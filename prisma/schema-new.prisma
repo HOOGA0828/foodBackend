@@ -1,0 +1,223 @@
+// 新專案資料庫設計 - 日本餐飲/超商新品追蹤系統
+// 核心需求：公司名字、產品敘述、產品提供時間區間、資料庫上次更新時間
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// 1. 品牌/公司表 (brands)
+// ============================================
+model Brand {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name          String    @unique @db.VarChar(200) // 公司名字（主要欄位）
+  nameEn        String?   @map("name_en") @db.VarChar(200) // 英文名稱
+  nameJp        String?   @map("name_jp") @db.VarChar(200) // 日文名稱
+  slug          String    @unique @db.VarChar(100) // URL slug
+  description   String?   @db.Text // 公司描述
+  category      String    @default("convenience_store") @db.VarChar(50) // 品牌類別: convenience_store, restaurant, fast_food, bakery, beverage
+  website       String?   @db.Text // 官方網站
+  logoUrl       String?   @map("logo_url") @db.Text // Logo URL
+  contactEmail  String?   @map("contact_email") @db.VarChar(255)
+  contactPhone  String?   @map("contact_phone") @db.VarChar(50)
+  address       String?   @db.Text
+  isActive      Boolean?  @default(true) @map("is_active") // 是否啟用爬蟲
+  crawlConfig   Json?     @map("crawl_config") @db.JsonB // 爬蟲配置 (JSONB)
+  lastCrawledAt DateTime? @map("last_crawled_at") @db.Timestamptz(6) // 最後爬取時間
+  createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6) // 資料庫上次更新時間（主要欄位）
+  products      Product[]
+
+  @@index([isActive], map: "idx_brands_is_active")
+  @@index([category], map: "idx_brands_category")
+  @@index([lastCrawledAt], map: "idx_brands_last_crawled")
+  @@index([name], map: "idx_brands_name")
+  @@index([crawlConfig], map: "idx_brands_crawl_config_gin", type: Gin)
+  @@map("brands")
+}
+
+// ============================================
+// 2. 產品分類表 (categories)
+// ============================================
+model Category {
+  id            String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name          String            @db.VarChar(100) // 分類名稱
+  nameEn        String?           @map("name_en") @db.VarChar(100) // 英文名稱
+  nameJp        String?           @map("name_jp") @db.VarChar(100) // 日文名稱
+  slug          String            @unique @db.VarChar(100)
+  parentId      String?           @map("parent_id") @db.Uuid
+  description   String?           @db.Text // 分類描述
+  iconUrl       String?           @map("icon_url") @db.Text // 分類圖示
+  sortOrder     Int?              @default(0) @map("sort_order")
+  isActive      Boolean?          @default(true) @map("is_active")
+  createdAt     DateTime?         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  parent        Category?         @relation("CategoryHierarchy", fields: [parentId], references: [id], onUpdate: NoAction)
+  children      Category[]        @relation("CategoryHierarchy")
+  productCategories ProductCategory[]
+  products      Product[]
+
+  @@index([parentId], map: "idx_categories_parent_id")
+  @@index([slug], map: "idx_categories_slug")
+  @@index([name], map: "idx_categories_name")
+  @@index([isActive], map: "idx_categories_is_active")
+  @@map("categories")
+}
+
+// ============================================
+// 3. 產品表 (products) - 核心表
+// ============================================
+model Product {
+  id                   String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                 String            @db.VarChar(300) // 產品名稱
+  nameEn               String?           @map("name_en") @db.VarChar(300) // 英文名稱
+  nameJp               String?           @map("name_jp") @db.VarChar(300) // 日文名稱
+  description          String?           @db.Text // 產品敘述（主要欄位）
+  descriptionEn        String?           @map("description_en") @db.Text // 英文描述
+  descriptionJp        String?           @map("description_jp") @db.Text // 日文描述
+
+  // 關聯資訊
+  brandId              String            @map("brand_id") @db.Uuid
+  categoryId           String?           @map("category_id") @db.Uuid
+
+  // 產品提供時間區間（主要欄位）
+  availableStartDate   DateTime?         @map("available_start_date") @db.Timestamptz(6) // 提供開始時間
+  availableEndDate     DateTime?         @map("available_end_date") @db.Timestamptz(6) // 提供結束時間
+
+  // 價格資訊
+  price                Decimal?          @db.Decimal(10, 2) // 價格（支援小數）
+  originalPrice        Decimal?          @map("original_price") @db.Decimal(10, 2) // 原價
+  currency             String?           @default("TWD") @db.VarChar(3) // 貨幣代碼
+
+  // 媒體資訊
+  imageUrls            String[]          @map("image_urls") // 產品圖片 URL 陣列
+  thumbnailUrl         String?           @map("thumbnail_url") // 縮圖 URL
+  videoUrls            String[]          @map("video_urls") // 影片 URL 陣列
+
+  // 狀態管理
+  status               String            @default("available") @db.VarChar(50) // available, limited, sold_out, discontinued
+  isLimitedEdition     Boolean?          @default(false) @map("is_limited_edition") // 是否為期間限定
+  isRegionLimited      Boolean?          @default(false) @map("is_region_limited") // 是否為地區限定
+  availableRegions     String[]          @map("available_regions") // 可購買地區陣列
+
+  // 產品分類標籤
+  tags                 String[]          // 產品標籤陣列
+  subcategories        String[]          // 次分類標籤（飲料類、季節限定等）
+
+  // 產品規格和營養資訊
+  specifications       Json?             @default("{}") @db.JsonB // 產品規格 (尺寸、重量、份量等)
+  nutritionInfo        Json?             @map("nutrition_info") @default("{}") @db.JsonB // 營養資訊
+  allergens            String[]          // 過敏原陣列
+
+  // 爬蟲和資料來源
+  sourceUrl            String?           @map("source_url") @db.Text // 來源 URL
+  sourceIdentifier     String?           @map("source_identifier") @db.VarChar(255) // 來源系統唯一識別符
+  crawledFrom          String?           @map("crawled_from") @db.VarChar(100) // 爬取來源品牌
+  scrapedAt            DateTime?         @default(now()) @map("scraped_at") @db.Timestamptz(6) // 最後爬取時間
+  lastVerifiedAt       DateTime?         @map("last_verified_at") @db.Timestamptz(6) // 最後驗證時間
+
+  // 發布和更新資訊
+  releaseDate          DateTime?         @map("release_date") @db.Timestamptz(6) // 產品發布日期
+  isNewProduct         Boolean?          @default(false) @map("is_new_product") // 是否為新品
+
+  // 擴充資料
+  metadata             Json?             @default("{}") @db.JsonB // 額外動態資訊
+  crawlMetadata        Json?             @map("crawl_metadata") @default("{}") @db.JsonB // 爬蟲相關元資料
+
+  // 時間戳記
+  createdAt            DateTime?         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6) // 資料庫上次更新時間（主要欄位）
+
+  productCategories    ProductCategory[]
+  brand                Brand             @relation(fields: [brandId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  category             Category?         @relation(fields: [categoryId], references: [id], onUpdate: NoAction)
+
+  @@index([brandId], map: "idx_products_brand_id")
+  @@index([brandId, status], map: "idx_products_brand_status")
+  @@index([categoryId], map: "idx_products_category_id")
+  @@index([status], map: "idx_products_status")
+  @@index([name], map: "idx_products_name")
+  @@index([name(ops: raw("gin_trgm_ops"))], map: "idx_products_name_trgm", type: Gin) // 全文搜索
+  @@index([availableStartDate], map: "idx_products_available_start")
+  @@index([availableEndDate], map: "idx_products_available_end")
+  @@index([availableStartDate, availableEndDate], map: "idx_products_available_period") // 時間區間索引
+  @@index([releaseDate], map: "idx_products_release_date")
+  @@index([scrapedAt], map: "idx_products_scraped_at")
+  @@index([updatedAt], map: "idx_products_updated_at") // 更新時間索引
+  @@index([isNewProduct], map: "idx_products_is_new")
+  @@index([sourceIdentifier], map: "idx_products_source_identifier")
+  @@index([tags], map: "idx_products_tags_gin", type: Gin) // 標籤搜索
+  @@index([subcategories], map: "idx_products_subcategories_gin", type: Gin) // 次分類搜索
+  @@index([allergens], map: "idx_products_allergens_gin", type: Gin) // 過敏原搜索
+  @@index([metadata], map: "idx_products_metadata_gin", type: Gin)
+  @@index([crawlMetadata], map: "idx_products_crawl_metadata_gin", type: Gin)
+  @@map("products")
+}
+
+// ============================================
+// 4. 產品-分類多對多關聯表 (product_categories)
+// ============================================
+model ProductCategory {
+  productId  String    @map("product_id") @db.Uuid
+  categoryId String    @map("category_id") @db.Uuid
+  isPrimary  Boolean?  @default(false) @map("is_primary") // 是否為主要分類
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([productId, categoryId])
+  @@index([categoryId], map: "idx_product_categories_category_id")
+  @@index([productId], map: "idx_product_categories_product_id")
+  @@map("product_categories")
+}
+
+// ============================================
+// 5. 爬蟲執行記錄表 (crawler_runs)
+// ============================================
+model CrawlerRun {
+  id              String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  brandId         String?   @map("brand_id") @db.Uuid // 關聯品牌（可選，全域爬蟲用）
+  brandName       String    @map("brand_name") @db.VarChar(200) // 品牌名稱
+  status          String    @default("running") @db.VarChar(50) // running, completed, failed, cancelled
+  startedAt       DateTime? @default(now()) @map("started_at") @db.Timestamptz(6)
+  completedAt     DateTime? @map("completed_at") @db.Timestamptz(6)
+  durationMs      Int?      @map("duration_ms") // 執行時間（毫秒）
+  productsFound   Int?      @default(0) @map("products_found") // 發現的產品數量
+  productsUpdated Int?      @default(0) @map("products_updated") // 更新的產品數量
+  productsNew     Int?      @default(0) @map("products_new") // 新增的產品數量
+  errorMessage    String?   @map("error_message") @db.Text // 錯誤訊息
+  metadata        Json?     @default("{}") @db.JsonB // 執行元資料
+  createdAt       DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([brandId], map: "idx_crawler_runs_brand_id")
+  @@index([status], map: "idx_crawler_runs_status")
+  @@index([startedAt], map: "idx_crawler_runs_started_at")
+  @@index([completedAt], map: "idx_crawler_runs_completed_at")
+  @@map("crawler_runs")
+}
+
+// ============================================
+// 6. 產品變更記錄表 (product_changes) - 可選，用於追蹤產品變更歷史
+// ============================================
+model ProductChange {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  productId   String    @map("product_id") @db.Uuid
+  changeType  String    @map("change_type") @db.VarChar(50) // created, updated, discontinued
+  fieldName   String?   @map("field_name") @db.VarChar(100) // 變更的欄位名稱
+  oldValue    String?   @map("old_value") @db.Text // 舊值
+  newValue    String?   @map("new_value") @db.Text // 新值
+  changedAt   DateTime? @default(now()) @map("changed_at") @db.Timestamptz(6)
+  changedBy   String?   @map("changed_by") @db.VarChar(100) // 變更來源 (crawler, manual, api)
+  metadata    Json?     @default("{}") @db.JsonB
+
+  @@index([productId], map: "idx_product_changes_product_id")
+  @@index([changeType], map: "idx_product_changes_change_type")
+  @@index([changedAt], map: "idx_product_changes_changed_at")
+  @@map("product_changes")
+}

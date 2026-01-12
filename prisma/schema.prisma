@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Brand {
+  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name          String    @unique @db.VarChar(200) // 公司名字（主要欄位）
+  nameEn        String?   @map("name_en") @db.VarChar(200) // 英文名稱（可選）
+  nameJp        String?   @map("name_jp") @db.VarChar(200) // 日文名稱（可選）
+  slug          String    @unique @db.VarChar(100)
+  logoUrl       String?   @map("logo_url")
+  website       String?   @map("website")
+  description   String?   @db.Text // 公司描述
+  contactEmail  String?   @map("contact_email") @db.VarChar(255)
+  contactPhone  String?   @map("contact_phone") @db.VarChar(50)
+  address       String?   @db.Text
+  isActive      Boolean?  @default(true) @map("is_active")
+  createdAt     DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6) // 資料庫上次更新時間
+  products      Product[]
+
+  @@index([isActive], map: "idx_brands_is_active")
+  @@index([slug], map: "idx_brands_slug")
+  @@index([name], map: "idx_brands_name")
+  @@map("brands")
+}
+
+model Category {
+  id                String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name              String            @db.VarChar(100) // 分類名稱
+  nameEn            String?           @map("name_en") @db.VarChar(100) // 英文名稱（可選）
+  nameJp            String?           @map("name_jp") @db.VarChar(100) // 日文名稱（可選）
+  slug              String            @unique @db.VarChar(100)
+  parentId          String?           @map("parent_id") @db.Uuid
+  description       String?           @db.Text // 分類描述
+  iconUrl           String?           @map("icon_url") // 分類圖示 URL
+  sortOrder         Int?              @default(0) @map("sort_order")
+  isActive          Boolean?          @default(true) @map("is_active")
+  createdAt         DateTime?         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  parent            Category?         @relation("CategoryHierarchy", fields: [parentId], references: [id], onUpdate: NoAction)
+  children          Category[]        @relation("CategoryHierarchy")
+  productCategories ProductCategory[]
+  products          Product[]
+
+  @@index([parentId], map: "idx_categories_parent_id")
+  @@index([slug], map: "idx_categories_slug")
+  @@index([name], map: "idx_categories_name")
+  @@index([isActive], map: "idx_categories_is_active")
+  @@map("categories")
+}
+
+model Product {
+  id                   String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name                 String            @db.VarChar(200) // 產品名稱
+  nameEn               String?           @map("name_en") @db.VarChar(200) // 英文名稱（可選）
+  nameJp               String?           @map("name_jp") @db.VarChar(200) // 日文名稱（可選）
+  description          String?           @db.Text // 產品敘述（主要欄位）
+  descriptionEn        String?           @map("description_en") @db.Text // 英文描述（可選）
+  descriptionJp        String?           @map("description_jp") @db.Text // 日文描述（可選）
+  brandId              String            @map("brand_id") @db.Uuid
+  categoryId           String?           @map("category_id") @db.Uuid
+  // 產品提供時間區間（主要欄位）
+  availableStartDate   DateTime?         @map("available_start_date") @db.Timestamptz(6) // 提供開始時間
+  availableEndDate     DateTime?         @map("available_end_date") @db.Timestamptz(6) // 提供結束時間
+  // 價格資訊
+  price                Decimal?          @db.Decimal(10, 2) // 價格（支援小數）
+  originalPrice        Decimal?          @map("original_price") @db.Decimal(10, 2) // 原價（特價商品用）
+  currency             String?           @default("TWD") @db.VarChar(3) // 貨幣代碼
+  // 媒體資訊
+  imageUrls            String[]          @map("image_urls") // 產品圖片 URL 陣列
+  thumbnailUrl         String?           @map("thumbnail_url") // 縮圖 URL
+  // 狀態管理
+  status               String            @default("available") @db.VarChar(50) // available, limited, sold_out, discontinued
+  isLimitedEdition     Boolean?          @default(false) @map("is_limited_edition") // 是否為期間限定
+  isRegionLimited      Boolean?          @default(false) @map("is_region_limited") // 是否為地區限定
+  availableRegions     String[]          @map("available_regions") // 可購買地區陣列
+  // 產品詳細資訊
+  specifications       Json?             @default("{}") // 產品規格（JSON格式，儲存尺寸、重量、規格等）
+  tags                 String[]          // 產品標籤陣列
+  // 爬蟲/資料來源相關
+  sourceUrl            String?           @map("source_url") // 來源 URL
+  sourceIdentifier     String?           @map("source_identifier") @db.VarChar(255) // 來源系統的唯一識別符
+  scrapedAt            DateTime?         @default(now()) @map("scraped_at") @db.Timestamptz(6) // 最後爬取時間
+  lastVerifiedAt       DateTime?         @map("last_verified_at") @db.Timestamptz(6) // 最後驗證時間
+  // 發布資訊
+  releaseDate          DateTime?         @map("release_date") @db.Timestamptz(6) // 產品發布日期
+  // 擴充資料（JSONB）- 儲存額外動態資訊
+  metadata             Json?             @default("{}")
+  // 時間戳記
+  createdAt            DateTime?         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime?         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6) // 資料庫上次更新時間（主要欄位）
+  productCategories    ProductCategory[]
+  brand                Brand             @relation(fields: [brandId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  category             Category?         @relation(fields: [categoryId], references: [id], onUpdate: NoAction)
+
+  @@index([brandId], map: "idx_products_brand_id")
+  @@index([brandId, status], map: "idx_products_brand_status")
+  @@index([categoryId], map: "idx_products_category_id")
+  @@index([metadata], map: "idx_products_metadata_gin", type: Gin)
+  @@index([name], map: "idx_products_name")
+  @@index([name(ops: raw("gin_trgm_ops"))], map: "idx_products_name_trgm", type: Gin) // 全文搜索
+  @@index([availableStartDate], map: "idx_products_available_start")
+  @@index([availableEndDate], map: "idx_products_available_end")
+  @@index([availableStartDate, availableEndDate], map: "idx_products_available_period") // 時間區間索引
+  @@index([status], map: "idx_products_status")
+  @@index([status, availableStartDate(sort: Desc)], map: "idx_products_status_available_start")
+  @@index([updatedAt], map: "idx_products_updated_at") // 更新時間索引，便於查詢最近更新的產品
+  @@index([sourceIdentifier], map: "idx_products_source_identifier")
+  @@index([tags], map: "idx_products_tags_gin", type: Gin) // 標籤搜索
+  @@map("products")
+}
+
+model ProductCategory {
+  productId  String    @map("product_id") @db.Uuid
+  categoryId String    @map("category_id") @db.Uuid
+  isPrimary  Boolean?  @default(false) @map("is_primary")
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  product    Product   @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([productId, categoryId])
+  @@index([categoryId], map: "idx_product_categories_category_id")
+  @@index([productId], map: "idx_product_categories_product_id")
+  @@map("product_categories")
+}
