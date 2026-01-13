@@ -52,18 +52,57 @@ export class SupabaseService {
 
       for (const product of result.products) {
         try {
-          // 檢查產品是否已存在（基於來源 URL 和名稱）
-          const { data: existingProduct } = await this.supabase
-            .from('products')
-            .select('id')
-            .eq('source_url', product.sourceUrl || result.brand.url)
-            .eq('name', product.translatedName)
-            .single();
+          // 檢查產品是否已存在
+          // 優先使用 metadata 中的 original_name 進行比對 (如果有的話)
+          let existingProduct_ = null;
 
-          if (existingProduct) {
+          if (product.originalName) {
+            // 使用原始名稱查
+            const { data: byOriginalName } = await this.supabase
+              .from('products')
+              .select('id')
+              .eq('source_url', product.sourceUrl || result.brand.url)
+              // 注意: JSONB 查詢語法視 Supabase/Postgres 版本而定，這裡使用 contains 或 textSearch 可能較慢
+              // 簡單起見，我們假設 source_url 足夠唯一，或者在 memory 中過濾?
+              // 但為了嚴謹，我們嘗試匹配 metadata->original_name
+              // .eq('metadata->>original_name', product.originalName) // Supabase JS 客戶端支援這種語法
+              .filter('metadata->>original_name', 'eq', product.originalName)
+              .maybeSingle(); // 使用 maybeSingle 避免多筆報錯，若有多筆則視為已存在
+
+            existingProduct_ = byOriginalName;
+          }
+
+          // 如果沒找到，退回使用 name (translatedName)
+          if (!existingProduct_) {
+            const { data: byName } = await this.supabase
+              .from('products')
+              .select('id')
+              .eq('source_url', product.sourceUrl || result.brand.url)
+              .eq('name', product.translatedName)
+              .maybeSingle();
+            existingProduct_ = byName;
+          }
+
+          // 如果還是沒找到，且 source_url 是獨特的 (非列表頁)，嘗試僅用 source_url
+          // 只有當 product.sourceUrl 不等於 brand.url (列表頁) 時才這樣做
+          if (!existingProduct_ && product.sourceUrl && product.sourceUrl !== result.brand.url) {
+            const { data: byUrl } = await this.supabase
+              .from('products')
+              .select('id')
+              .eq('source_url', product.sourceUrl)
+              .maybeSingle();
+            // 注意: 這有風險，如果 URL 指向同一個頁面但不同產品(例如錨點不同?)。
+            // 假設 scraper 處理好了 hash。
+            if (byUrl) existingProduct_ = byUrl;
+          }
+
+          if (existingProduct_) {
+            console.log(`📝 [Supabase] 更新產品: ${product.translatedName} (ID: ${existingProduct_.id})`);
             // 產品已存在，更新它
             const updateData = {
+              // name: product.translatedName, 
               description: product.translatedName,
+              name_jp: product.originalName, // 更新日文名稱
               price: product.price?.amount || null,
               currency: product.price?.currency || 'JPY',
               image_urls: product.imageUrl ? [product.imageUrl] : [],
@@ -73,23 +112,33 @@ export class SupabaseService {
               last_verified_at: new Date().toISOString(),
               allergens: product.allergens || [],
               scraped_at: result.scrapedAt.toISOString(),
-              crawled_from: result.brand.name
+              crawled_from: result.brand.name,
+              // 更新 metadata
+              metadata: {
+                original_name: product.originalName,
+                price_note: product.price?.note,
+                crawled_at: result.scrapedAt.toISOString(),
+                brand_info: result.brand
+              }
             };
 
             const { error: updateError } = await this.supabase
               .from('products')
               .update(updateData)
-              .eq('id', existingProduct.id);
+              .eq('id', existingProduct_.id);
 
             if (updateError) {
+              console.error(`❌ [Supabase] 更新失敗: ${updateError.message}`);
               errors.push(`更新產品 ${product.translatedName} 失敗: ${updateError.message}`);
             } else {
               skippedCount++;
             }
           } else {
+            console.log(`✨ [Supabase] 新增產品: ${product.translatedName}`);
             // 插入新產品
             const insertData = {
               name: product.translatedName,
+              name_jp: product.originalName, // 插入日文名稱
               description: product.translatedName, // 主要欄位
               brand_id: brandId,
               price: product.price?.amount || null,
@@ -118,6 +167,7 @@ export class SupabaseService {
               .insert(insertData);
 
             if (insertError) {
+              console.error(`❌ [Supabase] 插入失敗: ${insertError.message}`);
               errors.push(`插入產品 ${product.translatedName} 失敗: ${insertError.message}`);
             } else {
               insertedCount++;
@@ -125,6 +175,7 @@ export class SupabaseService {
           }
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+          console.error(`❌ [Supabase] 處理例外: ${errorMessage}`);
           errors.push(`處理產品 ${product.translatedName} 時發生錯誤: ${errorMessage}`);
         }
       }
@@ -133,7 +184,6 @@ export class SupabaseService {
       await this.recordCrawlerRun(result, insertedCount, skippedCount, errors);
 
       // 4. 總結
-      const totalProcessed = insertedCount + skippedCount;
       const hasErrors = errors.length > 0;
 
       console.log(`📊 [Supabase] ${result.brand.displayName} 儲存完成:`);
@@ -175,8 +225,10 @@ export class SupabaseService {
     try {
       // 處理日文日期格式：2026年01月06日
       const match = dateString.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
-      if (match) {
-        const [, year, month, day] = match;
+      if (match && match[1] && match[2] && match[3]) {
+        const year = match[1];
+        const month = match[2];
+        const day = match[3];
         return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       }
 
@@ -263,6 +315,48 @@ export class SupabaseService {
     } catch (error) {
       console.error('❌ [Supabase] 查詢記錄時發生錯誤:', error);
       return [];
+    }
+  }
+
+  /**
+   * 刪除指定品牌的所有產品資料（用於重置測試）
+   * @param brandName 品牌名稱
+   */
+  async clearBrandProducts(brandName: string): Promise<{ success: boolean; deletedCount?: number; error?: string }> {
+    try {
+      console.log(`🗑️ [Supabase] 準備刪除 ${brandName} 的所有產品...`);
+
+      // 1. 找到品牌 ID
+      const { data: brandData, error: brandError } = await this.supabase
+        .from('brands')
+        .select('id')
+        .eq('slug', brandName.toLowerCase().replace(/\s+/g, '-'))
+        .single();
+
+      if (brandError || !brandData) {
+        console.warn(`⚠️ [Supabase] 找不到品牌 ${brandName}，嘗試直接用 crawl_from 刪除?`);
+        // 備用方案: 直接用 crawled_from 刪除? 但 products 表關聯的是 brand_id
+        // 這裡假設 brands table 必須有資料
+        return { success: false, error: `找不到品牌: ${brandName}` };
+      }
+
+      // 2. 刪除該品牌的所有產品
+      const { count, error: deleteError } = await this.supabase
+        .from('products')
+        .delete({ count: 'exact' })
+        .eq('brand_id', brandData.id);
+
+      if (deleteError) {
+        console.error(`❌ [Supabase] 刪除失敗:`, deleteError);
+        return { success: false, error: deleteError.message };
+      }
+
+      console.log(`✅ [Supabase] 已刪除 ${brandName} 的 ${count} 筆產品資料`);
+      return { success: true, deletedCount: count || 0 };
+
+    } catch (error) {
+      console.error(`❌ [Supabase] 清除過程發生錯誤:`, error);
+      return { success: false, error: error instanceof Error ? error.message : '未知錯誤' };
     }
   }
 

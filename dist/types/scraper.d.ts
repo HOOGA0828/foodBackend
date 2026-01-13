@@ -50,6 +50,7 @@ export interface ScraperResult {
         name: string;
         displayName: string;
         category: string;
+        url: string;
     };
     productsCount: number;
     products: ProductInfo[];

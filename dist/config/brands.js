@@ -1,30 +1,30 @@
 export const BRANDS = [
     {
-        name: '7eleven',
-        displayName: '7-Eleven',
-        url: 'https://www.sej.co.jp/products/new/',
+        name: '7-Eleven',
+        displayName: '7-Eleven 新品頁面(近畿)',
+        url: 'https://www.sej.co.jp/products/a/thisweek/area/kinki/',
         category: 'convenience_store',
         pageType: 'product_list',
-        newProductSelector: '.new-product-list',
+        newProductSelector: undefined,
         enabled: true,
         options: {
             waitFor: 3000,
             actions: ['scrollToBottom'],
             deepCrawling: {
                 enabled: true,
-                productLinkSelector: '.product-item a[href], .new-product-item a[href]',
-                productTitleSelector: '.product-name, .item-title, h3, h4',
-                productImageSelector: '.product-image img, .item-image img',
-                newBadgeSelector: '.new-badge, .badge-new',
-                maxProducts: 20,
+                productLinkSelector: 'a[href*="item"], a[href*="product"], .product-item a, [data-product] a',
+                productTitleSelector: '.product-name, .item-title, h3, h4, .title',
+                productImageSelector: 'img[src*="item-image"], img[src*="7api"], img[alt*=""], .product img, .item img',
+                newBadgeSelector: '.new-badge, .badge-new, [class*="new"]',
+                maxProducts: 10,
                 detailPageWaitFor: 2000
             }
         }
     },
     {
         name: 'familymart',
-        displayName: 'FamilyMart',
-        url: 'https://www.family.co.jp/goods/new.html',
+        displayName: '全家 新品頁面',
+        url: 'https://www.family.co.jp/goods.html',
         category: 'convenience_store',
         pageType: 'product_list',
         newProductSelector: '.new-goods-list',
@@ -45,9 +45,9 @@ export const BRANDS = [
     {
         name: 'lawson',
         displayName: 'LAWSON',
-        url: 'https://www.lawson.co.jp/recommend/new/',
+        url: 'https://www.lawson.co.jp/index.html',
         category: 'convenience_store',
-        pageType: 'product_list',
+        pageType: 'homepage_banner',
         newProductSelector: '.new-item-container',
         enabled: true,
         options: {
@@ -65,11 +65,11 @@ export const BRANDS = [
         }
     },
     {
-        name: 'mcdonalds',
-        displayName: 'McDonald\'s',
-        url: 'https://www.mcdonalds.co.jp/menu/',
-        category: 'fast_food',
-        pageType: 'product_list',
+        name: 'sushiro',
+        displayName: 'sushiro',
+        url: 'https://www.akindo-sushiro.co.jp/campaign/',
+        category: 'restaurant',
+        pageType: 'homepage_banner',
         newProductSelector: '.menu-new-items',
         enabled: true,
         options: {
@@ -86,15 +86,78 @@ export const BRANDS = [
         }
     },
     {
-        name: 'starbucks',
-        displayName: 'Starbucks',
-        url: 'https://www.starbucks.co.jp/menu/',
-        category: 'beverage',
-        pageType: 'product_list',
+        name: 'mcdonalds',
+        displayName: 'mcdonalds',
+        url: 'https://www.mcdonalds.co.jp/',
+        category: 'fast_food',
+        pageType: 'homepage_banner',
         newProductSelector: '.seasonal-menu',
         enabled: true,
         options: {
-            waitFor: 2000,
+            waitFor: 3000,
+            deepCrawling: {
+                enabled: true,
+                productLinkSelector: '.beverage-link[href], .menu-item a[href]',
+                productTitleSelector: '.beverage-name, .menu-title',
+                productImageSelector: '.beverage-image img, .menu-image img',
+                newBadgeSelector: '.seasonal-badge, .new-badge',
+                maxProducts: 15,
+                detailPageWaitFor: 2000
+            }
+        }
+    },
+    {
+        name: '吉野家',
+        displayName: '吉野家',
+        url: 'https://www.yoshinoya.com/',
+        category: 'restaurant',
+        pageType: 'homepage_banner',
+        newProductSelector: '.seasonal-menu',
+        enabled: true,
+        options: {
+            waitFor: 3000,
+            deepCrawling: {
+                enabled: true,
+                productLinkSelector: '.beverage-link[href], .menu-item a[href]',
+                productTitleSelector: '.beverage-name, .menu-title',
+                productImageSelector: '.beverage-image img, .menu-image img',
+                newBadgeSelector: '.seasonal-badge, .new-badge',
+                maxProducts: 15,
+                detailPageWaitFor: 2000
+            }
+        }
+    },
+    {
+        name: 'kurasushi',
+        displayName: 'kurasushi',
+        url: 'https://www.kurasushi.co.jp/',
+        category: 'restaurant',
+        pageType: 'homepage_banner',
+        newProductSelector: '.seasonal-menu',
+        enabled: true,
+        options: {
+            waitFor: 3000,
+            deepCrawling: {
+                enabled: true,
+                productLinkSelector: '.beverage-link[href], .menu-item a[href]',
+                productTitleSelector: '.beverage-name, .menu-title',
+                productImageSelector: '.beverage-image img, .menu-image img',
+                newBadgeSelector: '.seasonal-badge, .new-badge',
+                maxProducts: 15,
+                detailPageWaitFor: 2000
+            }
+        }
+    },
+    {
+        name: 'starbucks',
+        displayName: 'starbucks',
+        url: 'https://www.starbucks.co.jp/',
+        category: 'restaurant',
+        pageType: 'homepage_banner',
+        newProductSelector: '.seasonal-menu',
+        enabled: true,
+        options: {
+            waitFor: 3000,
             deepCrawling: {
                 enabled: true,
                 productLinkSelector: '.beverage-link[href], .menu-item a[href]',

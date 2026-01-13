@@ -26,8 +26,10 @@ export interface BrandConfig {
     actions?: string[];
     /** 二層抓取設定 */
     deepCrawling?: {
-      /** 是否啟用二層抓取 */
+      /** 是否啟用二層抓取 (提取連結與圖片) */
       enabled: boolean;
+      /** 是否進入詳細頁面抓取內容 (若為 false 則僅使用列表頁資訊) */
+      scrapeDetailPages?: boolean;
       /** 產品連結選擇器 (用於提取 href) */
       productLinkSelector?: string;
       /** 產品標題選擇器 (用於提取產品名稱) */
@@ -55,19 +57,21 @@ export const BRANDS: BrandConfig[] = [
     url: 'https://www.sej.co.jp/products/a/thisweek/area/kinki/',
     category: 'convenience_store',
     pageType: 'product_list',
-    newProductSelector: '.new-product-list',
+    newProductSelector: undefined, // 使用整個頁面
     enabled: true,
     options: {
       waitFor: 3000,
       actions: ['scrollToBottom'], // 滾動到底部載入更多內容
       deepCrawling: {
         enabled: true,
-        productLinkSelector: '.product-item a[href], .new-product-item a[href]',
-        productTitleSelector: '.product-name, .item-title, h3, h4',
-        productImageSelector: '.product-image img, .item-image img',
-        newBadgeSelector: '.new-badge, .badge-new',
-        maxProducts: 20,
-        detailPageWaitFor: 2000
+        scrapeDetailPages: false, // 不進入詳細頁面，直接從列表獲取
+        // 修改選擇器以符合使用者需求: .list_inner -> .item_ttl / figure img
+        productLinkSelector: '.list_inner', // Container
+        productTitleSelector: '.item_ttl',
+        productImageSelector: 'figure img',
+        newBadgeSelector: '.new-badge, .badge-new, [class*="new"]',
+        maxProducts: 30,
+        detailPageWaitFor: 0
       }
     }
   },

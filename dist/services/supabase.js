@@ -12,31 +12,111 @@ export class SupabaseService {
     async saveScraperResult(result) {
         try {
             console.log(`💾 [Supabase] 準備儲存 ${result.brand.displayName} 的爬取結果...`);
-            const insertData = {
-                brand_name: result.brand.name,
-                brand_display_name: result.brand.displayName,
-                brand_category: result.brand.category,
-                products_count: result.productsCount,
-                products: result.products,
-                scraped_at: result.scrapedAt.toISOString(),
-                status: result.status,
-                execution_time_ms: result.executionTime
+            const { data: brandData, error: brandError } = await this.supabase
+                .from('brands')
+                .select('id')
+                .eq('slug', result.brand.name.toLowerCase().replace(/\s+/g, '-'))
+                .single();
+            if (brandError || !brandData) {
+                console.error(`❌ [Supabase] 找不到品牌: ${result.brand.name}`, brandError);
+                return { success: false, error: `找不到品牌: ${result.brand.name}` };
+            }
+            const brandId = brandData.id;
+            let insertedCount = 0;
+            let skippedCount = 0;
+            const errors = [];
+            for (const product of result.products) {
+                try {
+                    const { data: existingProduct } = await this.supabase
+                        .from('products')
+                        .select('id')
+                        .eq('source_url', product.sourceUrl || result.brand.url)
+                        .eq('name', product.translatedName)
+                        .single();
+                    if (existingProduct) {
+                        const updateData = {
+                            description: product.translatedName,
+                            price: product.price?.amount || null,
+                            currency: product.price?.currency || 'JPY',
+                            image_urls: product.imageUrl ? [product.imageUrl] : [],
+                            available_start_date: this.parseDateString(product.releaseDate),
+                            is_new_product: product.isNew || true,
+                            updated_at: new Date().toISOString(),
+                            last_verified_at: new Date().toISOString(),
+                            allergens: product.allergens || [],
+                            scraped_at: result.scrapedAt.toISOString(),
+                            crawled_from: result.brand.name
+                        };
+                        const { error: updateError } = await this.supabase
+                            .from('products')
+                            .update(updateData)
+                            .eq('id', existingProduct.id);
+                        if (updateError) {
+                            errors.push(`更新產品 ${product.translatedName} 失敗: ${updateError.message}`);
+                        }
+                        else {
+                            skippedCount++;
+                        }
+                    }
+                    else {
+                        const insertData = {
+                            name: product.translatedName,
+                            description: product.translatedName,
+                            brand_id: brandId,
+                            price: product.price?.amount || null,
+                            currency: product.price?.currency || 'JPY',
+                            image_urls: product.imageUrl ? [product.imageUrl] : [],
+                            available_start_date: this.parseDateString(product.releaseDate),
+                            is_new_product: product.isNew || true,
+                            status: 'available',
+                            source_url: product.sourceUrl || result.brand.url,
+                            source_identifier: `${result.brand.name}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                            scraped_at: result.scrapedAt.toISOString(),
+                            last_verified_at: result.scrapedAt.toISOString(),
+                            crawled_from: result.brand.name,
+                            allergens: product.allergens || [],
+                            tags: ['新品'],
+                            metadata: {
+                                original_name: product.originalName,
+                                price_note: product.price?.note,
+                                crawled_at: result.scrapedAt.toISOString(),
+                                brand_info: result.brand
+                            }
+                        };
+                        const { error: insertError } = await this.supabase
+                            .from('products')
+                            .insert(insertData);
+                        if (insertError) {
+                            errors.push(`插入產品 ${product.translatedName} 失敗: ${insertError.message}`);
+                        }
+                        else {
+                            insertedCount++;
+                        }
+                    }
+                }
+                catch (error) {
+                    const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+                    errors.push(`處理產品 ${product.translatedName} 時發生錯誤: ${errorMessage}`);
+                }
+            }
+            await this.recordCrawlerRun(result, insertedCount, skippedCount, errors);
+            const hasErrors = errors.length > 0;
+            console.log(`📊 [Supabase] ${result.brand.displayName} 儲存完成:`);
+            console.log(`   ✅ 新增產品: ${insertedCount} 個`);
+            console.log(`   ⚠️  更新產品: ${skippedCount} 個`);
+            console.log(`   ❌ 錯誤產品: ${errors.length} 個`);
+            if (hasErrors) {
+                console.log('   錯誤詳情:');
+                errors.slice(0, 3).forEach(error => console.log(`     - ${error}`));
+                if (errors.length > 3) {
+                    console.log(`     ...還有 ${errors.length - 3} 個錯誤`);
+                }
+            }
+            return {
+                success: !hasErrors || insertedCount > 0,
+                inserted: insertedCount > 0,
+                error: hasErrors ? errors.join('; ') : undefined
             };
-            const existingRecord = await this.checkExistingRecord(result.brand.name, result.scrapedAt);
-            if (existingRecord) {
-                console.log(`⚠️ [Supabase] ${result.brand.displayName} 在 ${result.scrapedAt.toISOString()} 已經有記錄，跳過插入`);
-                return { success: true, inserted: false };
-            }
-            const { data, error } = await this.supabase
-                .from('product_scrapes')
-                .insert(insertData)
-                .select();
-            if (error) {
-                console.error('❌ [Supabase] 插入失敗:', error);
-                return { success: false, error: error.message };
-            }
-            console.log(`✅ [Supabase] ${result.brand.displayName} 資料儲存成功，插入 ${data.length} 筆記錄`);
-            return { success: true, inserted: true };
         }
         catch (error) {
             console.error('❌ [Supabase] 儲存過程發生錯誤:', error);
@@ -46,27 +126,54 @@ export class SupabaseService {
             };
         }
     }
-    async checkExistingRecord(brandName, scrapedAt) {
+    parseDateString(dateString) {
+        if (!dateString)
+            return null;
         try {
-            const date = new Date(scrapedAt);
-            const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-            const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
-            const { data, error } = await this.supabase
-                .from('product_scrapes')
-                .select('id')
-                .eq('brand_name', brandName)
-                .gte('scraped_at', startOfDay.toISOString())
-                .lt('scraped_at', endOfDay.toISOString())
-                .limit(1);
-            if (error) {
-                console.warn('⚠️ [Supabase] 檢查重複記錄時發生錯誤:', error);
-                return false;
+            const match = dateString.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+            if (match && match[1] && match[2] && match[3]) {
+                const year = match[1];
+                const month = match[2];
+                const day = match[3];
+                return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
             }
-            return data && data.length > 0;
+            const date = new Date(dateString);
+            return isNaN(date.getTime()) ? null : date;
+        }
+        catch {
+            return null;
+        }
+    }
+    async recordCrawlerRun(result, insertedCount, updatedCount, errors) {
+        try {
+            const { data: brandData } = await this.supabase
+                .from('brands')
+                .select('id')
+                .eq('slug', result.brand.name.toLowerCase().replace(/\s+/g, '-'))
+                .single();
+            const crawlerRunData = {
+                brand_id: brandData?.id || null,
+                brand_name: result.brand.displayName,
+                status: errors.length > 0 ? 'partial_success' : 'success',
+                started_at: new Date(result.scrapedAt.getTime() - result.executionTime),
+                completed_at: result.scrapedAt,
+                duration_ms: result.executionTime,
+                products_found: result.productsCount,
+                products_updated: updatedCount,
+                products_new: insertedCount,
+                error_message: errors.length > 0 ? errors.slice(0, 3).join('; ') : null,
+                metadata: {
+                    brand_category: result.brand.category,
+                    has_errors: errors.length > 0,
+                    error_count: errors.length
+                }
+            };
+            await this.supabase
+                .from('crawler_runs')
+                .insert(crawlerRunData);
         }
         catch (error) {
-            console.warn('⚠️ [Supabase] 檢查重複記錄時發生錯誤:', error);
-            return false;
+            console.warn('⚠️ [Supabase] 記錄爬蟲執行結果失敗:', error);
         }
     }
     async getLatestScrapes(brandName, limit = 10) {

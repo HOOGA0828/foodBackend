@@ -1,0 +1,428 @@
+{
+  "usableSessionsCount": 7,
+  "retiredSessionsCount": 1,
+  "sessions": [
+    {
+      "id": "session_lWL0UW8zRh",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-13T16:26:50.225Z",
+      "createdAt": "2026-01-13T15:36:50.225Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_eTaPp2GYDj",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": [
+          {
+            "key": "Apache",
+            "value": "3f2d9df6.64846c2a1a31d",
+            "expires": "2026-01-20T15:36:50.667Z",
+            "domain": "www.sej.co.jp",
+            "path": "/",
+            "hostOnly": true,
+            "creation": "2026-01-13T15:36:53.118Z",
+            "lastAccessed": "2026-01-13T15:40:52.200Z"
+          },
+          {
+            "key": "nlbi_1627146",
+            "value": "H+wcJBucdhSd/tWgcJl5DwAAAAAoWmrXmEWqmtgKMnowPS5+",
+            "expires": "2026-01-13T16:26:53.117Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "secure": true,
+            "httpOnly": true,
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.118Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "visid_incap_1627146",
+            "value": "JuOMDPfkRmKfkLDwUdOompJmZmkAAAAAQUIPAAAAAAAQMKHWgZD4fuqXPyWUgFiQ",
+            "expires": "2027-01-12T15:42:00.667Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "secure": true,
+            "httpOnly": true,
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.121Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "incap_ses_2111_1627146",
+            "value": "XrESV2N56wh5p5vS0MdLHZJmZmkAAAAAdZm5PfZNFOa4VDlbFAs+yw==",
+            "expires": "2026-01-13T16:26:53.117Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "secure": true,
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.122Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "_gid",
+            "value": "GA1.3.1427052335.1768318611",
+            "expires": "2026-01-14T15:40:51.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.122Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "_gcl_au",
+            "value": "1.1.2110141711.1768318611",
+            "expires": "2026-04-13T15:36:51.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.122Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "__ulfpc",
+            "value": "202601140036511968",
+            "expires": "2027-02-17T15:36:51.118Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.122Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "_ga_EMVSQ32ZLJ",
+            "value": "GS2.1.s1768318611$o1$g1$t1768318851$j60$l0$h0",
+            "expires": "2027-02-17T15:40:51.877Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.122Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "_ga",
+            "value": "GA1.1.53489652.1768318611",
+            "expires": "2027-02-17T15:40:51.877Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.122Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "_fbp",
+            "value": "fb.2.1768318611978.151455648538707226",
+            "expires": "2026-04-13T15:40:51.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.122Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "_yjsu_yjad",
+            "value": "1768318611.8cde9ab3-ec93-47e0-b5d8-99b16b14ef0f",
+            "expires": "2027-01-13T15:36:51.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:36:53.122Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          },
+          {
+            "key": "_gat",
+            "value": "1",
+            "expires": "2026-01-13T15:41:51.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:40:52.201Z",
+            "lastAccessed": "2026-01-13T15:40:52.201Z"
+          }
+        ]
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-13T16:26:50.228Z",
+      "createdAt": "2026-01-13T15:36:50.228Z",
+      "usageCount": 6,
+      "maxUsageCount": 50,
+      "errorScore": 6.5
+    },
+    {
+      "id": "session_wSPhUlT9ov",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-13T16:27:53.163Z",
+      "createdAt": "2026-01-13T15:37:53.163Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_iKXvov4u1e",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-13T16:28:50.185Z",
+      "createdAt": "2026-01-13T15:38:50.185Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_HKElhRu1WP",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-13T16:29:50.883Z",
+      "createdAt": "2026-01-13T15:39:50.883Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_ejzWvv9FUS",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-13T16:30:51.518Z",
+      "createdAt": "2026-01-13T15:40:51.518Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_0amguH9lvP",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-13T16:31:52.232Z",
+      "createdAt": "2026-01-13T15:41:52.232Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_u34bKzODWh",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": [
+          {
+            "key": "visid_incap_1627146",
+            "value": "y3PE7RIjQ52dsgClxm16fsBnZmkAAAAAQUIPAAAAAAB/GLsx+7GXG82EL4eRpdcE",
+            "expires": "2027-01-12T15:42:01.903Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "secure": true,
+            "httpOnly": true,
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "incap_ses_2111_1627146",
+            "value": "YGhZeiQAAShiGJzS0MdLHcBnZmkAAAAAYKl+aW2v2KLXzqscYMjRFA==",
+            "expires": "2026-01-13T16:31:55.331Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "secure": true,
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "Apache",
+            "value": "8be95f51.64846d4a65aee",
+            "expires": "2026-01-20T15:41:52.967Z",
+            "domain": "www.sej.co.jp",
+            "path": "/",
+            "hostOnly": true,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "nlbi_1627146",
+            "value": "W8p+Rd2KB0rud7vEcJl5DwAAAADne70JPfChSHWn2zQUQpzv",
+            "expires": "2026-01-13T16:31:55.331Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "secure": true,
+            "httpOnly": true,
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "___utmvc",
+            "value": "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",
+            "expires": "2026-01-13T15:42:13.000Z",
+            "domain": "www.sej.co.jp",
+            "path": "/",
+            "hostOnly": true,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "_gid",
+            "value": "GA1.3.1529451840.1768318913",
+            "expires": "2026-01-14T15:41:53.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "_gat",
+            "value": "1",
+            "expires": "2026-01-13T15:42:53.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "__ulfpc",
+            "value": "202601140041532962",
+            "expires": "2027-02-17T15:41:53.196Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "_gcl_au",
+            "value": "1.1.825664687.1768318913",
+            "expires": "2026-04-13T15:41:53.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "_ga_EMVSQ32ZLJ",
+            "value": "GS2.1.s1768318913$o1$g0$t1768318913$j60$l0$h0",
+            "expires": "2027-02-17T15:41:53.463Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "_ga",
+            "value": "GA1.1.348374742.1768318913",
+            "expires": "2027-02-17T15:41:53.464Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "_fbp",
+            "value": "fb.2.1768318914210.561067150727322582",
+            "expires": "2026-04-13T15:41:54.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          },
+          {
+            "key": "_yjsu_yjad",
+            "value": "1768318914.092859ca-a533-442d-8684-a038f83bcf08",
+            "expires": "2027-01-13T15:41:54.000Z",
+            "domain": "sej.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-13T15:41:55.331Z",
+            "lastAccessed": "2026-01-13T15:41:55.331Z"
+          }
+        ]
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-13T16:31:52.233Z",
+      "createdAt": "2026-01-13T15:41:52.233Z",
+      "usageCount": 1,
+      "maxUsageCount": 50,
+      "errorScore": 1
+    }
+  ]
+}

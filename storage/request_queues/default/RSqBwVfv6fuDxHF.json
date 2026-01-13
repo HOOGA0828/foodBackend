@@ -1,0 +1,9 @@
+{
+	"id": "RSqBwVfv6fuDxHF",
+	"json": "{\"id\":\"RSqBwVfv6fuDxHF\",\"url\":\"https://www.sej.co.jp/products/a/thisweek/area/kinki/\",\"loadedUrl\":\"https://www.sej.co.jp/products/a/thisweek/area/kinki/\",\"uniqueKey\":\"https://www.sej.co.jp/products/a/thisweek/area/kinki\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":1,\"errorMessages\":[\"Error: requestHandler timed out after 60 seconds.\\n    at Timeout._onTimeout (D:\\\\project\\\\newFood\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:88:74)\\n    at listOnTimeout (node:internal/timers:605:17)\\n    at process.processTimers (node:internal/timers:541:7)\"],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-01-13T15:38:50.166Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 1,
+	"uniqueKey": "https://www.sej.co.jp/products/a/thisweek/area/kinki",
+	"url": "https://www.sej.co.jp/products/a/thisweek/area/kinki/"
+}

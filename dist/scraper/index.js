@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import 'dotenv/config';
-import { getEnabledBrands, getBrandByName } from '../config/brands.js';
+import { getEnabledBrands, getBrandByName, BRANDS } from '../config/brands.js';
+import { pathToFileURL } from 'url';
 import { createAIParserService } from '../services/aiParser.js';
 import { createWebScraper } from './scraper.js';
 import { createSupabaseService } from '../services/supabase.js';
@@ -8,13 +9,21 @@ async function main() {
     console.log('🇯🇵 日本新品追蹤爬蟲系統啟動');
     console.log('================================');
     try {
+        console.log('🚀 程式開始執行...');
         console.log('🔧 初始化服務...');
         const aiParser = createAIParserService();
         const scraper = createWebScraper(aiParser);
         const supabaseService = createSupabaseService();
         const targetBrands = getTargetBrands();
+        console.log(`🔍 找到 ${targetBrands.length} 個目標品牌`);
         if (targetBrands.length === 0) {
             console.log('❌ 沒有找到啟用的品牌配置');
+            console.log('💡 請檢查 src/config/brands.ts 中的 enabled 設定');
+            const allBrands = BRANDS;
+            console.log('\n📋 所有品牌的狀態:');
+            allBrands.forEach(brand => {
+                console.log(`  ${brand.enabled ? '✅' : '❌'} ${brand.name}: ${brand.displayName}`);
+            });
             process.exit(1);
         }
         console.log(`📋 將處理 ${targetBrands.length} 個品牌:`);
@@ -37,7 +46,8 @@ async function main() {
                     brand: {
                         name: brand.name,
                         displayName: brand.displayName,
-                        category: brand.category
+                        category: brand.category,
+                        url: brand.url
                     },
                     productsCount: 0,
                     products: [],
@@ -213,7 +223,10 @@ process.on('uncaughtException', (error) => {
     console.error('💥 未捕獲的異常:', error);
     process.exit(1);
 });
-if (require.main === module) {
-    main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+    main().catch(error => {
+        console.error('💥 程式執行失敗:', error);
+        process.exit(1);
+    });
 }
 //# sourceMappingURL=index.js.map

@@ -116,6 +116,12 @@ ${request.detailMarkdownContent}
 
     prompt += `
 
+請特別注意：
+- 如果有詳細頁面內容，請優先使用詳細頁面的資訊
+- 圖片URL通常位於詳細頁面內容中，格式類似 ![圖片說明](https://example.com/image.jpg)
+- 請從圖片連結中提取完整的URL，並將其設定為 imageUrl 欄位
+- 如果找到多個圖片，請選擇最相關的產品圖片
+
 請輸出以下 JSON 格式：
 {
   "products": [

@@ -32,7 +32,7 @@ async function checkDatabaseStructure() {
     for (const tableName of tablesToCheck) {
       try {
         // 嘗試查詢表格
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from(tableName)
           .select('*')
           .limit(1);

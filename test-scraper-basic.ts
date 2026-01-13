@@ -79,12 +79,21 @@ async function testBasicCrawling() {
         process.exit(1);
       }
 
-      console.log(`📋 使用 ${enabledBrands.length} 個已配置品牌的網址進行測試:`);
-      enabledBrands.forEach((brand, index) => {
-        console.log(`${index + 1}. ${brand.displayName}: ${brand.url}`);
-        testUrls.push(brand.url);
-        testConfigs.push(brand);
-      });
+      // 臨時：只測試 7-Eleven
+      const sevenEleven = enabledBrands.find(b => b.name === '7-Eleven');
+      if (sevenEleven) {
+        console.log(`📋 專門測試 7-Eleven:`);
+        console.log(`1. ${sevenEleven.displayName}: ${sevenEleven.url}`);
+        testUrls.push(sevenEleven.url);
+        testConfigs.push(sevenEleven);
+      } else {
+        console.log(`📋 使用 ${enabledBrands.length} 個已配置品牌的網址進行測試:`);
+        enabledBrands.forEach((brand, index) => {
+          console.log(`${index + 1}. ${brand.displayName}: ${brand.url}`);
+          testUrls.push(brand.url);
+          testConfigs.push(brand);
+        });
+      }
       console.log('');
     }
 
@@ -285,6 +294,10 @@ async function testLinkExtraction(page, brandConfig) {
       console.log('   3. 在 Console 中測試選擇器:');
       console.log(`      document.querySelectorAll('${deepCrawling.productLinkSelector}')`);
       console.log('   4. 調整 test-urls-config.ts 中的選擇器');
+
+      // 額外檢查：列出頁面上可能的產品元素
+      console.log('\n🔍 額外分析：嘗試找到頁面上的產品元素...');
+      await analyzePageStructure(page, brandConfig);
       return;
     }
 
@@ -359,12 +372,39 @@ async function testLinkExtraction(page, brandConfig) {
       console.log(`   連結: ${link.href}`);
       if (link.imageUrl) {
         console.log(`   圖片: ${link.imageUrl}`);
+      } else {
+        console.log(`   圖片: 無`);
       }
       if (link.isNew) {
         console.log(`   🆕 新品`);
       }
       console.log('');
     });
+
+    // 額外檢查圖片選擇器
+    console.log('\n🖼️  檢查圖片選擇器:');
+    try {
+      const images = await page.$$eval(
+        deepCrawling.productImageSelector,
+        (imgs: any[]) => imgs.slice(0, 10).map(img => ({
+          src: img.src,
+          alt: img.alt,
+          className: img.className
+        }))
+      );
+
+      console.log(`找到 ${images.length} 張圖片:`);
+      images.forEach((img, i) => {
+        console.log(`  ${i + 1}. ${img.src}`);
+        if (img.alt) console.log(`     alt: ${img.alt}`);
+      });
+
+      if (images.length === 0) {
+        console.log('💡 建議檢查選擇器或頁面載入是否完整');
+      }
+    } catch (error) {
+      console.warn('檢查圖片選擇器時發生錯誤:', error);
+    }
 
     // 轉換為絕對路徑預覽
     const baseUrl = new URL(brandConfig.url).origin;
@@ -381,6 +421,135 @@ async function testLinkExtraction(page, brandConfig) {
     console.log('   1. 檢查選擇器語法是否正確');
     console.log('   2. 確認目標網站的 HTML 結構');
     console.log('   3. 嘗試更通用的選擇器，如: a[href], .product a, .item a');
+  }
+}
+
+/**
+ * 分析頁面結構，嘗試找到產品相關元素
+ */
+async function analyzePageStructure(page: any, brandConfig: any): Promise<void> {
+  try {
+    // 檢查常見的產品元素選擇器
+    const commonSelectors = [
+      'a[href*="product"]',
+      'a[href*="item"]',
+      '.product',
+      '.item',
+      '.goods',
+      '[class*="product"]',
+      '[class*="item"]',
+      '[class*="goods"]',
+      'img[alt*="商品"]',
+      'img[alt*="製品"]',
+      'img[alt*="商品"]'
+    ];
+
+    console.log('🔍 測試常見產品選擇器:');
+
+    for (const selector of commonSelectors) {
+      try {
+        const count = await page.locator(selector).count();
+        if (count > 0) {
+          console.log(`   ✅ ${selector}: ${count} 個元素`);
+
+          // 如果找到元素，顯示前幾個的資訊
+          if (count <= 5) {
+            const elements = await page.$$eval(selector, (els: any[]) =>
+              els.slice(0, 3).map(el => ({
+                tagName: el.tagName,
+                href: el.href || el.getAttribute('href'),
+                text: el.textContent?.trim().substring(0, 50),
+                className: el.className,
+                alt: el.alt || el.getAttribute('alt')
+              }))
+            );
+
+            elements.forEach((el, i) => {
+              console.log(`     ${i + 1}. ${el.tagName}${el.className ? '.' + el.className : ''}`);
+              if (el.href) console.log(`        連結: ${el.href}`);
+              if (el.text) console.log(`        文字: ${el.text}...`);
+              if (el.alt) console.log(`        圖片說明: ${el.alt}`);
+            });
+          }
+        }
+      } catch (error) {
+        // 忽略選擇器錯誤
+      }
+    }
+
+    // 檢查是否有產品列表區域
+    console.log('\n🔍 檢查產品列表區域:');
+    const listSelectors = [
+      'ul', 'ol', 'div[class*="list"]', 'div[class*="container"]',
+      'section', 'article', '.products', '.items', '.goods-list',
+      '.productLink', 'ul.productLink'
+    ];
+
+    for (const selector of listSelectors) {
+      try {
+        const count = await page.locator(selector).count();
+        if (count > 0 && count <= 20) { // 只顯示合理數量的元素
+          console.log(`   📋 ${selector}: ${count} 個`);
+
+          // 特別檢查productLink
+          if (selector === 'ul.productLink' || selector === '.productLink') {
+            console.log('   🔗 檢查 productLink 內容:');
+            const links = await page.$$eval(selector + ' a[href]', (anchors: any[]) =>
+              anchors.slice(0, 5).map(a => ({
+                href: a.href,
+                text: a.textContent?.trim(),
+                title: a.title || a.getAttribute('title')
+              }))
+            );
+
+            links.forEach((link, i) => {
+              console.log(`     ${i + 1}. ${link.text}`);
+              console.log(`        連結: ${link.href}`);
+              if (link.title) console.log(`        標題: ${link.title}`);
+            });
+          }
+        }
+      } catch (error) {
+        // 忽略錯誤
+      }
+    }
+
+    // 檢查頁面中的實際產品內容
+    console.log('\n🔍 檢查頁面中的實際產品內容:');
+    try {
+      // 檢查是否有產品資訊的div或section
+      const productContent = await page.$$eval('div, section, article', (elements: any[]) => {
+        return elements
+          .filter(el => {
+            const text = el.textContent || '';
+            const html = el.innerHTML || '';
+            // 尋找包含產品相關關鍵字的元素
+            return (text.includes('新商品') || text.includes('商品') || html.includes('img') || html.includes('price'))
+              && text.length > 50; // 只顯示有內容的元素
+          })
+          .slice(0, 3) // 只取前3個
+          .map(el => ({
+            tagName: el.tagName,
+            className: el.className,
+            id: el.id,
+            textPreview: el.textContent?.substring(0, 100),
+            hasImages: el.querySelectorAll('img').length,
+            hasLinks: el.querySelectorAll('a').length
+          }));
+      });
+
+      productContent.forEach((item, i) => {
+        console.log(`   📦 元素 ${i + 1}: ${item.tagName}${item.className ? '.' + item.className : ''}${item.id ? '#' + item.id : ''}`);
+        console.log(`      文字預覽: ${item.textPreview}...`);
+        console.log(`      圖片數量: ${item.hasImages}, 連結數量: ${item.hasLinks}`);
+      });
+
+    } catch (error) {
+      console.warn('檢查產品內容時發生錯誤:', error);
+    }
+
+  } catch (error) {
+    console.warn('⚠️ 頁面結構分析失敗:', error);
   }
 }
 

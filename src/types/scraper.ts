@@ -34,6 +34,8 @@ export interface ProductLink {
   price?: string;
   /** 是否為新品標記 */
   isNew?: boolean;
+  /** 原始文本內容 (用於 AI 解析) */
+  rawText?: string;
 }
 
 /**
@@ -106,6 +108,7 @@ export interface ScraperResult {
     name: string;
     displayName: string;
     category: string;
+    url: string;
   };
   /** 成功解析的產品數量 */
   productsCount: number;

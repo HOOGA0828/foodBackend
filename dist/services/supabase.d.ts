@@ -7,7 +7,8 @@ export declare class SupabaseService {
         error?: string;
         inserted?: boolean;
     }>;
-    private checkExistingRecord;
+    private parseDateString;
+    private recordCrawlerRun;
     getLatestScrapes(brandName?: string, limit?: number): Promise<any[]>;
     cleanupOldRecords(brandName: string, daysAgo?: number): Promise<boolean>;
 }

@@ -8,6 +8,7 @@ export declare class WebScraper {
     private scrapeListPage;
     private scrapeDetailPages;
     private parseWithoutDeepCrawling;
+    private parseWithImageBasedLinks;
     private parseWithDeepCrawling;
 }
 export declare function createWebScraper(aiParser: AIParserService): WebScraper;

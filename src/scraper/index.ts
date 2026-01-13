@@ -71,7 +71,8 @@ async function main() {
           brand: {
             name: brand.name,
             displayName: brand.displayName,
-            category: brand.category
+            category: brand.category,
+            url: brand.url
           },
           productsCount: 0,
           products: [],
@@ -312,7 +313,7 @@ process.on('uncaughtException', (error) => {
 });
 
 // 啟動主程式
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main().catch(error => {
     console.error('💥 程式執行失敗:', error);
     process.exit(1);
