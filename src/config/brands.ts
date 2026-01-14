@@ -78,9 +78,9 @@ export const BRANDS: BrandConfig[] = [
   {
     name: 'familymart',
     displayName: '全家 新品頁面',
-    url: 'https://www.family.co.jp/goods.html',
+    url: 'https://www.family.co.jp/',
     category: 'convenience_store',
-    pageType: 'product_list',
+    pageType: 'homepage_banner',
     newProductSelector: '.new-goods-list',
     enabled: true,
     options: {

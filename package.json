@@ -1,6 +1,6 @@
 {
   "name": "japan-food-tracker-backend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "日本餐飲/超商新品追蹤網站後端 API",
   "main": "dist/index.js",
   "type": "module",

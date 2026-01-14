@@ -5,6 +5,23 @@
 此格式基於 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)，
 專案遵循 [語意化版本](https://semver.org/spec/v2.0.0.html)。
 
+## [1.0.2] - 2026-01-14
+
+### 新增功能 (Features)
+- 🏪 **FamilyMart 智慧爬蟲升級**:
+  - 🧠 **AI 視覺過濾**: 整合 OpenAI Vision API，精準識別首頁輪播圖中的食物廣告，自動排除非商品廣告。
+  - 📏 **幾何鄰近抓取 (Geometric Scraping)**: 
+    - 新增 `GeometricScraper` 服務，針對結構鬆散的活動頁面，透過計算圖片與價格的視覺距離來自動配對商品。
+    - 解決了活動頁面缺乏固定 HTML 結構導致無法抓取的難題。
+  - 🔓 **多商品資料提取**: 成功突破單一頁面僅能抓取一筆資料的限制，實現 Campaign Page 完整商品清單的自動爬取 (驗證: 單頁 23+ 商品)。
+
+### 修復 (Fixes)
+- 🐛 **資料庫唯一性限制繞過**:
+  - 修正 `sourceUrl` 唯一性約束導致的資料覆蓋問題。
+  - 實作網址指紋 (`url#filename`) 機制，確保同一活動頁面下的多個不同商品能被正確視為獨立項目存入 DB。
+- 🧩 **模組化重構**:
+  - 將幾何抓取邏輯獨立為共用服務 `src/services/GeometricScraper.ts`，提升程式碼複用性。
+
 ## [1.0.1] - 2026-01-14
 
 ### 重構 (Refactor)

@@ -1,9 +1,0 @@
-{
-	"id": "xDCBBNzPQAbbPu7",
-	"json": "{\"id\":\"xDCBBNzPQAbbPu7\",\"url\":\"https://www.sej.co.jp/products/a/thisweek/area/kinki/2/l15/\",\"loadedUrl\":\"https://www.sej.co.jp/products/a/thisweek/area/kinki/2/l15/\",\"uniqueKey\":\"https://www.sej.co.jp/products/a/thisweek/area/kinki/2/l15\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":3,\"errorMessages\":[\"Error: requestHandler timed out after 60 seconds.\\n    at Timeout._onTimeout (D:\\\\project\\\\newFood\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:88:74)\\n    at listOnTimeout (node:internal/timers:605:17)\\n    at process.processTimers (node:internal/timers:541:7)\",\"Error: requestHandler timed out after 60 seconds.\\n    at Timeout._onTimeout (D:\\\\project\\\\newFood\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:88:74)\\n    at listOnTimeout (node:internal/timers:605:17)\\n    at process.processTimers (node:internal/timers:541:7)\",\"Error: requestHandler timed out after 60 seconds.\\n    at Timeout._onTimeout (D:\\\\project\\\\newFood\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:88:74)\\n    at listOnTimeout (node:internal/timers:605:17)\\n    at process.processTimers (node:internal/timers:541:7)\",\"Error: requestHandler timed out after 60 seconds.\\n    at Timeout._onTimeout (D:\\\\project\\\\newFood\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:88:74)\\n    at listOnTimeout (node:internal/timers:605:17)\\n    at process.processTimers (node:internal/timers:541:7)\"],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":5}},\"handledAt\":\"2026-01-13T15:42:55.350Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 3,
-	"uniqueKey": "https://www.sej.co.jp/products/a/thisweek/area/kinki/2/l15",
-	"url": "https://www.sej.co.jp/products/a/thisweek/area/kinki/2/l15/"
-}

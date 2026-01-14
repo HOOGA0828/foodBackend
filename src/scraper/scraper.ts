@@ -4,6 +4,7 @@ import { ScraperResult } from '../types/scraper.js';
 import { AIParserService } from '../services/aiParser.js';
 import { ScraperStrategy } from './strategies/base.js';
 import { SevenElevenStrategy } from './strategies/sevenEleven.js';
+import { FamilyMartStrategy } from './strategies/familymart.js';
 import { DefaultStrategy } from './strategies/default.js';
 
 /**
@@ -25,6 +26,7 @@ export class WebScraper {
   private registerStrategies() {
     // 註冊特定品牌策略
     this.strategies.set('7-Eleven', new SevenElevenStrategy(this.aiParser));
+    this.strategies.set('familymart', new FamilyMartStrategy(this.aiParser));
     // 其他品牌默認使用 DefaultStrategy，不需要顯式註冊為 key，
     // 因為 scrapeAndParseBrand 會 fallback
   }
