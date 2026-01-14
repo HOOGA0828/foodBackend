@@ -99,21 +99,21 @@ export const BRANDS: BrandConfig[] = [
   {
     name: 'lawson',
     displayName: 'LAWSON',
-    url: 'https://www.lawson.co.jp/index.html',
+    url: 'https://www.lawson.co.jp/recommend/new/',
     category: 'convenience_store',
-    pageType: 'homepage_banner',
+    pageType: 'product_list',
     newProductSelector: '.new-item-container',
     enabled: true,
     options: {
       waitFor: 2500,
-      actions: ['clickLoadMore'], // 點擊載入更多按鈕
       deepCrawling: {
         enabled: true,
-        productLinkSelector: '.item-link[href], .product-card a[href]',
-        productTitleSelector: '.item-title, .product-name',
-        productImageSelector: '.item-image img, .product-image img',
-        newBadgeSelector: '.new-label, .badge-new',
-        maxProducts: 20,
+        // LawsonStrategy 將自行處理多日期抓取，這裡的配置主要作為參考或 fallback
+        productLinkSelector: '.col-2 li a, .col-3 li a, .recommendList li a',
+        productTitleSelector: '.ttl, p.text',
+        productImageSelector: 'img',
+        newBadgeSelector: '.new-icon',
+        maxProducts: 30, // 增加數量以容納 3 個日期的產品
         detailPageWaitFor: 2000
       }
     }

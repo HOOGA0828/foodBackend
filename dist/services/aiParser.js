@@ -138,6 +138,43 @@ ${request.detailMarkdownContent}
         }
         return prompt;
     }
+    async isFoodAdvertisement(imageUrl) {
+        try {
+            console.log(`🖼️ [AI Parser] 分析圖片是否為食物廣告: ${imageUrl}`);
+            const completion = await this.openai.chat.completions.create({
+                model: this.model,
+                messages: [
+                    {
+                        role: 'user',
+                        content: [
+                            {
+                                type: 'text',
+                                text: '請問這張圖片是否為便利商店的「食物商品」或「飲料商品」的廣告或介紹？\n如果是會員招募、APP下載、點數活動、徵才資訊等非具體食物商品的內容，請回答 false。\n請只回傳 JSON 格式：{"isFood": boolean, "reason": "理由"}'
+                            },
+                            {
+                                type: 'image_url',
+                                image_url: {
+                                    url: imageUrl
+                                }
+                            }
+                        ]
+                    }
+                ],
+                max_tokens: 300,
+                response_format: { type: 'json_object' }
+            });
+            const content = completion.choices[0]?.message?.content;
+            if (!content)
+                return false;
+            const result = JSON.parse(content);
+            console.log(`🤖 [AI Parser] 圖片分析結果: ${result.isFood} (${result.reason})`);
+            return result.isFood === true;
+        }
+        catch (error) {
+            console.warn(`⚠️ [AI Parser] 圖片分析失敗，預設視為非食物:`, error);
+            return false;
+        }
+    }
     validateAndTransformProducts(rawProducts, defaultSourceUrl) {
         return rawProducts
             .filter(product => product && typeof product === 'object')

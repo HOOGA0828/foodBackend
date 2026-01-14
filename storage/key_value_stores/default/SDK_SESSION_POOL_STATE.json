@@ -1,0 +1,167 @@
+{
+  "usableSessionsCount": 5,
+  "retiredSessionsCount": 1,
+  "sessions": [
+    {
+      "id": "session_qGxcUYm4Qa",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-14T11:01:31.974Z",
+      "createdAt": "2026-01-14T10:11:31.974Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_MNcOHZYnxa",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": [
+          {
+            "key": "_gcl_au",
+            "value": "1.1.1183748576.1768385493",
+            "expires": "2026-04-14T10:11:33.000Z",
+            "domain": "lawson.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-14T10:12:32.754Z",
+            "lastAccessed": "2026-01-14T10:13:32.913Z"
+          },
+          {
+            "key": "_ga",
+            "value": "GA1.1.818294829.1768385493",
+            "expires": "2027-02-18T10:11:33.466Z",
+            "domain": "lawson.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-14T10:12:32.762Z",
+            "lastAccessed": "2026-01-14T10:13:32.913Z"
+          },
+          {
+            "key": "_yjsu_yjad",
+            "value": "1768385493.7d8c7a1f-8da8-4ffd-be5a-6a79f45890a9",
+            "expires": "2027-01-14T10:11:33.000Z",
+            "domain": "lawson.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-14T10:12:32.764Z",
+            "lastAccessed": "2026-01-14T10:13:32.913Z"
+          },
+          {
+            "key": "_ga_X1TGKLS9S0",
+            "value": "GS2.1.s1768385493$o1$g1$t1768385552$j1$l0$h0",
+            "expires": "2027-02-18T10:12:32.608Z",
+            "domain": "lawson.co.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-01-14T10:12:32.764Z",
+            "lastAccessed": "2026-01-14T10:13:32.913Z"
+          }
+        ]
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-14T11:01:31.977Z",
+      "createdAt": "2026-01-14T10:11:31.977Z",
+      "usageCount": 4,
+      "maxUsageCount": 50,
+      "errorScore": 6
+    },
+    {
+      "id": "session_9YQNFcp8PT",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-14T11:02:32.630Z",
+      "createdAt": "2026-01-14T10:12:32.630Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_TQLF0Gkxcl",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-14T11:03:32.804Z",
+      "createdAt": "2026-01-14T10:13:32.804Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_VBa7MlOhA0",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-14T11:04:32.949Z",
+      "createdAt": "2026-01-14T10:14:32.949Z",
+      "usageCount": 0,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_CaD9kedfVa",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-01-14T11:04:32.950Z",
+      "createdAt": "2026-01-14T10:14:32.950Z",
+      "usageCount": 1,
+      "maxUsageCount": 50,
+      "errorScore": 1
+    }
+  ]
+}

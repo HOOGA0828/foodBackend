@@ -1,0 +1,302 @@
+[
+  {
+    "originalName": "食べくらべポテナゲ大",
+    "translatedName": "食べくらべポテナゲ大",
+    "price": {
+      "amount": 630,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/media_library/34203/file.png?20251226164840",
+    "originalDescription": "ポテト(L)×1個、チキンマックナゲット® 5ピースに期間限定のスパイシーナゲット5ピースが入ったお得なセット。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "食べくらべポテナゲ特大",
+    "translatedName": "食べくらべポテナゲ特大",
+    "price": {
+      "amount": 990,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/media_library/34204/file.png?20251226164919",
+    "originalDescription": "ポテト(L)×2個、チキンマックナゲット® 10ピースに期間限定のスパイシーナゲット5ピースが入ったお得なセット。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "ポテナゲ大",
+    "translatedName": "ポテナゲ大",
+    "price": {
+      "amount": 600,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/media_library/32122/file.png?20250814105609",
+    "originalDescription": "マックフライポテト®(L)×1個とチキンマックナゲット® 10ピースがセットで￥360以上おトク！夜マック®だけのサイドセットです。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "ポテナゲ特大",
+    "translatedName": "ポテナゲ特大",
+    "price": {
+      "amount": 960,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/media_library/32123/file.png?20250814105624",
+    "originalDescription": "マックフライポテト®(L)×2個とチキンマックナゲット® 15ピースがセットで￥540以上おトク！夜マック®だけのサイドセットです。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "倍ダブルチーズバーガー",
+    "translatedName": "倍ダブルチーズバーガー",
+    "price": {
+      "amount": 690,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/166/4560-Bai-Double-CheeseBurger.png?20250916140018",
+    "originalDescription": "クリーミーなチーズと、100％ビーフパティを2枚も使ったダブルチーズバーガー。パティを倍にして4枚にボリュームアップ。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "倍てりやきマックバーガー",
+    "translatedName": "倍てりやきマックバーガー",
+    "price": {
+      "amount": 520,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/163/4530-Bai-Teriyaki-McBurger.png?20251125140128",
+    "originalDescription": "ポークパティをてりやき風味に仕上げたてりやきマックバーガー。パティが倍でその食べ応えとコクもボリュームアップ。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "倍ビッグマック",
+    "translatedName": "倍ビッグマック",
+    "price": {
+      "amount": 720,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/165/4550-Bai-Big-Mac.png?20250806100038",
+    "originalDescription": "おいしさも食べごたえもビッグな人気メニュー、ビッグマック®。パティが倍でそのビッグな食べごたえもボリュームアップ。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "倍チキンフィレオ",
+    "translatedName": "倍チキンフィレオ",
+    "price": {
+      "amount": 540,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/167/4571-Bai-Chicken-Filet-O.png?20251125135928",
+    "originalDescription": "ボリュームたっぷりのムネ肉を使ったチキンフィレオ®。パティが倍でそのボリュームも食べ応えもアップ。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "倍フィレオフィッシュ",
+    "translatedName": "倍フィレオフィッシュ",
+    "price": {
+      "amount": 520,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/1111/BAI_FOF.png?20250821095908",
+    "originalDescription": "外はサクサク、中はしっとりふっくらのフィレオフィッシュ®。パティが倍で、白身魚のおいしさもボリュームアップ。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "倍てりやきチキンフィレオ",
+    "translatedName": "倍てりやきチキンフィレオ",
+    "price": {
+      "amount": 540,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/176/4680-Bai-Teriyaki-Chicken-Filet-O.png?20251125135951",
+    "originalDescription": "サクサクチキンを甘辛てりやきソースで絡めた、食べ応えのあるチキンバーガー。パティを倍にしてさらに食べ応えアップ。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "倍ベーコンレタスバーガー",
+    "translatedName": "倍ベーコンレタスバーガー",
+    "price": {
+      "amount": 540,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/159/4520-Bai-Bacon-Lettuce-Burger.png?20250821095916",
+    "originalDescription": "ベーコン、100％ビーフパティとレタスの贅沢ハーモニー、ベーコンレタスバーガー。パティが倍で贅沢さもボリュームアップ。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "倍えびフィレオ",
+    "translatedName": "倍えびフィレオ",
+    "price": {
+      "amount": 550,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/169/4591-Bai-Ebi-Filet-O.png?20251117135945",
+    "originalDescription": "えび本来の歯ごたえと深い味わいが自慢のザクザクえびカツのえびフィレオ®。パティが倍でさらにザクザクボリュームアップ。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/yorumac/",
+    "isNew": true
+  },
+  {
+    "originalName": "ザク切りポテト&肉厚ビーフ やみつきコンソメペッパーマヨ",
+    "translatedName": "ザク切りポテト&肉厚ビーフ やみつきコンソメペッパーマヨ",
+    "price": {
+      "amount": 560,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3363/1595.png?20260106140007",
+    "originalDescription": "肉厚の100%ビーフパティとポテトパティに、コンソメペッパーマヨソースとスモークベーコンが相性抜群のボリューミーな一品。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/dragonquest-burger/",
+    "isNew": true
+  },
+  {
+    "originalName": "ホットチリ&タルタルチキン",
+    "translatedName": "ホットチリ&タルタルチキン",
+    "price": {
+      "amount": 490,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3361/1596.png?20260106144808",
+    "originalDescription": "ホットチリガーリックソースとサワークリームタルタルソースの2種類のソースが、チキンパティと相性抜群なやみつきになる一品。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/dragonquest-burger/",
+    "isNew": true
+  },
+  {
+    "originalName": "チーズダブルてりやき",
+    "translatedName": "チーズダブルてりやき",
+    "price": {
+      "amount": 540,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3362/1597.png?20260106144607",
+    "originalDescription": "2枚のポークパティを甘辛いてりやき風味のソースと絡め、チェダーチーズとレタスと合わせた食べ応えのある一品。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/dragonquest-burger/",
+    "isNew": true
+  },
+  {
+    "originalName": "マックフィズ® 爽やかヨーグルトソーダ味",
+    "translatedName": "マックフィズ® 爽やかヨーグルトソーダ味",
+    "price": {
+      "amount": 300,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3395/3247.png?20260108155916",
+    "originalDescription": "ヨーグルトのやさしい甘さとソーダの爽やかな風味が、気分をリフレッシュさせてくれる炭酸ドリンク。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/dragonquest-burger/",
+    "isNew": true
+  },
+  {
+    "originalName": "マックフロート® 爽やかヨーグルトソーダ味",
+    "translatedName": "マックフロート® 爽やかヨーグルトソーダ味",
+    "price": {
+      "amount": 380,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3396/3248.png?20260108155919",
+    "originalDescription": "ヨーグルトのやさしい甘さとソーダの爽やかな風味の炭酸ドリンクに、ソフトクリームをトッピングしたデザートドリンク。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/dragonquest-burger/",
+    "isNew": true
+  },
+  {
+    "originalName": "スパイシーチキンマックナゲット 黒胡椒ガーリック 5ピース",
+    "translatedName": "スパイシーチキンマックナゲット 黒胡椒ガーリック 5ピース",
+    "price": {
+      "amount": 290,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3378/1688.png?20260109135916",
+    "originalDescription": "粗挽きブラックペッパーとガーリックの旨みが後引くおいしさの、スパイシーチキンマックナゲット 黒胡椒ガーリックが今年も登場。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/spicynuggets/",
+    "isNew": true
+  },
+  {
+    "originalName": "やみつき旨にんにくソース",
+    "translatedName": "やみつき旨にんにくソース",
+    "price": {
+      "amount": 40,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3379/5636.png?20260109135920",
+    "originalDescription": "濃口醤油のコクとガツンとしたにんにくが食欲をそそる、チキンマックナゲット®のおいしさを引き立てる味わいです。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/spicynuggets/",
+    "isNew": true
+  },
+  {
+    "originalName": "サワークリームタルタルソース",
+    "translatedName": "サワークリームタルタルソース",
+    "price": {
+      "amount": 40,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3380/5637.png?20260109135923",
+    "originalDescription": "サワークリームにオニオンやガーリックの旨みを加え、ピクルスの爽やかな酸味のタルタルが、やみつきになる味わいのソースです。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/spicynuggets/",
+    "isNew": true
+  },
+  {
+    "originalName": "バーベキューソース",
+    "translatedName": "バーベキューソース",
+    "price": {
+      "amount": 40,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/2893/5502.png?20250806095935",
+    "originalDescription": "太陽の恵みを受けたトマトペーストに、ミックススパイスと赤ワインビネガーなどをブレンド。スモーキーな風味が特長です。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/spicynuggets/",
+    "isNew": true
+  },
+  {
+    "originalName": "マスタードソース",
+    "translatedName": "マスタードソース",
+    "price": {
+      "amount": 40,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/2894/5503.png?20250806100026",
+    "originalDescription": "色鮮やかなフレンチマスタードとクリーミーなドレッシングをブレンドした、ほのかな辛みと甘酸っぱさが楽しめるソースです。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/spicynuggets/",
+    "isNew": true
+  },
+  {
+    "originalName": "シャカシャカポテト® ハッピーターン味シーズニング",
+    "translatedName": "シャカシャカポテト® ハッピーターン味シーズニング",
+    "price": {
+      "amount": 40,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3354/2102.png?20251226095942",
+    "originalDescription": "「ハッピーターン」の甘じょっぱいおいしさをマックフライポテト®に合うようオリジナルシーズニングで再現しました。\n※亀田製菓株式会社監修のもと「ハッピーターン」の味わいを再現しております。\n※ポテトに+￥40～でチョイス可能。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/shakashaka-potato/",
+    "isNew": true
+  },
+  {
+    "originalName": "生チョコクリームパイ",
+    "translatedName": "生チョコクリームパイ",
+    "price": {
+      "amount": 220,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3360/2244.png?20260106140042",
+    "originalDescription": "チョコレートと生クリームを使用した生チョコクリームをサクサクのパイ生地に包んだ、濃厚でとろけるような冬限定のホットパイ\n※中身が熱いことがありますのでやけどにご注意ください。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/melty-hot-pie/",
+    "isNew": true
+  },
+  {
+    "originalName": "塩キャラメルアーモンドパイ",
+    "translatedName": "塩キャラメルアーモンドパイ",
+    "price": {
+      "amount": 220,
+      "currency": "JPY"
+    },
+    "imageUrl": "https://www.mcdonalds.co.jp/product_images/3359/2250.png?20260106140004",
+    "originalDescription": "アーモンドクリーム、塩キャラメルクリーム、キャラメルフィリングの3層のクリームが織り成す、奥深い味わいと食感のホットパイ\n※中身が熱いことがありますのでやけどにご注意ください。",
+    "sourceUrl": "https://www.mcdonalds.co.jp/campaign/melty-hot-pie/",
+    "isNew": true
+  }
+]

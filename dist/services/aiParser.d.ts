@@ -6,6 +6,7 @@ export declare class AIParserService {
     parseProducts(request: AIParseRequest): Promise<AIParseResponse>;
     private buildSystemPrompt;
     private buildUserPrompt;
+    isFoodAdvertisement(imageUrl: string): Promise<boolean>;
     private validateAndTransformProducts;
 }
 export declare function createAIParserService(apiKey?: string): AIParserService;

@@ -6,6 +6,8 @@ import { ScraperStrategy } from './strategies/base.js';
 import { SevenElevenStrategy } from './strategies/sevenEleven.js';
 import { FamilyMartStrategy } from './strategies/familymart.js';
 import { DefaultStrategy } from './strategies/default.js';
+import { LawsonStrategy } from './strategies/lawson.js';
+import { McdonaldsStrategy } from './strategies/mcdonalds.js';
 
 /**
  * 網頁爬蟲服務
@@ -27,6 +29,8 @@ export class WebScraper {
     // 註冊特定品牌策略
     this.strategies.set('7-Eleven', new SevenElevenStrategy(this.aiParser));
     this.strategies.set('familymart', new FamilyMartStrategy(this.aiParser));
+    this.strategies.set('lawson', new LawsonStrategy(this.aiParser));
+    this.strategies.set('mcdonalds', new McdonaldsStrategy(this.aiParser));
     // 其他品牌默認使用 DefaultStrategy，不需要顯式註冊為 key，
     // 因為 scrapeAndParseBrand 會 fallback
   }

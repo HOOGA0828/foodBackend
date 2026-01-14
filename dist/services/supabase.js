@@ -27,15 +27,39 @@ export class SupabaseService {
             const errors = [];
             for (const product of result.products) {
                 try {
-                    const { data: existingProduct } = await this.supabase
-                        .from('products')
-                        .select('id')
-                        .eq('source_url', product.sourceUrl || result.brand.url)
-                        .eq('name', product.translatedName)
-                        .single();
-                    if (existingProduct) {
+                    let existingProduct_ = null;
+                    if (product.originalName) {
+                        const { data: byOriginalName } = await this.supabase
+                            .from('products')
+                            .select('id')
+                            .eq('source_url', product.sourceUrl || result.brand.url)
+                            .filter('metadata->>original_name', 'eq', product.originalName)
+                            .maybeSingle();
+                        existingProduct_ = byOriginalName;
+                    }
+                    if (!existingProduct_) {
+                        const { data: byName } = await this.supabase
+                            .from('products')
+                            .select('id')
+                            .eq('source_url', product.sourceUrl || result.brand.url)
+                            .eq('name', product.translatedName)
+                            .maybeSingle();
+                        existingProduct_ = byName;
+                    }
+                    if (!existingProduct_ && product.sourceUrl && product.sourceUrl !== result.brand.url) {
+                        const { data: byUrl } = await this.supabase
+                            .from('products')
+                            .select('id')
+                            .eq('source_url', product.sourceUrl)
+                            .maybeSingle();
+                        if (byUrl)
+                            existingProduct_ = byUrl;
+                    }
+                    if (existingProduct_) {
+                        console.log(`📝 [Supabase] 更新產品: ${product.translatedName} (ID: ${existingProduct_.id})`);
                         const updateData = {
                             description: product.translatedName,
+                            name_jp: product.originalName,
                             price: product.price?.amount || null,
                             currency: product.price?.currency || 'JPY',
                             image_urls: product.imageUrl ? [product.imageUrl] : [],
@@ -45,13 +69,20 @@ export class SupabaseService {
                             last_verified_at: new Date().toISOString(),
                             allergens: product.allergens || [],
                             scraped_at: result.scrapedAt.toISOString(),
-                            crawled_from: result.brand.name
+                            crawled_from: result.brand.name,
+                            metadata: {
+                                original_name: product.originalName,
+                                price_note: product.price?.note,
+                                crawled_at: result.scrapedAt.toISOString(),
+                                brand_info: result.brand
+                            }
                         };
                         const { error: updateError } = await this.supabase
                             .from('products')
                             .update(updateData)
-                            .eq('id', existingProduct.id);
+                            .eq('id', existingProduct_.id);
                         if (updateError) {
+                            console.error(`❌ [Supabase] 更新失敗: ${updateError.message}`);
                             errors.push(`更新產品 ${product.translatedName} 失敗: ${updateError.message}`);
                         }
                         else {
@@ -59,8 +90,10 @@ export class SupabaseService {
                         }
                     }
                     else {
+                        console.log(`✨ [Supabase] 新增產品: ${product.translatedName}`);
                         const insertData = {
                             name: product.translatedName,
+                            name_jp: product.originalName,
                             description: product.translatedName,
                             brand_id: brandId,
                             price: product.price?.amount || null,
@@ -87,6 +120,7 @@ export class SupabaseService {
                             .from('products')
                             .insert(insertData);
                         if (insertError) {
+                            console.error(`❌ [Supabase] 插入失敗: ${insertError.message}`);
                             errors.push(`插入產品 ${product.translatedName} 失敗: ${insertError.message}`);
                         }
                         else {
@@ -96,6 +130,7 @@ export class SupabaseService {
                 }
                 catch (error) {
                     const errorMessage = error instanceof Error ? error.message : '未知錯誤';
+                    console.error(`❌ [Supabase] 處理例外: ${errorMessage}`);
                     errors.push(`處理產品 ${product.translatedName} 時發生錯誤: ${errorMessage}`);
                 }
             }
@@ -196,6 +231,34 @@ export class SupabaseService {
         catch (error) {
             console.error('❌ [Supabase] 查詢記錄時發生錯誤:', error);
             return [];
+        }
+    }
+    async clearBrandProducts(brandName) {
+        try {
+            console.log(`🗑️ [Supabase] 準備刪除 ${brandName} 的所有產品...`);
+            const { data: brandData, error: brandError } = await this.supabase
+                .from('brands')
+                .select('id')
+                .eq('slug', brandName.toLowerCase().replace(/\s+/g, '-'))
+                .single();
+            if (brandError || !brandData) {
+                console.warn(`⚠️ [Supabase] 找不到品牌 ${brandName}，嘗試直接用 crawl_from 刪除?`);
+                return { success: false, error: `找不到品牌: ${brandName}` };
+            }
+            const { count, error: deleteError } = await this.supabase
+                .from('products')
+                .delete({ count: 'exact' })
+                .eq('brand_id', brandData.id);
+            if (deleteError) {
+                console.error(`❌ [Supabase] 刪除失敗:`, deleteError);
+                return { success: false, error: deleteError.message };
+            }
+            console.log(`✅ [Supabase] 已刪除 ${brandName} 的 ${count} 筆產品資料`);
+            return { success: true, deletedCount: count || 0 };
+        }
+        catch (error) {
+            console.error(`❌ [Supabase] 清除過程發生錯誤:`, error);
+            return { success: false, error: error instanceof Error ? error.message : '未知錯誤' };
         }
     }
     async cleanupOldRecords(brandName, daysAgo = 7) {

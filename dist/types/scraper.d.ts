@@ -12,6 +12,7 @@ export interface ProductLink {
     imageUrl?: string;
     price?: string;
     isNew?: boolean;
+    rawText?: string;
 }
 export interface DetailedProductData {
     productLink: ProductLink;

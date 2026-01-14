@@ -5,7 +5,25 @@
 此格式基於 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)，
 專案遵循 [語意化版本](https://semver.org/spec/v2.0.0.html)。
 
-## [1.0.2] - 2026-01-14
+## [1.0.3] - 2026-01-14
+
+### 新增功能 (Features)
+- 🍔 **McDonald's 爬蟲實作**:
+  - 新增 `McdonaldsStrategy`，支援從首頁 Banner 自動識別活動並抓取詳細頁面。
+  - 🧠 **強化版活動頁解析**:
+    - 針對麥當勞活動頁 (Campaign Page) 實作多產品抓取邏輯 (不再受限於單產品)。
+    - 支援多種 DOM 結構偵測 (`.product-card-area`, `.cmp-container`, Grid Layout)，提升抓取強健度。
+    - 透過 AI 視覺分析自動過濾非食物類廣告。
+
+### 修復 (Fixes)
+- 🔄 **資料庫去重邏輯修正**:
+  - 修正同網址多產品 (Campaign Page URL Sharing) 造成的資料覆蓋問題。
+  - 調整 `saveScraperResult` 策略：**優先使用產品名稱 (Original Name)** 作為唯一識別，不再單純依賴 URL 進行去重。
+  - 確保同一活動頁面下的數十個不同產品都能正確且獨立地存入資料庫。
+
+### 文件 (Docs)
+- 📝 更新使用說明，新增指定品牌爬取的指令範例 (`npm run scraper:run -- mcdonalds`)。
+
 
 ### 新增功能 (Features)
 - 🏪 **FamilyMart 智慧爬蟲升級**:

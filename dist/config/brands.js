@@ -12,21 +12,22 @@ export const BRANDS = [
             actions: ['scrollToBottom'],
             deepCrawling: {
                 enabled: true,
-                productLinkSelector: 'a[href*="item"], a[href*="product"], .product-item a, [data-product] a',
-                productTitleSelector: '.product-name, .item-title, h3, h4, .title',
-                productImageSelector: 'img[src*="item-image"], img[src*="7api"], img[alt*=""], .product img, .item img',
+                scrapeDetailPages: false,
+                productLinkSelector: '.list_inner',
+                productTitleSelector: '.item_ttl',
+                productImageSelector: 'figure img',
                 newBadgeSelector: '.new-badge, .badge-new, [class*="new"]',
-                maxProducts: 10,
-                detailPageWaitFor: 2000
+                maxProducts: 30,
+                detailPageWaitFor: 0
             }
         }
     },
     {
         name: 'familymart',
         displayName: '全家 新品頁面',
-        url: 'https://www.family.co.jp/goods.html',
+        url: 'https://www.family.co.jp/',
         category: 'convenience_store',
-        pageType: 'product_list',
+        pageType: 'homepage_banner',
         newProductSelector: '.new-goods-list',
         enabled: true,
         options: {
@@ -45,21 +46,20 @@ export const BRANDS = [
     {
         name: 'lawson',
         displayName: 'LAWSON',
-        url: 'https://www.lawson.co.jp/index.html',
+        url: 'https://www.lawson.co.jp/recommend/new/',
         category: 'convenience_store',
-        pageType: 'homepage_banner',
+        pageType: 'product_list',
         newProductSelector: '.new-item-container',
         enabled: true,
         options: {
             waitFor: 2500,
-            actions: ['clickLoadMore'],
             deepCrawling: {
                 enabled: true,
-                productLinkSelector: '.item-link[href], .product-card a[href]',
-                productTitleSelector: '.item-title, .product-name',
-                productImageSelector: '.item-image img, .product-image img',
-                newBadgeSelector: '.new-label, .badge-new',
-                maxProducts: 20,
+                productLinkSelector: '.col-2 li a, .col-3 li a, .recommendList li a',
+                productTitleSelector: '.ttl, p.text',
+                productImageSelector: 'img',
+                newBadgeSelector: '.new-icon',
+                maxProducts: 30,
                 detailPageWaitFor: 2000
             }
         }

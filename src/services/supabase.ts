@@ -52,49 +52,51 @@ export class SupabaseService {
 
       for (const product of result.products) {
         try {
-          // 檢查產品是否已存在
-          // 優先使用 metadata 中的 original_name 進行比對 (如果有的話)
+          // 優化後的比對邏輯：
+
+          // 修正後的比對邏輯：
+          // 針對 McDonald's 等品牌，多個產品可能共享同一個 Campaign URL。
+          // 因此單純依賴 source_url 會導致同頁面的產品互相覆蓋。
+          // 此處改為優先使用 Product Name (name_jp) 作為唯一識別，
+          // 若名稱相符則視為同一產品。
+
+
           let existingProduct_ = null;
 
+          // 修正後的比對邏輯：
+          // 針對 McDonald's 等品牌，多個產品可能共享同一個 Campaign URL。
+          // 因此單純依賴 source_url 會導致同頁面的產品互相覆蓋。
+          // 此處改為優先使用 Product Name (name_jp) 作為唯一識別，
+          // 若名稱相符則視為同一產品。
+
+          // 策略 1: 優先使用 brand_id + original_name (name_jp) 進行比對
+          // 這是最準確的方式，避免活動頁面多產品 URL 重複的問題
           if (product.originalName) {
-            // 使用原始名稱查
             const { data: byOriginalName } = await this.supabase
               .from('products')
               .select('id')
-              .eq('source_url', product.sourceUrl || result.brand.url)
-              // 注意: JSONB 查詢語法視 Supabase/Postgres 版本而定，這裡使用 contains 或 textSearch 可能較慢
-              // 簡單起見，我們假設 source_url 足夠唯一，或者在 memory 中過濾?
-              // 但為了嚴謹，我們嘗試匹配 metadata->original_name
-              // .eq('metadata->>original_name', product.originalName) // Supabase JS 客戶端支援這種語法
-              .filter('metadata->>original_name', 'eq', product.originalName)
-              .maybeSingle(); // 使用 maybeSingle 避免多筆報錯，若有多筆則視為已存在
-
-            existingProduct_ = byOriginalName;
-          }
-
-          // 如果沒找到，退回使用 name (translatedName)
-          if (!existingProduct_) {
-            const { data: byName } = await this.supabase
-              .from('products')
-              .select('id')
-              .eq('source_url', product.sourceUrl || result.brand.url)
-              .eq('name', product.translatedName)
+              .eq('brand_id', brandId)
+              .eq('name_jp', product.originalName)
               .maybeSingle();
-            existingProduct_ = byName;
+
+            if (byOriginalName) existingProduct_ = byOriginalName;
           }
 
-          // 如果還是沒找到，且 source_url 是獨特的 (非列表頁)，嘗試僅用 source_url
-          // 只有當 product.sourceUrl 不等於 brand.url (列表頁) 時才這樣做
-          if (!existingProduct_ && product.sourceUrl && product.sourceUrl !== result.brand.url) {
-            const { data: byUrl } = await this.supabase
-              .from('products')
-              .select('id')
-              .eq('source_url', product.sourceUrl)
-              .maybeSingle();
-            // 注意: 這有風險，如果 URL 指向同一個頁面但不同產品(例如錨點不同?)。
-            // 假設 scraper 處理好了 hash。
-            if (byUrl) existingProduct_ = byUrl;
-          }
+          // 策略 2: 如果名稱沒對上，才嘗試 source_url
+          // 但為了防止不同產品(同URL)被誤判為同一產品(改名)，
+          // 這裡我們需要非常小心。
+          // 暫時決定：如果不匹配名稱，就視為新產品 (Insert)。
+          // 這樣可能會導致 "改名" 的產品變為兩筆資料，但總比 "不同產品覆蓋成一筆" (資料遺失) 好。
+          // 因此，取消 source_url 的獨立 fallback，除非我們能確定該 URL 是專屬頁面 (Deep Link)。
+
+          /* 
+          // 舊邏輯備份 - 已停用以修復 McDonald's 問題
+          if (!existingProduct_ && !isListingPage && product.sourceUrl) {
+             // ... risk of collision ...
+          } 
+          */
+
+          // 策略 C: (已移除) 不再使用 translatedName 進行比對，因為 AI 翻譯不穩定容易導致重複
 
           if (existingProduct_) {
             console.log(`📝 [Supabase] 更新產品: ${product.translatedName} (ID: ${existingProduct_.id})`);
