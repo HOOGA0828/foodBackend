@@ -1,0 +1,488 @@
+﻿?妒 Testing Yoshinoya Scraper...
+?? Config found for ??摰??? [WebScraper] ????摰??豢?蝑: YoshinoyaStrategy
+? [Yoshinoya] ????: ??摰?Visiting: https://www.yoshinoya.com/
+?? ?曉 12 ?憚?剝??殷??? AI 閬死蝭拚...
+?儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2025/11/19083413/ramennabe_2511-sp.jpg
+?? [AI Parser] ????蝯?: true (??銝剖?蝷箇??臭?蝣?暻蛛?撅祆憌???誨??隞晶??
+??[AI] 撱??閬憌: gyunikutama-ramen-nabe
+   ???: https://www.yoshinoya.com/lp/ramennabe_2511/
+?儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2025/10/15155546/gyusuki_2510_sp.jpg
+?? [AI Parser] ????蝯?: true (??銝剖?蝷箔?憌??嚗??怎?????撉券瘝寧???撱????蝝嫘?
+??[AI] 撱??閬憌: gyusuki
+   ???: https://www.yoshinoya.com/lp/gyusuki_2510/
+?儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+?? [AI Parser] ????蝯?: true (??銝剖??怠擃?憌??嚗???甇??ㄞ???蝑?
+??[AI] 撱??閬憌: curry
+   ???: https://www.yoshinoya.com/menu/curry/
+?儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+?? [AI Parser] ????蝯?: true (??銝剖?蝷箔??琿????拙?????賊???暺?蝝嫘?
+??[AI] 撱??閬憌: karaage
+   ???: https://www.yoshinoya.com/menu/karaage/
+?儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2026/01/06163525/f19042f14b3a1263bfd359c6adef6f27.jpg
+?? [AI Parser] ????蝯?: false (?批捆?箏?暑??銝?琿?憌?ㄡ????撱????蝝嫘?
+??[AI] 撱??閬???? ??憌?憌?蝧?柴?憌???00?????????胯??准?喋??潦?
+?儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2025/12/19122355/gyudon_campaign_202504_sp.jpg
+?? [AI Parser] ????蝯?: true (???批捆?臬?憌??嚗?銝潘??誨??靽靽⊥)
+??[AI] 撱??閬憌: ???扎?Ｕ??摰?銝潔蒂???誑銝???嚗?   ???: https://www.yoshinoya.com/campaign/gyudon_campaign_202601/
+?儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2025/12/25151256/33699b8bc63282620871e52c9a81e1aa.png
+?? [AI Parser] ????蝯?: false (?批捆?箸??⊥???暺瘣餃?嚗蒂?擃??拙???撱????蝝嫘?
+??[AI] 撱??閬???? 璆賢予?Ｕ??扎?詻??喋?颲潦?格???振?扼??閮?璆賢予??喋?20???儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2025/12/25120942/05c24bdf9c2c1abdde835de3a2a08c2d.jpg
+?? [AI Parser] ????蝯?: false (撱???批捆瘨?PayPay?芣??詨??瘣餃?嚗??琿?憌?ㄡ????隞晶??
+??[AI] 撱??閬???? ?賬????喋??嚗ayPay?胯??扳?憭?0%?颯?艾???
+?儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2025/12/25120950/750_750.jpg
+?? [AI Parser] ????蝯?: false (?撐???舀??⊥???暺瘣餃??誨??銝??怠擃??拙???隞晶??
+??[AI] 撱??閬???? LYP?????～?ayPay??喋??憭?%?颯?艾????儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/wp-content/uploads/2025/12/11170242/mobaV_shokai_Yoshinoya_750_750.jpg
+?? [AI Parser] ????蝯?: false (?批捆?箸??⊥???暑??銝阡??琿????拇?憌脫???撱????
+??[AI] 撱??閬???? ???艾?Ｕ??扎V?怒??蝷箝V??喋?20?盔?整?嚗??儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/assets/images/home/TOP-COUPON-APP-PC.jpg
+?? [AI Parser] ????蝯?: false (?銝???獢?銝行憿舐內?琿????拇?憌脫?????
+??[AI] 撱??閬???? ??摰嗚??胯?
+?儭?[AI Parser] ?????臬?粹??拙誨?? https://www.yoshinoya.com/assets/images/home/TOP-COUPON-LINE-PC.jpg
+?? [AI Parser] ????蝯?: false (??憿舐內?LINE璅?嚗?憌???ㄡ?????
+??[AI] 撱??閬???? LINE?胯?
+?? [Yoshinoya] ?曉 5 ??AI 撽????暑???
+?? [Yoshinoya] ??瘛勗漲?? 5 ????..
+?? Scanning Campaign Page: https://www.yoshinoya.com/lp/ramennabe_2511/
+?? [Yoshinoya] ?澆 AI 閫????批捆...
+?? [AI Parser] ??閫?? ??摰????閮?..
+??[AI Parser] ??摰?閫??摰?嚗??1 ????儭?[Deep Crawl] ????暻菟??喉?鞊爸嚗??∪?潘???閰喟敦??..
+   ?? 撠?閰喟敦?? https://www.yoshinoya.com/menu/set/gyunikutama-ramen-nabe/
+node.exe : Failed dee
+p crawl for https://w
+ww.yoshinoya.com/menu
+/set/gyunikutama-rame
+n-nabe/ page.evaluate
+: ReferenceError: __n
+ame is not defined
+位於 線路:1 字元:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Program Files\nodejs
+/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Failed    
+ deep cra... is n    
+ot defined:Strin    g
+) [], RemoteExc    ep
+tion
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+    at eval (eval at 
+evaluate (:290:30), <
+anonymous>:1:381)
+    at UtilityScript.
+evaluate (<anonymous>
+:292:16)
+    at UtilityScript.
+<anonymous> (<anonymo
+us>:1:44)
+    at YoshinoyaStrat
+egy.scrapeSingleProdu
+ctPage (D:\project\ne
+wFood\backend\src\scr
+aper\strategies\yoshi
+noya.ts:291:48)
+    at async Yoshinoy
+aStrategy.scrapeDetai
+lPages (D:\project\ne
+wFood\backend\src\scr
+aper\strategies\yoshi
+noya.ts:210:52)
+    at async Yoshinoy
+aStrategy.scrape (D:\
+project\newFood\backe
+nd\src\scraper\strate
+gies\yoshinoya.ts:34:
+30)
+    at async WebScrap
+er.scrapeAndParseBran
+d (D:\project\newFood
+\backend\src\scraper\
+scraper.ts:50:12)
+    at async testYosh
+inoya (D:\project\new
+Food\backend\src\test
+-yoshinoya-scraper.ts
+:33:24)
+   + ????暻菟??喉?鞊爸嚗?(?? JPY)
+?? Scanning Campaign Page: https://www.yoshinoya.com/lp/gyusuki_2510/
+?? [Yoshinoya] ?澆 AI 閫????批捆...
+?? [AI Parser] ??閫?? ??摰????閮?..
+??[AI Parser] ??摰?閫??摰?嚗??2 ????儭?[Deep Crawl] ??瘨桅?憟? ?∪?潘???閰喟敦??..
+   ?? 撠?閰喟敦?? https://www.yoshinoya.com/menu/set/gyusuki-nabe-zen/
+Failed deep crawl for
+ https://www.yoshinoy
+a.com/menu/set/gyusuk
+i-nabe-zen/ page.eval
+uate: ReferenceError:
+ __name is not define
+d
+    at eval (eval at 
+evaluate (:290:30), <
+anonymous>:1:381)
+    at UtilityScript.
+evaluate (<anonymous>
+:292:16)
+    at UtilityScript.
+<anonymous> (<anonymo
+us>:1:44)
+    at YoshinoyaStrat
+egy.scrapeSingleProdu
+ctPage (D:\project\ne
+wFood\backend\src\scr
+aper\strategies\yoshi
+noya.ts:291:48)
+    at async Yoshinoy
+aStrategy.scrapeDetai
+lPages (D:\project\ne
+wFood\backend\src\scr
+aper\strategies\yoshi
+noya.ts:210:52)
+    at async Yoshinoy
+aStrategy.scrape (D:\
+project\newFood\backe
+nd\src\scraper\strate
+gies\yoshinoya.ts:34:
+30)
+    at async WebScrap
+er.scrapeAndParseBran
+d (D:\project\newFood
+\backend\src\scraper\
+scraper.ts:50:12)
+    at async testYosh
+inoya (D:\project\new
+Food\backend\src\test
+-yoshinoya-scraper.ts
+:33:24)
+   + ??瘨桅?憟? (?? JPY)
+?儭?[Deep Crawl] 鞊爸?祆硃??憟? ?∪?潘???閰喟敦??..
+   ?? 撠?閰喟敦?? https://www.yoshinoya.com/menu/set/tonkotsushoyu-gyu-nabe-zen/
+Failed deep crawl for
+ https://www.yoshinoy
+a.com/menu/set/tonkot
+sushoyu-gyu-nabe-zen/
+ page.evaluate: Refer
+enceError: __name is 
+not defined
+    at eval (eval at 
+evaluate (:290:30), <
+anonymous>:1:381)
+    at UtilityScript.
+evaluate (<anonymous>
+:292:16)
+    at UtilityScript.
+<anonymous> (<anonymo
+us>:1:44)
+    at YoshinoyaStrat
+egy.scrapeSingleProdu
+ctPage (D:\project\ne
+wFood\backend\src\scr
+aper\strategies\yoshi
+noya.ts:291:48)
+    at async Yoshinoy
+aStrategy.scrapeDetai
+lPages (D:\project\ne
+wFood\backend\src\scr
+aper\strategies\yoshi
+noya.ts:210:52)
+    at async Yoshinoy
+aStrategy.scrape (D:\
+project\newFood\backe
+nd\src\scraper\strate
+gies\yoshinoya.ts:34:
+30)
+    at async WebScrap
+er.scrapeAndParseBran
+d (D:\project\newFood
+\backend\src\scraper\
+scraper.ts:50:12)
+    at async testYosh
+inoya (D:\project\new
+Food\backend\src\test
+-yoshinoya-scraper.ts
+:33:24)
+   + 鞊爸?祆硃??憟? (?? JPY)
+?? Scanning Campaign Page: https://www.yoshinoya.com/menu/curry/
+?? [Yoshinoya] ?澆 AI 閫????批捆...
+?? [AI Parser] ??閫?? ??摰????閮?..
+??[AI Parser] ??摰?閫??摰?嚗??13 ???   + ??????憌?(871 JPY)
+   + ????憌?(771 JPY)
+   + ??????憌?(693 JPY)
+   + ????憌?(593 JPY)
+   + ????暺??抵??ㄞ (871 JPY)
+   + ??暺??抵??ㄞ (771 JPY)
+   + ?賊?暺???(643 JPY)
+   + ????暺???(693 JPY)
+   + ??暺???(593 JPY)
+   + ????? (693 JPY)
+   + ???????? (843 JPY)
+   + 韏瑕暺???(601 JPY)
+   + 暺???(453 JPY)
+?? Scanning Campaign Page: https://www.yoshinoya.com/menu/karaage/
+?? [Yoshinoya] ?澆 AI 閫????批捆...
+?? [AI Parser] ??閫?? ??摰????閮?..
+??[AI Parser] ??摰?閫??摰?嚗??16 ???   + 擛潸?瘝寧?蜈 (711 JPY)
+   + 擛潸?瘝寧??憌?(916 JPY)
+   + 擛澆控?菟瘝寧?蜈 (711 JPY)
+   + 擛澆控?菟瘝寧??憌?(916 JPY)
+   + 暺瘝寧????(643 JPY)
+   + ???交?祆硃?賊?銝?(663 JPY)
+   + ???交?祆硃?賊?摰? (868 JPY)
+   + 憛??砍??駁瘝寧?蜈 (663 JPY)
+   + 憛??砍??駁瘝寧??憌?(868 JPY)
+   + 頞之隞質?擐瘝寧?蜈 (1056 JPY)
+   + ?賊?銝?(563 JPY)
+   + ?賊?摰? (768 JPY)
+   + ???賊?銝?(663 JPY)
+   + ?摰?嚗????餌??憌? (968 JPY)
+   + ?靘輻嚗????餌?噶?塚? (968 JPY)
+? [Filter] ??桀?/???摰? ?賊?嚗?? (????嚗???)
+?? Scanning Campaign Page: https://www.yoshinoya.com/campaign/gyudon_campaign_202601/
+?? [Yoshinoya] ?澆 AI 閫????批捆...
+?? [AI Parser] ??閫?? ??摰????閮?..
+??[AI Parser] ??摰?閫??摰?嚗??3 ???   + ?蜈嚗?遢嚗?(800 JPY)
+   + ?蜈嚗?遢嚗?(1150 JPY)
+   + ?蜈嚗?遢嚗?(1500 JPY)
+
+==========================================
+??Scrape Complete
+? Status: success
+? Products Found: 33
+==========================================
+
+? Filtered Product List:
+
+--- Product 1 ---
+Original Name (JP): ????潦?喲????具??)
+Translated Name (TW): ????暻菟??喉?鞊爸嚗?Price: N/A
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/11/19083413/ramennabe_2511-sp.jpg
+Source: https://www.yoshinoya.com/lp/ramennabe_2511/
+
+--- Product 2 ---
+Original Name (JP): ??????Translated Name (TW): ??瘨桅?憟?
+Price: N/A
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15155546/gyusuki_2510_sp.jpg
+Source: https://www.yoshinoya.com/lp/gyusuki_2510/
+
+--- Product 3 ---
+Original Name (JP): ?具???斗硃????Translated Name (TW): 鞊爸?祆硃??憟?
+Price: N/A
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15155546/gyusuki_2510_sp.jpg
+Source: https://www.yoshinoya.com/lp/gyusuki_2510/
+
+--- Product 4 ---
+Original Name (JP): ?????芥???瑯?扎
+Translated Name (TW): ??????憌?Price: 871 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 5 ---
+Original Name (JP): ????扎?押??Translated Name (TW): ????憌?Price: 771 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 6 ---
+Original Name (JP): ??????瑯?扎
+Translated Name (TW): ??????憌?Price: 693 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 7 ---
+Original Name (JP): ???扎?押??Translated Name (TW): ????憌?Price: 593 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 8 ---
+Original Name (JP): ?????芥?暺?研
+Translated Name (TW): ????暺??抵??ㄞ
+Price: 871 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 9 ---
+Original Name (JP): ????怒??Translated Name (TW): ??暺??抵??ㄞ
+Price: 771 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 10 ---
+Original Name (JP): ????暺?研
+Translated Name (TW): ?賊?暺???Price: 643 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 11 ---
+Original Name (JP): ????暺?研
+Translated Name (TW): ????暺???Price: 693 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 12 ---
+Original Name (JP): ???怒??Translated Name (TW): ??暺???Price: 593 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 13 ---
+Original Name (JP): ??怒?暺?研
+Translated Name (TW): ?????
+Price: 693 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 14 ---
+Original Name (JP): ???怒???怒??Translated Name (TW): ????????
+Price: 843 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 15 ---
+Original Name (JP): ??粹??怒??Translated Name (TW): 韏瑕暺???Price: 601 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 16 ---
+Original Name (JP): 暺?研
+Translated Name (TW): 暺???Price: 453 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/10/15193752/c3d8f94687b30db904ce2da812698185.jpg
+Source: https://www.yoshinoya.com/menu/curry/
+
+--- Product 17 ---
+Original Name (JP): 擛潦?????Ｕ????蜈
+Translated Name (TW): 擛潸?瘝寧?蜈
+Price: 711 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 18 ---
+Original Name (JP): 擛潦?????Ｕ?????憌?Translated Name (TW): 擛潸?瘝寧??憌?Price: 916 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 19 ---
+Original Name (JP): 擛潦??????喋????蜈
+Translated Name (TW): 擛澆控?菟瘝寧?蜈
+Price: 711 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 20 ---
+Original Name (JP): 擛潦??????喋?????憌?Translated Name (TW): 擛澆控?菟瘝寧??憌?Price: 916 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 21 ---
+Original Name (JP): ???潦??嫘?潦?????銝?Translated Name (TW): ???交?祆硃?賊?銝?Price: 663 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 22 ---
+Original Name (JP): ???潦??嫘?潦?????摰?
+Translated Name (TW): ???交?祆硃?賊?摰?
+Price: 868 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 23 ---
+Original Name (JP): ?踴?踴?????銝?Translated Name (TW): 憛??砍??駁瘝寧?蜈
+Price: 663 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 24 ---
+Original Name (JP): ?踴?踴?????摰?
+Translated Name (TW): 憛??砍??駁瘝寧??憌?Price: 868 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 25 ---
+Original Name (JP): ?怒??怒???????頞?蜈
+Translated Name (TW): 頞之隞質?擐瘝寧?蜈
+Price: 1056 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 26 ---
+Original Name (JP): ????銝?Translated Name (TW): ?賊?銝?Price: 563 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 27 ---
+Original Name (JP): ????摰?
+Translated Name (TW): ?賊?摰?
+Price: 768 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 28 ---
+Original Name (JP): ????Translated Name (TW): ???賊?銝?Price: 663 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 29 ---
+Original Name (JP): W摰?嚗??踴????摰?嚗?Translated Name (TW): ?摰?嚗????餌??憌?
+Price: 968 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 30 ---
+Original Name (JP): W撘?嚗??踴????撘?嚗?Translated Name (TW): ?靘輻嚗????餌?噶?塚?
+Price: 968 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2024/09/12191255/4ff4d4128fd1973a3c4276d03cc07c28.jpg
+Source: https://www.yoshinoya.com/menu/karaage/
+
+--- Product 31 ---
+Original Name (JP): ?蜈嚗蒂??
+Translated Name (TW): ?蜈嚗?遢嚗?Price: 800 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/12/19122355/gyudon_campaign_202504_sp.jpg
+Source: https://www.yoshinoya.com/campaign/gyudon_campaign_202601/
+
+--- Product 32 ---
+Original Name (JP): ?蜈嚗蒂??
+Translated Name (TW): ?蜈嚗?遢嚗?Price: 1150 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/12/19122355/gyudon_campaign_202504_sp.jpg
+Source: https://www.yoshinoya.com/campaign/gyudon_campaign_202601/
+
+--- Product 33 ---
+Original Name (JP): ?蜈嚗蒂??
+Translated Name (TW): ?蜈嚗?遢嚗?Price: 1500 JPY
+New: true
+Image: https://www.yoshinoya.com/wp-content/uploads/2025/12/19122355/gyudon_campaign_202504_sp.jpg
+Source: https://www.yoshinoya.com/campaign/gyudon_campaign_202601/

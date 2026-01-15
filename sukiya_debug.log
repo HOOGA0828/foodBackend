@@ -1,0 +1,56 @@
+🚀 Debugging Sukiya Homepage v3...
+Visiting: https://www.sukiya.jp/
+Selector "#main_visual .slick-list": NOT FOUND
+Selector ".main_visual .slick-list": NOT FOUND
+Selector ".slick-slider": FOUND
+   -> Contains 61 links
+   -> HTML (first 200 chars): 
+    
+    
+
+        
+            
+
+                <div class="slick-list draggable" style="height: 90px;"><div class="slick-track" style="opacity: 1; height: 990px; transform: translate3d(0px, -450px
+Selector ".bx-wrapper": NOT FOUND
+
+--- Dumping ALL .slick-list elements ---
+
+[Slick List #0]
+<div class="slick-track" style="opacity: 1; height: 990px; transform: translate3d(0px, -450px, 0px);"><li class="news_li slick-slide slick-cloned" data-slick-index="-1" aria-hidden="true" tabindex="-1" style="width: 630px;" id="">
+
+                    
+
+                        <a href="/news/Press_sukiya_20251202_shiraga.pdf" tabindex="-1">
+
+                    
+
+                        <dl class="news_dl">
+
+                            <dt class="news_dt press_release">2025年11月25日</dt>
+
+        
+
+[Slick List #1]
+<div class="slick-track" style="opacity: 1; width: 7542px; transform: translate3d(-3771px, 0px, 0px);"><li class="slide-item slick-slide slick-cloned" data-slick-index="-4" id="" aria-hidden="true" tabindex="-1" style="width: 403px;"><a href="https://news.sukiya.jp/special/shiraga202512/index.html" tabindex="-1">
+								<img src="assets/img/top/banner/banner_shiraganegi_251202.png" alt="白髪ねぎ牛丼"></a>
+						</li><li class="slide-item slick-slide slick-cloned" data-slick-index="-3" id="" aria-hidd
+
+[Slick List #2]
+<div class="slick-track" style="opacity: 1; width: 2988px; transform: translate3d(-1494px, 0px, 0px);"><li class="slide-item slick-slide slick-cloned" data-slick-index="-4" id="" aria-hidden="true" tabindex="-1" style="width: 166px;">
+								<img src="assets/img/top/banner/banner_shiraganegi_251202.png" alt="白髪ねぎ牛丼">
+						</li><li class="slide-item slick-slide slick-cloned" data-slick-index="-3" id="" aria-hidden="true" tabindex="-1" style="width: 166px;">
+								<img src="assets/img/top/bann
+
+[Slick List #3]
+<div class="slick-track" style="opacity: 1; width: 0px; transform: translate3d(128px, 0px, 0px);"><li class="slide-item slick-slide slick-cloned" data-slick-index="-2" id="" aria-hidden="true" tabindex="-1" style="width: 0px;"><a href="/campaign/sweets.html" tabindex="-1">
+								<img src="assets/img/top/banner/sp/banner_coffeejelly_251202.png" alt="コーヒーゼリークリームラテ"></a>
+						</li><li class="slide-item slick-slide slick-cloned slick-center" data-slick-index="-1" id="" aria-hidden="true" tabindex
+
+[Slick List #4]
+<div class="slick-track" style="opacity: 1; width: 5344px; transform: translate3d(-1336px, 0px, 0px); transition: transform 1500ms;"><li class="slick-img slick-slide slick-cloned" data-slick-index="-4" id="" aria-hidden="true" tabindex="-1" style="width: 334px;">
+							<a href="/menu/in/gyusuki/1007300/index.html" tabindex="-1">
+								<div class="img" style=""><img src="assets/img/top/recommend/recom_03.png?20251216" alt="">
+								</div>
+								<div class="details">
+									<h3 class="men

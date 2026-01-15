@@ -125,7 +125,7 @@ export const BRANDS: BrandConfig[] = [
     category: 'restaurant',
     pageType: 'homepage_banner',
     newProductSelector: '.menu-new-items',
-    enabled: true,
+    enabled: false,
     options: {
       waitFor: 3000,
       deepCrawling: {
@@ -166,18 +166,35 @@ export const BRANDS: BrandConfig[] = [
     url: 'https://www.yoshinoya.com/',
     category: 'restaurant',
     pageType: 'homepage_banner',
-    newProductSelector: '.seasonal-menu',
+    newProductSelector: '.campaign__unit .swiper-wrapper',
     enabled: true,
     options: {
       waitFor: 3000,
       deepCrawling: {
         enabled: true,
-        productLinkSelector: '.beverage-link[href], .menu-item a[href]',
-        productTitleSelector: '.beverage-name, .menu-title',
-        productImageSelector: '.beverage-image img, .menu-image img',
-        newBadgeSelector: '.seasonal-badge, .new-badge',
-        maxProducts: 15,
+        scrapeDetailPages: true,
+        productLinkSelector: '.campaign__unit .swiper-slide:not(.swiper-slide-duplicate) a',
+        productTitleSelector: '.rcmd__text p',
+        productImageSelector: 'img',
+        newBadgeSelector: '.new-badge',
+        maxProducts: 10,
         detailPageWaitFor: 2000
+      }
+    }
+  },
+  {
+    name: 'sukiya',
+    displayName: 'Sukiya',
+    url: 'https://www.sukiya.jp/',
+    category: 'restaurant',
+    pageType: 'product_list',
+    newProductSelector: '#recommend_menu', // 推薦選單區（包含產品輪播）
+    enabled: true,
+    options: {
+      waitFor: 3000,
+      deepCrawling: {
+        enabled: true,
+        scrapeDetailPages: true // Enable deep scraping for descriptions
       }
     }
   },
@@ -188,7 +205,7 @@ export const BRANDS: BrandConfig[] = [
     category: 'restaurant',
     pageType: 'homepage_banner',
     newProductSelector: '.seasonal-menu',
-    enabled: true,
+    enabled: false,
     options: {
       waitFor: 3000,
       deepCrawling: {
@@ -209,7 +226,7 @@ export const BRANDS: BrandConfig[] = [
     category: 'restaurant',
     pageType: 'homepage_banner',
     newProductSelector: '.seasonal-menu',
-    enabled: true,
+    enabled: false,
     options: {
       waitFor: 3000,
       deepCrawling: {

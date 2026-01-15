@@ -223,6 +223,69 @@ ${request.detailMarkdownContent}
   }
 
   /**
+   * 解析單一產品頁面內容
+   */
+  async parseProductPage(request: { url: string; html: string; screenshot?: string }): Promise<Partial<ProductInfo>> {
+    try {
+      console.log(`🧠 [AI Parser] 解析產品頁面: ${request.url}`);
+
+      const completion = await this.openai.chat.completions.create({
+        model: this.model,
+        messages: [
+          {
+            role: 'system',
+            content: `你是一個產品資訊提取助手。請從提供的 HTML/文字內容中提取：
+            1. 產品名稱 (name) - 請保留原文
+            2. 產品描述 (description)
+            3. 價格 (price) - 包含 amount (數字) 和 currency (幣種，預設 JPY)
+            
+            回傳 JSON 格式: { "name": string, "description": string, "price": { "amount": number, "currency": string } }`
+          },
+          {
+            role: 'user',
+            content: request.html
+          }
+        ],
+        response_format: { type: 'json_object' }
+      });
+
+      const content = completion.choices[0]?.message?.content;
+      if (!content) return {};
+
+      return JSON.parse(content);
+    } catch (e) {
+      console.warn('AI 解析產品頁面失敗', e);
+      return {};
+    }
+  }
+
+  /**
+   * 翻譯文字為繁體中文
+   */
+  async translateToTraditionalChinese(text: string): Promise<string> {
+    try {
+      if (!text) return '';
+      const completion = await this.openai.chat.completions.create({
+        model: this.model,
+        messages: [
+          {
+            role: 'system',
+            content: '你是翻譯助手。請將以下日文翻譯成台灣繁體中文。只回傳翻譯後的文字，不要包含任何解釋。'
+          },
+          {
+            role: 'user',
+            content: text
+          }
+        ]
+      });
+      return completion.choices[0]?.message?.content?.trim() || text;
+    } catch (e) {
+      console.warn('翻譯失敗', e);
+      return text;
+    }
+  }
+
+  /**
    * 驗證並轉換產品資料格式
    */
   private validateAndTransformProducts(rawProducts: any[], defaultSourceUrl: string): ProductInfo[] {

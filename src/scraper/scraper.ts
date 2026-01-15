@@ -8,6 +8,8 @@ import { FamilyMartStrategy } from './strategies/familymart.js';
 import { DefaultStrategy } from './strategies/default.js';
 import { LawsonStrategy } from './strategies/lawson.js';
 import { McdonaldsStrategy } from './strategies/mcdonalds.js';
+import { YoshinoyaStrategy } from './strategies/yoshinoya.js';
+import { SukiyaStrategy } from './strategies/sukiya.js';
 
 /**
  * 網頁爬蟲服務
@@ -31,8 +33,8 @@ export class WebScraper {
     this.strategies.set('familymart', new FamilyMartStrategy(this.aiParser));
     this.strategies.set('lawson', new LawsonStrategy(this.aiParser));
     this.strategies.set('mcdonalds', new McdonaldsStrategy(this.aiParser));
-    // 其他品牌默認使用 DefaultStrategy，不需要顯式註冊為 key，
-    // 因為 scrapeAndParseBrand 會 fallback
+    this.strategies.set('吉野家', new YoshinoyaStrategy(this.aiParser));
+    this.strategies.set('sukiya', new SukiyaStrategy(this.aiParser));
   }
 
   /**
@@ -45,7 +47,21 @@ export class WebScraper {
     console.log(`🤖 [WebScraper] 為 ${brandConfig.name} 選擇策略: ${strategy.constructor.name}`);
 
     // 執行策略
-    return await strategy.scrape(brandConfig);
+    const result = await strategy.scrape(brandConfig);
+
+    // 全域過濾：排除沒有價格的產品
+    if (result.products && result.products.length > 0) {
+      const originalCount = result.products.length;
+      result.products = result.products.filter(p => p.price && typeof p.price.amount === 'number');
+      const filteredCount = result.products.length;
+
+      if (originalCount !== filteredCount) {
+        console.log(`🧹 [Global Filter] 已移除 ${originalCount - filteredCount} 筆無價格商品 (剩餘 ${filteredCount} 筆)`);
+        result.productsCount = filteredCount;
+      }
+    }
+
+    return result;
   }
 }
 

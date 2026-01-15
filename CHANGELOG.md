@@ -5,6 +5,19 @@
 此格式基於 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)，
 專案遵循 [語意化版本](https://semver.org/spec/v2.0.0.html)。
 
+## [1.0.4] - 2026-01-15
+
+### 新增功能 (Features)
+- 🐮 **牛丼雙雄爬蟲實作 (Yoshinoya & Sukiya)**:
+  - **吉野家 (Yoshinoya)**:
+    - 實作 `YoshinoyaStrategy`，針對 React 動態網站進行優化。
+    - 支援 Swiper 輪播圖抓取，自動識別活動與促銷商品。
+    - 解決價格標籤解析問題，正確處理 "税込" 與格式化價格。
+  - **Sukiya**:
+    - 實作 `SukiyaStrategy`，完整支援首頁推薦選單與詳細頁面抓取。
+    - 🛠️ **圖片網址自動修復**: 針對 Sukiya 網站的相對路徑圖片 (`assets/...`)，實作自動補全邏輯，確保圖片能正確顯示。
+    - 🧹 **智慧圖片過濾**: 自動排除網頁中的裝飾性圖示（如「內用」、「外帶」icon），優先選取高品質產品照 (`photo_`)。
+
 ## [1.0.3] - 2026-01-14
 
 ### 新增功能 (Features)
