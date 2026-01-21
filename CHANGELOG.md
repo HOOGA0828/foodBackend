@@ -5,6 +5,17 @@
 此格式基於 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)，
 專案遵循 [語意化版本](https://semver.org/spec/v2.0.0.html)。
 
+## [1.0.5] - 2026-01-21
+
+### 新增功能 (Features)
+- 🍗 **KFC 爬蟲升級**:
+  - 修正活動頁面抓取邏輯 (`#campaign` 區塊)，支援多商品一次性爬取。
+  - 優化選擇器策略，解決只能抓取單一商品的問題。
+- 🍔 **Mos Burger 爬蟲實作**:
+  - 新增 `MosBurgerStrategy`，精準鎖定推薦菜單 (`.menu-recommend`)。
+  - 🖼️ **圖片處理優化**: 自動修正相對路徑圖片網址，並透過 AI 過濾非食物圖片。
+  - 💰 **價格解析增強**: 針對多種價格選項，自動提取最低價格。
+
 ## [1.0.4] - 2026-01-15
 
 ### 新增功能 (Features)
