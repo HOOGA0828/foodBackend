@@ -10,6 +10,9 @@ import { LawsonStrategy } from './strategies/lawson.js';
 import { McdonaldsStrategy } from './strategies/mcdonalds.js';
 import { YoshinoyaStrategy } from './strategies/yoshinoya.js';
 import { SukiyaStrategy } from './strategies/sukiya.js';
+import { MatsuyaStrategy } from './strategies/matsuya.js';
+import { KfcStrategy } from './strategies/kfc.js';
+import { MosBurgerStrategy } from './strategies/MosBurgerStrategy.js';
 
 /**
  * 網頁爬蟲服務
@@ -35,6 +38,9 @@ export class WebScraper {
     this.strategies.set('mcdonalds', new McdonaldsStrategy(this.aiParser));
     this.strategies.set('吉野家', new YoshinoyaStrategy(this.aiParser));
     this.strategies.set('sukiya', new SukiyaStrategy(this.aiParser));
+    this.strategies.set('Matsuya', new MatsuyaStrategy(this.aiParser));
+    this.strategies.set('KFC', new KfcStrategy(this.aiParser));
+    this.strategies.set('mos_burger', new MosBurgerStrategy(this.aiParser));
   }
 
   /**
@@ -44,9 +50,14 @@ export class WebScraper {
     // 選擇策略
     const strategy = this.strategies.get(brandConfig.name) || new DefaultStrategy(this.aiParser);
 
+    if (!strategy) {
+      console.error(`❌ [WebScraper] Critical: Strategy for ${brandConfig.name} is undefined even after fallback!`);
+    }
+
     console.log(`🤖 [WebScraper] 為 ${brandConfig.name} 選擇策略: ${strategy.constructor.name}`);
 
     // 執行策略
+    console.log(`DEBUG: Invoking scrape on ${strategy?.constructor.name}`);
     const result = await strategy.scrape(brandConfig);
 
     // 全域過濾：排除沒有價格的產品

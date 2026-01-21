@@ -39,6 +39,7 @@
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "@supabase/supabase-js": "^2.47.10",
+    "cheerio": "^1.1.2",
     "crawlee": "^3.10.4",
     "dotenv": "^16.4.7",
     "express": "^4.21.1",

@@ -223,6 +223,52 @@ ${request.detailMarkdownContent}
   }
 
   /**
+   * 判斷圖片是否為「期間限定」或「新登場/即將推出」的食物商品廣告
+   * @param imageUrl 圖片網址
+   * @returns 是否為期間限定或新品食物廣告
+   */
+  async isNewOrLimitedFood(imageUrl: string): Promise<boolean> {
+    try {
+      console.log(`🖼️ [AI Parser] 分析圖片是否為期間限定/新品食物: ${imageUrl}`);
+
+      const completion = await this.openai.chat.completions.create({
+        model: this.model,
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: '請問這張圖片是否為食物或飲料商品的廣告或介紹？\n\n判斷標準：\n1. 必須是具體的食物或飲料商品。\n2. 只要是介紹某個食物產品（包含新品、期間限定、或是一般主打商品），請都回答 true。\n3. 如果是純粹的會員招募、APP下載、徵才資訊、單純品牌形象（無特定產品）等，請回答 false。\n\n請只回傳 JSON 格式：{"isTarget": boolean, "reason": "理由"}'
+              },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: imageUrl
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 300,
+        response_format: { type: 'json_object' }
+      });
+
+      const content = completion.choices[0]?.message?.content;
+      if (!content) return false;
+
+      const result = JSON.parse(content);
+      console.log(`🤖 [AI Parser] 期間限定/新品分析結果: ${result.isTarget} (${result.reason})`);
+
+      return result.isTarget === true;
+
+    } catch (error) {
+      console.warn(`⚠️ [AI Parser] 圖片分析失敗，預設視為非目標:`, error);
+      return false;
+    }
+  }
+
+  /**
    * 解析單一產品頁面內容
    */
   async parseProductPage(request: { url: string; html: string; screenshot?: string }): Promise<Partial<ProductInfo>> {

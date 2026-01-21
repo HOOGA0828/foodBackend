@@ -119,27 +119,6 @@ export const BRANDS: BrandConfig[] = [
     }
   },
   {
-    name: 'sushiro',
-    displayName: 'sushiro',
-    url: 'https://www.akindo-sushiro.co.jp/campaign/',
-    category: 'restaurant',
-    pageType: 'homepage_banner',
-    newProductSelector: '.menu-new-items',
-    enabled: false,
-    options: {
-      waitFor: 3000,
-      deepCrawling: {
-        enabled: true,
-        productLinkSelector: '.menu-item a[href], .product-link[href]',
-        productTitleSelector: '.menu-title, .item-name',
-        productImageSelector: '.menu-image img, .item-image img',
-        newBadgeSelector: '.new-badge, .seasonal-badge',
-        maxProducts: 15,
-        detailPageWaitFor: 2000
-      }
-    }
-  },
-  {
     name: 'mcdonalds',
     displayName: 'mcdonalds',
     url: 'https://www.mcdonalds.co.jp/',
@@ -188,34 +167,13 @@ export const BRANDS: BrandConfig[] = [
     url: 'https://www.sukiya.jp/',
     category: 'restaurant',
     pageType: 'product_list',
-    newProductSelector: '#recommend_menu', // 推薦選單區（包含產品輪播）
+    newProductSelector: '', // 推薦選單區（包含產品輪播）
     enabled: true,
     options: {
       waitFor: 3000,
       deepCrawling: {
         enabled: true,
         scrapeDetailPages: true // Enable deep scraping for descriptions
-      }
-    }
-  },
-  {
-    name: 'kurasushi',
-    displayName: 'kurasushi',
-    url: 'https://www.kurasushi.co.jp/',
-    category: 'restaurant',
-    pageType: 'homepage_banner',
-    newProductSelector: '.seasonal-menu',
-    enabled: false,
-    options: {
-      waitFor: 3000,
-      deepCrawling: {
-        enabled: true,
-        productLinkSelector: '.beverage-link[href], .menu-item a[href]',
-        productTitleSelector: '.beverage-name, .menu-title',
-        productImageSelector: '.beverage-image img, .menu-image img',
-        newBadgeSelector: '.seasonal-badge, .new-badge',
-        maxProducts: 15,
-        detailPageWaitFor: 2000
       }
     }
   },
@@ -239,8 +197,56 @@ export const BRANDS: BrandConfig[] = [
         detailPageWaitFor: 2000
       }
     }
+  },
+  {
+    name: 'Matsuya',
+    displayName: '松屋',
+    url: 'https://www.matsuyafoods.co.jp/matsuya/menu/',
+    category: 'restaurant',
+    pageType: 'product_list',
+    newProductSelector: '.menu-list',
+    enabled: true,
+    options: {
+      waitFor: 3000,
+      deepCrawling: {
+        enabled: true,
+        scrapeDetailPages: false
+      }
+    }
+  },
+  {
+    name: 'KFC',
+    displayName: '肯德基',
+    url: 'https://www.kfc.co.jp/menu/',
+    category: 'fast_food',
+    pageType: 'product_list',
+    newProductSelector: '.product-list',
+    enabled: true,
+    options: {
+      waitFor: 3000,
+      deepCrawling: {
+        enabled: true,
+        scrapeDetailPages: false
+      }
+    }
   }
-  // 新增更多品牌時，在此處添加...
+  ,
+  {
+    name: 'mos_burger',
+    displayName: '摩斯漢堡',
+    url: 'https://www.mos.jp/menu/',
+    category: 'fast_food',
+    pageType: 'product_list',
+    newProductSelector: '.menu-recommend',
+    enabled: true,
+    options: {
+      waitFor: 3000,
+      deepCrawling: {
+        enabled: false,
+        scrapeDetailPages: false
+      }
+    }
+  }
 ];
 
 /**

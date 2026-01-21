@@ -1,0 +1,19 @@
+[
+  "id",
+  "name",
+  "name_en",
+  "name_jp",
+  "slug",
+  "description",
+  "category",
+  "website",
+  "logo_url",
+  "contact_email",
+  "contact_phone",
+  "address",
+  "is_active",
+  "crawl_config",
+  "last_crawled_at",
+  "created_at",
+  "updated_at"
+]

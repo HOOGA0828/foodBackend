@@ -1,0 +1,9 @@
+🍔 [Mos Burger] 開始抓取: 摩斯漢堡
+Visiting: https://www.mos.jp/
+[Browser] [Meta Pixel] - Duplicate Pixel ID: 954433052643649.
+[Browser] [Browser Debug] checking 3 containers for selector: main .swiper-wrapper
+[Browser] [Browser Debug] Container empty (0 images), skipping this instance of: main .swiper-wrapper
+[Browser] [Browser Debug] Locked to container: main .swiper-wrapper (has 14 images)
+[Browser] [Browser Debug] Found 14 images in container (main .swiper-wrapper)
+[Browser] [Browser Debug] Images after duplicate check: 14
+[Browser] [Browser Debug] Total valid items extracted: 6
