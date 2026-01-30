@@ -13,6 +13,7 @@ model Brand {
   nameEn        String?   @map("name_en") @db.VarChar(200) // 英文名稱（可選）
   nameJp        String?   @map("name_jp") @db.VarChar(200) // 日文名稱（可選）
   slug          String    @unique @db.VarChar(100)
+  colors        String[]  @default([]) @map("colors") // 品牌主色系
   logoUrl       String?   @map("logo_url")
   website       String?   @map("website")
   description   String?   @db.Text // 公司描述

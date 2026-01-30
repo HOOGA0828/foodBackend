@@ -1,0 +1,9 @@
+{
+	"id": "jJYOp3ReBCisC3O",
+	"json": "{\"id\":\"jJYOp3ReBCisC3O\",\"url\":\"https://www.lawson.co.jp/recommend/new/\",\"loadedUrl\":\"https://www.lawson.co.jp/recommend/new/\",\"uniqueKey\":\"https://www.lawson.co.jp/recommend/new\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":3,\"errorMessages\":[\"Error: requestHandler timed out after 60 seconds.\\n    at Timeout._onTimeout (D:\\\\project\\\\newFood\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:88:74)\\n    at listOnTimeout (node:internal/timers:605:17)\\n    at process.processTimers (node:internal/timers:541:7)\",\"Error: requestHandler timed out after 60 seconds.\\n    at Timeout._onTimeout (D:\\\\project\\\\newFood\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:88:74)\\n    at listOnTimeout (node:internal/timers:605:17)\\n    at process.processTimers (node:internal/timers:541:7)\",\"Error: requestHandler timed out after 60 seconds.\\n    at Timeout._onTimeout (D:\\\\project\\\\newFood\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:88:74)\\n    at listOnTimeout (node:internal/timers:605:17)\\n    at process.processTimers (node:internal/timers:541:7)\",\"Error: requestHandler timed out after 60 seconds.\\n    at Timeout._onTimeout (D:\\\\project\\\\newFood\\\\backend\\\\node_modules\\\\@apify\\\\src\\\\index.ts:88:74)\\n    at listOnTimeout (node:internal/timers:605:17)\\n    at process.processTimers (node:internal/timers:541:7)\"],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":5}},\"handledAt\":\"2026-01-30T08:36:53.646Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 3,
+	"uniqueKey": "https://www.lawson.co.jp/recommend/new",
+	"url": "https://www.lawson.co.jp/recommend/new/"
+}

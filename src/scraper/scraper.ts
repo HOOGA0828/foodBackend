@@ -12,7 +12,9 @@ import { YoshinoyaStrategy } from './strategies/yoshinoya.js';
 import { SukiyaStrategy } from './strategies/sukiya.js';
 import { MatsuyaStrategy } from './strategies/matsuya.js';
 import { KfcStrategy } from './strategies/kfc.js';
+
 import { MosBurgerStrategy } from './strategies/MosBurgerStrategy.js';
+import { StarbucksStrategy } from './strategies/starbucks.js';
 
 /**
  * 網頁爬蟲服務
@@ -41,6 +43,7 @@ export class WebScraper {
     this.strategies.set('Matsuya', new MatsuyaStrategy(this.aiParser));
     this.strategies.set('KFC', new KfcStrategy(this.aiParser));
     this.strategies.set('mos_burger', new MosBurgerStrategy(this.aiParser));
+    this.strategies.set('starbucks', new StarbucksStrategy(this.aiParser));
   }
 
   /**

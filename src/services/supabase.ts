@@ -50,61 +50,41 @@ export class SupabaseService {
       let skippedCount = 0;
       const errors: string[] = [];
 
+      // 1.5 獲取目前資料庫中該品牌所有「未過期」的產品 ID
+      const { data: currentActiveProducts } = await this.supabase
+        .from('products')
+        .select('id')
+        .eq('brand_id', brandId)
+        .eq('is_expired', false);
+
+      const activeProductIds = new Set<string>(currentActiveProducts?.map(p => p.id) || []);
+      console.log(`📋 [Supabase] 目前活躍產品數量: ${activeProductIds.size}`);
+
       for (const product of result.products) {
         try {
-          // 優化後的比對邏輯：
-
-          // 修正後的比對邏輯：
-          // 針對 McDonald's 等品牌，多個產品可能共享同一個 Campaign URL。
-          // 因此單純依賴 source_url 會導致同頁面的產品互相覆蓋。
-          // 此處改為優先使用 Product Name (name_jp) 作為唯一識別，
-          // 若名稱相符則視為同一產品。
-
-
           let existingProduct_ = null;
 
-          // 修正後的比對邏輯：
-          // 針對 McDonald's 等品牌，多個產品可能共享同一個 Campaign URL。
-          // 因此單純依賴 source_url 會導致同頁面的產品互相覆蓋。
-          // 此處改為優先使用 Product Name (name_jp) 作為唯一識別，
-          // 若名稱相符則視為同一產品。
-
           // 策略 1: 優先使用 brand_id + original_name (name_jp) 進行比對
-          // 這是最準確的方式，避免活動頁面多產品 URL 重複的問題
           if (product.originalName) {
             const { data: byOriginalName } = await this.supabase
               .from('products')
               .select('id')
-              .eq('brand_id', brandId)
+              .eq('brand_id', brandId) // products table
               .eq('name_jp', product.originalName)
               .maybeSingle();
 
             if (byOriginalName) existingProduct_ = byOriginalName;
           }
 
-          // 策略 2: 如果名稱沒對上，才嘗試 source_url
-          // 但為了防止不同產品(同URL)被誤判為同一產品(改名)，
-          // 這裡我們需要非常小心。
-          // 暫時決定：如果不匹配名稱，就視為新產品 (Insert)。
-          // 這樣可能會導致 "改名" 的產品變為兩筆資料，但總比 "不同產品覆蓋成一筆" (資料遺失) 好。
-          // 因此，取消 source_url 的獨立 fallback，除非我們能確定該 URL 是專屬頁面 (Deep Link)。
-
-          /* 
-          // 舊邏輯備份 - 已停用以修復 McDonald's 問題
-          if (!existingProduct_ && !isListingPage && product.sourceUrl) {
-             // ... risk of collision ...
-          } 
-          */
-
-          // 策略 C: (已移除) 不再使用 translatedName 進行比對，因為 AI 翻譯不穩定容易導致重複
-
           if (existingProduct_) {
+            // 從待過期清單中移除（表示此產品本次爬取仍存在）
+            activeProductIds.delete(existingProduct_.id);
+
             console.log(`📝 [Supabase] 更新產品: ${product.translatedName} (ID: ${existingProduct_.id})`);
             // 產品已存在，更新它
             const updateData = {
-              // name: product.translatedName, 
               description: product.translatedName,
-              name_jp: product.originalName, // 更新日文名稱
+              name_jp: product.originalName,
               price: product.price?.amount || null,
               currency: product.price?.currency || 'JPY',
               image_urls: product.imageUrl ? [product.imageUrl] : [],
@@ -113,9 +93,13 @@ export class SupabaseService {
               updated_at: new Date().toISOString(),
               last_verified_at: new Date().toISOString(),
               allergens: product.allergens || [],
-              scraped_at: result.scrapedAt.toISOString(),
+              scraped_at: result.scrapedAt.toISOString(), // Legacy field, keeping for compatibility
               crawled_from: result.brand.name,
-              // 更新 metadata
+
+              // NEW: 標記為未過期並更新活躍時間
+              is_expired: false,
+              last_active_at: new Date().toISOString(),
+
               metadata: {
                 original_name: product.originalName,
                 price_note: product.price?.note,
@@ -133,15 +117,15 @@ export class SupabaseService {
               console.error(`❌ [Supabase] 更新失敗: ${updateError.message}`);
               errors.push(`更新產品 ${product.translatedName} 失敗: ${updateError.message}`);
             } else {
-              skippedCount++;
+              skippedCount++; // Reuse skippedCount to track "Updated"
             }
           } else {
             console.log(`✨ [Supabase] 新增產品: ${product.translatedName}`);
             // 插入新產品
             const insertData = {
               name: product.translatedName,
-              name_jp: product.originalName, // 插入日文名稱
-              description: product.translatedName, // 主要欄位
+              name_jp: product.originalName,
+              description: product.translatedName,
               brand_id: brandId,
               price: product.price?.amount || null,
               currency: product.price?.currency || 'JPY',
@@ -155,7 +139,12 @@ export class SupabaseService {
               last_verified_at: result.scrapedAt.toISOString(),
               crawled_from: result.brand.name,
               allergens: product.allergens || [],
-              tags: ['新品'], // 標籤
+              tags: ['新品'],
+
+              // NEW: 標記為未過期
+              is_expired: false,
+              last_active_at: new Date().toISOString(),
+
               metadata: {
                 original_name: product.originalName,
                 price_note: product.price?.note,
@@ -179,6 +168,26 @@ export class SupabaseService {
           const errorMessage = error instanceof Error ? error.message : '未知錯誤';
           console.error(`❌ [Supabase] 處理例外: ${errorMessage}`);
           errors.push(`處理產品 ${product.translatedName} 時發生錯誤: ${errorMessage}`);
+        }
+      }
+
+      // 3. 處理過期產品（本次爬取未出現，但原本在資料庫中且標記為未過期的產品）
+      if (activeProductIds.size > 0) {
+        console.log(`🍂 [Supabase] 標記 ${activeProductIds.size} 個產品為已過期...`);
+        const expiredIds = Array.from(activeProductIds);
+
+        const { error: expireError } = await this.supabase
+          .from('products')
+          .update({
+            is_expired: true,
+            status: 'expired', // Optional: sync status field if used
+            updated_at: new Date().toISOString()
+          })
+          .in('id', expiredIds);
+
+        if (expireError) {
+          console.error(`❌ [Supabase] 標記過期失敗: ${expireError.message}`);
+          errors.push(`標記 ${expiredIds.length} 個產品過期失敗: ${expireError.message}`);
         }
       }
 

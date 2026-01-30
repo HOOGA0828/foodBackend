@@ -10,6 +10,8 @@ export interface BrandConfig {
   displayName: string;
   /** 目標網址 */
   url: string;
+  /** 第二目標網址 (選填) */
+  url2?: string;
   /** 產品類別 */
   category: 'convenience_store' | 'restaurant' | 'fast_food' | 'bakery' | 'beverage';
   /** 頁面類型 */
@@ -180,11 +182,12 @@ export const BRANDS: BrandConfig[] = [
   {
     name: 'starbucks',
     displayName: 'starbucks',
-    url: 'https://www.starbucks.co.jp/',
+    url: 'https://product.starbucks.co.jp/beverage/?nid=mm',
+    url2: 'https://product.starbucks.co.jp/food/?nid=mm',
     category: 'restaurant',
-    pageType: 'homepage_banner',
-    newProductSelector: '.seasonal-menu',
-    enabled: false,
+    pageType: 'product_list',
+    newProductSelector: '.card-wrap.main-wrap.category-main-layout',
+    enabled: true,
     options: {
       waitFor: 3000,
       deepCrawling: {

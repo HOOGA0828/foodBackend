@@ -20,6 +20,7 @@
     "test:connection": "tsx src/test-connection.ts",
     "test:insert": "tsx src/test-insert.ts",
     "scraper:run": "tsx src/scraper/index.ts",
+    "translate:names": "tsx src/scripts/translate-names.ts",
     "scraper:dev": "tsx watch src/scraper/index.ts",
     "test:scraper": "tsx test-scraper-basic.ts",
     "test:scraper:config": "tsx test-scraper-basic.ts config",
@@ -39,12 +40,16 @@
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "@supabase/supabase-js": "^2.47.10",
+    "@types/get-pixels": "^3.3.4",
+    "@types/quantize": "^1.0.2",
     "cheerio": "^1.1.2",
     "crawlee": "^3.10.4",
     "dotenv": "^16.4.7",
     "express": "^4.21.1",
+    "get-pixels": "^3.3.3",
     "openai": "^4.69.0",
     "playwright": "^1.57.0",
+    "quantize": "^1.0.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {

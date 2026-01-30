@@ -1,0 +1,52 @@
+{
+  "requestsFinished": 0,
+  "requestsFailed": 1,
+  "requestsRetries": 1,
+  "requestsFailedPerMinute": 0,
+  "requestsFinishedPerMinute": 0,
+  "requestMinDurationMillis": null,
+  "requestMaxDurationMillis": 0,
+  "requestTotalFailedDurationMillis": 60492,
+  "requestTotalFinishedDurationMillis": 0,
+  "crawlerStartedAt": "2026-01-30T08:32:51.406Z",
+  "crawlerFinishedAt": "2026-01-30T08:36:55.375Z",
+  "statsPersistedAt": "2026-01-30T08:36:55.375Z",
+  "crawlerRuntimeMillis": 244161,
+  "crawlerLastStartTimestamp": 1769761971214,
+  "requestRetryHistogram": [
+    null,
+    null,
+    null,
+    1
+  ],
+  "statsId": 1,
+  "requestAvgFailedDurationMillis": 60492,
+  "requestAvgFinishedDurationMillis": null,
+  "requestTotalDurationMillis": 60492,
+  "requestsTotal": 1,
+  "requestsWithStatusCode": {
+    "200": 4
+  },
+  "errors": {
+    "D:\\project\\newFood\\backend\\node_modules\\@apify\\src\\index.ts:88:74": {
+      "missing error code": {
+        "Error": {
+          "requestHandler timed out after 60 seconds.": {
+            "count": 1
+          }
+        }
+      }
+    }
+  },
+  "retryErrors": {
+    "D:\\project\\newFood\\backend\\node_modules\\@apify\\src\\index.ts:88:74": {
+      "missing error code": {
+        "Error": {
+          "requestHandler timed out after 60 seconds.": {
+            "count": 3
+          }
+        }
+      }
+    }
+  }
+}
