@@ -282,7 +282,7 @@ export class FamilyMartStrategy implements ScraperStrategy {
                         const aiResult = await this.aiParser.parseProducts(parseRequest);
 
                         if (aiResult.success && aiResult.products.length > 0) {
-                            const parsed = aiResult.products[0];
+                            const parsed = aiResult.products[0]!;
                             products.push({
                                 originalName: p.name,
                                 translatedName: parsed.translatedName || p.name,

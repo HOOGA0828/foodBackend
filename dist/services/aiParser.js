@@ -1,10 +1,13 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import pRetry from 'p-retry';
 export class AIParserService {
-    openai;
-    model = 'gpt-4o-mini';
+    genAI;
+    model;
     constructor(apiKey) {
-        this.openai = new OpenAI({
-            apiKey: apiKey,
+        this.genAI = new GoogleGenerativeAI(apiKey);
+        this.model = this.genAI.getGenerativeModel({
+            model: "gemini-3-flash-preview",
+            generationConfig: { responseMimeType: "application/json" }
         });
     }
     async parseProducts(request) {
@@ -12,30 +15,44 @@ export class AIParserService {
             console.log(`🤖 [AI Parser] 開始解析 ${request.brandName} 的產品資訊...`);
             const systemPrompt = this.buildSystemPrompt(request.brandName);
             const userPrompt = this.buildUserPrompt(request);
-            const completion = await this.openai.chat.completions.create({
-                model: this.model,
-                messages: [
-                    { role: 'system', content: systemPrompt },
-                    { role: 'user', content: userPrompt }
-                ],
-                temperature: 0.1,
-                max_tokens: 4000,
-                response_format: { type: 'json_object' }
+            const result = await pRetry(async () => {
+                return await this.model.generateContent([
+                    systemPrompt,
+                    userPrompt
+                ]);
+            }, {
+                retries: 3,
+                minTimeout: 2000,
+                factor: 2,
+                onFailedAttempt: error => {
+                    console.warn(`⚠️ [AI Parser] Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left. Error: ${error.message}`);
+                }
             });
-            const content = completion.choices[0]?.message?.content;
-            if (!content) {
+            const response = result.response;
+            const text = response.text();
+            if (!text) {
                 throw new Error('AI 回應為空');
             }
-            const parsedData = JSON.parse(content);
+            const parsedData = JSON.parse(text);
             const products = this.validateAndTransformProducts(parsedData.products || [], request.sourceUrl);
+            products.forEach(product => {
+                const linkImageUrl = request.productLink?.imageUrl;
+                if (!product.imageUrl && linkImageUrl && this.isValidImageUrl(linkImageUrl)) {
+                    console.log(`🖼️ [AI Parser] Restoring imageUrl from link: ${linkImageUrl}`);
+                    product.imageUrl = linkImageUrl;
+                }
+                else if (!product.imageUrl && linkImageUrl) {
+                    console.log(`⚠️ [AI Parser] Refused to restore invalid imageUrl: ${linkImageUrl}`);
+                }
+            });
             console.log(`✅ [AI Parser] ${request.brandName} 解析完成，找到 ${products.length} 個產品`);
             return {
                 success: true,
                 products,
                 tokenUsage: {
-                    promptTokens: completion.usage?.prompt_tokens || 0,
-                    completionTokens: completion.usage?.completion_tokens || 0,
-                    totalTokens: completion.usage?.total_tokens || 0
+                    promptTokens: 0,
+                    completionTokens: 0,
+                    totalTokens: 0
                 }
             };
         }
@@ -47,6 +64,16 @@ export class AIParserService {
                 errorMessage: error instanceof Error ? error.message : '未知錯誤'
             };
         }
+    }
+    isValidImageUrl(url) {
+        if (!url)
+            return false;
+        const lower = url.toLowerCase();
+        return !lower.includes('giphy.gif') &&
+            !lower.includes('placeholder') &&
+            !lower.includes('loading') &&
+            !lower.endsWith('.gif') &&
+            !lower.includes('data:image/');
     }
     buildSystemPrompt(brandName) {
         return `你是專業的日本產品資訊解析助手，專門處理 ${brandName} 的產品資料。
@@ -138,41 +165,217 @@ ${request.detailMarkdownContent}
         }
         return prompt;
     }
+    async fetchImageAsBase64(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok)
+                throw new Error(`Failed to fetch image: ${response.statusText}`);
+            const arrayBuffer = await response.arrayBuffer();
+            return Buffer.from(arrayBuffer).toString('base64');
+        }
+        catch (error) {
+            console.warn(`⚠️ 無法下載圖片 ${url}:`, error);
+            return null;
+        }
+    }
     async isFoodAdvertisement(imageUrl) {
         try {
             console.log(`🖼️ [AI Parser] 分析圖片是否為食物廣告: ${imageUrl}`);
-            const completion = await this.openai.chat.completions.create({
-                model: this.model,
-                messages: [
-                    {
-                        role: 'user',
-                        content: [
-                            {
-                                type: 'text',
-                                text: '請問這張圖片是否為便利商店的「食物商品」或「飲料商品」的廣告或介紹？\n如果是會員招募、APP下載、點數活動、徵才資訊等非具體食物商品的內容，請回答 false。\n請只回傳 JSON 格式：{"isFood": boolean, "reason": "理由"}'
-                            },
-                            {
-                                type: 'image_url',
-                                image_url: {
-                                    url: imageUrl
-                                }
-                            }
-                        ]
-                    }
-                ],
-                max_tokens: 300,
-                response_format: { type: 'json_object' }
-            });
-            const content = completion.choices[0]?.message?.content;
-            if (!content)
+            const imageBase64 = await this.fetchImageAsBase64(imageUrl);
+            if (!imageBase64) {
                 return false;
-            const result = JSON.parse(content);
-            console.log(`🤖 [AI Parser] 圖片分析結果: ${result.isFood} (${result.reason})`);
-            return result.isFood === true;
+            }
+            const prompt = '請問這張圖片是否為「食物商品」或「飲料商品」的廣告或介紹？\n包含便利商店、餐廳、速食店等各種食物飲料產品（如主餐、湯類、飲品、甜點等）。\n如果是會員招募、APP下載、點數活動、徵才資訊等非具體食物商品的內容，請回答 false。\n請只回傳 JSON 格式：{"isFood": boolean, "reason": "理由"}';
+            const result = await this.model.generateContent([
+                prompt,
+                {
+                    inlineData: {
+                        data: imageBase64,
+                        mimeType: "image/jpeg"
+                    }
+                }
+            ]);
+            const text = result.response.text();
+            if (!text)
+                return false;
+            const jsonResult = JSON.parse(text);
+            console.log(`🤖 [AI Parser] 圖片分析結果: ${jsonResult.isFood} (${jsonResult.reason})`);
+            return jsonResult.isFood === true;
         }
         catch (error) {
             console.warn(`⚠️ [AI Parser] 圖片分析失敗，預設視為非食物:`, error);
             return false;
+        }
+    }
+    async isNewOrLimitedFood(imageUrl) {
+        try {
+            console.log(`🖼️ [AI Parser] 分析圖片是否為期間限定/新品食物: ${imageUrl}`);
+            const imageBase64 = await this.fetchImageAsBase64(imageUrl);
+            if (!imageBase64)
+                return false;
+            const prompt = '請問這張圖片是否為食物或飲料商品的廣告或介紹？\n\n判斷標準：\n1. 必須是具體的食物或飲料商品。\n2. 只要是介紹某個食物產品（包含新品、期間限定、或是一般主打商品），請都回答 true。\n3. 如果是純粹的會員招募、APP下載、徵才資訊、單純品牌形象（無特定產品）等，請回答 false。\n\n請只回傳 JSON 格式：{"isTarget": boolean, "reason": "理由"}';
+            const result = await this.model.generateContent([
+                prompt,
+                {
+                    inlineData: {
+                        data: imageBase64,
+                        mimeType: "image/jpeg"
+                    }
+                }
+            ]);
+            const text = result.response.text();
+            if (!text)
+                return false;
+            const jsonResult = JSON.parse(text);
+            console.log(`🤖 [AI Parser] 期間限定/新品分析結果: ${jsonResult.isTarget} (${jsonResult.reason})`);
+            return jsonResult.isTarget === true;
+        }
+        catch (error) {
+            console.warn(`⚠️ [AI Parser] 圖片分析失敗，預設視為非目標:`, error);
+            return false;
+        }
+    }
+    async parseProductPage(request) {
+        try {
+            console.log(`🧠 [AI Parser] 解析產品頁面: ${request.url}`);
+            const prompt = `你是一個產品資訊提取助手。請從提供的 HTML/文字內容中提取：
+            1. 產品名稱 (name) - 請保留原文
+            2. 產品描述 (description)
+            3. 價格 (price) - 包含 amount (數字) 和 currency (幣種，預設 JPY)
+            
+            回傳 JSON 格式: { "name": string, "description": string, "price": { "amount": number, "currency": string } }`;
+            const result = await this.model.generateContent([
+                prompt,
+                request.html
+            ]);
+            const text = result.response.text();
+            if (!text)
+                return {};
+            return JSON.parse(text);
+        }
+        catch (e) {
+            console.warn('AI 解析產品頁面失敗', e);
+            return {};
+        }
+    }
+    async translateToTraditionalChinese(text) {
+        try {
+            if (!text)
+                return '';
+            const prompt = '你是翻譯助手。請將以下日文翻譯成台灣繁體中文。請回傳 JSON 格式：{ "translated": "翻譯後的文字" }';
+            const result = await this.model.generateContent([
+                prompt,
+                text
+            ]);
+            const respText = result.response.text();
+            if (!respText)
+                return text;
+            const json = JSON.parse(respText);
+            return json.translated || text;
+        }
+        catch (e) {
+            console.warn('翻譯失敗', e);
+            return text;
+        }
+    }
+    async parseProductsBatch(requests) {
+        if (requests.length === 0)
+            return [];
+        try {
+            console.log(`🤖 [AI Parser] 開始批次解析 ${requests.length} 個產品...`);
+            const result = await pRetry(async () => {
+                const listings = requests.map((req, index) => {
+                    return `Item ${index + 1}:\nSource URL: ${req.sourceUrl}\nContent:\n${req.listMarkdownContent}\n${req.detailMarkdownContent ? `Detail: ${req.detailMarkdownContent}` : ''}`;
+                }).join('\n\n----------------\n\n');
+                const systemPrompt = `你是專業的日本產品資訊解析助手。
+你的任務是從提供的多個產品內容中提取資訊，並將其轉換為結構化的 JSON 格式。
+
+請遵循以下規則：
+1. 每個項目由 "Item N" 標識。請確保回傳的陣列順序與輸入 Item 順序一致。
+2. 將日文產品名稱翻譯為自然、易懂的繁體中文。
+3. 將產品描述翻譯為繁體中文，保持簡潔但完整。
+4. 正確識別價格資訊（保持數字格式）。
+5. 提取營養資訊和過敏原。
+6. 對於每個 Item，回傳一個完整的產品物件。
+7. 如果某個 Item 無法解析或非產品，請在該位置回傳 null 或標記錯誤，不要跳過導致索引錯位。
+
+輸出格式必須是：
+{
+  "products": [
+    { ...product 1 object... },
+    { ...product 2 object... },
+    ...
+  ]
+}`;
+                const userPrompt = `請解析以下 ${requests.length} 個產品項目：
+
+${listings}
+
+除了基本資訊外，請特別注意提取圖片 URL (imageUrl) 和價格。
+請回傳包含 ${requests.length} 個產品物件的 JSON，格式如下：
+{
+  "products": [
+    {
+       "originalName": "日文原名",
+       "translatedName": "繁體中文翻譯名稱",
+       "originalDescription": "日文描述",
+       "translatedDescription": "繁體中文描述",
+       "price": { "amount": 100, "currency": "JPY" },
+       "nutrition": { ... },
+       "allergens": [],
+       "imageUrl": "URL",
+       "isNew": true,
+       "sourceUrl": "Source URL from input"
+    },
+    ...
+  ]
+}`;
+                const generationResult = await this.model.generateContent([
+                    systemPrompt,
+                    userPrompt
+                ]);
+                return generationResult;
+            }, {
+                retries: 3,
+                minTimeout: 2000,
+                factor: 2,
+                onFailedAttempt: error => {
+                    console.warn(`⚠️ [AI Parser] Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left. Error: ${error.message}`);
+                }
+            });
+            const text = result.response.text();
+            if (!text)
+                throw new Error('AI 回應為空');
+            const parsedData = JSON.parse(text);
+            let products = parsedData.products || [];
+            if (products.length !== requests.length) {
+                console.warn(`⚠️ [AI Parser] 批次解析數量不匹配 (預期 ${requests.length}, 實際 ${products.length})，可能部分丟失。`);
+            }
+            return products.map((p, i) => {
+                const req = requests[i];
+                if (!req || !p)
+                    return null;
+                const sourceUrl = p?.sourceUrl || req?.sourceUrl || '';
+                const transformedArray = this.validateAndTransformProducts([p], sourceUrl);
+                if (transformedArray.length === 0)
+                    return null;
+                const transformed = transformedArray[0];
+                if (!transformed)
+                    return null;
+                if (!transformed.imageUrl && req.productLink?.imageUrl) {
+                    console.log(`🖼️ [AI Parser] Restoring imageUrl from link: ${req.productLink.imageUrl}`);
+                    transformed.imageUrl = req.productLink.imageUrl;
+                }
+                else if (!transformed.imageUrl) {
+                    console.log(`⚠️ [AI Parser] Item '${transformed.translatedName}' has no imageUrl. Link info:`, JSON.stringify(req.productLink));
+                }
+                transformed.sourceUrl = sourceUrl;
+                return transformed;
+            }).filter((p) => p !== null);
+        }
+        catch (error) {
+            console.error(`❌ [AI Parser] 批次解析失敗 (Max Retries Reached):`, error);
+            return [];
         }
     }
     validateAndTransformProducts(rawProducts, defaultSourceUrl) {
@@ -186,7 +389,7 @@ ${request.detailMarkdownContent}
             originalDetailedDescription: product.originalDetailedDescription || undefined,
             translatedDetailedDescription: product.translatedDetailedDescription || undefined,
             price: product.price && typeof product.price.amount === 'number' ? {
-                amount: product.price.amount,
+                amount: Math.round(product.price.amount),
                 currency: product.price.currency || 'JPY',
                 note: product.price.note || undefined
             } : undefined,
@@ -208,9 +411,9 @@ ${request.detailMarkdownContent}
     }
 }
 export function createAIParserService(apiKey) {
-    const key = apiKey || process.env.OPENAI_API_KEY;
+    const key = apiKey || process.env.GEMINI_API_KEY;
     if (!key) {
-        throw new Error('OpenAI API Key 未設定，請設定 OPENAI_API_KEY 環境變數');
+        throw new Error('Gemini API Key 未設定，請設定 GEMINI_API_KEY 環境變數');
     }
     return new AIParserService(key);
 }

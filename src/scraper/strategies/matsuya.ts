@@ -93,7 +93,7 @@ export class MatsuyaStrategy implements ScraperStrategy {
                     if (el.href.includes('#')) continue;
 
                     // Ignore obvious non-product links
-                    if (el.innerText.includes('TOP') || el.innerText.includes('メニュー')) continue;
+                    if (el.textContent?.includes('TOP') || el.textContent?.includes('メニュー')) continue;
 
                     let container = el.parentElement;
                     let foundName = '';
@@ -104,13 +104,13 @@ export class MatsuyaStrategy implements ScraperStrategy {
                     // Initial search in anchor itself
                     const innerImg = el.querySelector('img');
                     if (innerImg) foundImg = innerImg.getAttribute('src') || innerImg.getAttribute('data-src') || '';
-                    if (el.innerText.includes('円')) foundPrice = el.innerText;
+                    if (el.textContent?.includes('円')) foundPrice = el.textContent || '';
 
                     // Traverse up up to 3 levels to find container
                     let bestContainer = null;
                     for (let i = 0; i < 3; i++) {
                         if (!container) break;
-                        const text = container.innerText;
+                        const text = container.textContent || '';
 
                         // Check if container has price
                         if (text.includes('円')) {
@@ -141,10 +141,10 @@ export class MatsuyaStrategy implements ScraperStrategy {
 
                         // Fallback Name: Split text by newline
                         if (!foundName) {
-                            const lines = bestContainer.innerText.split('\n').map(l => l.trim()).filter(l => l);
+                            const lines = (bestContainer.textContent || '').split('\n').map(l => l.trim()).filter(l => l);
                             // Assume first line is name if not price
-                            if (lines.length > 0 && !lines[0].includes('円')) {
-                                foundName = lines[0];
+                            if (lines.length > 0 && !lines[0]?.includes('円')) {
+                                foundName = lines[0] || '';
                             } else if (innerImg && innerImg.getAttribute('alt')) {
                                 foundName = innerImg.getAttribute('alt') || '';
                             }

@@ -100,7 +100,7 @@ export class McdonaldsStrategy implements ScraperStrategy {
 
                 return {
                     url: anchor.href,
-                    text: (anchor.innerText || img?.alt || '').trim(),
+                    text: (anchor.textContent || img?.alt || '').trim(),
                     imgSrc: imgSrc
                 };
             }).filter(i => i !== null && i.url && !i.url.includes('void(0)'));
@@ -185,16 +185,16 @@ export class McdonaldsStrategy implements ScraperStrategy {
                     if (cards.length > 0) {
                         for (const card of cards) {
                             // Extract Title
-                            const title = card.querySelector('h2, .h-l, .product-title, .cmp-title')?.innerText?.trim();
+                            const title = card.querySelector('h2, .h-l, .product-title, .cmp-title')?.textContent?.trim();
 
                             // Extract Price
                             // Look for the specific price class, or a generic price pattern text
                             const priceEl = card.querySelector('.product-section-price-primary-val, .price-text');
-                            let priceText = priceEl ? priceEl.innerText.trim() : '';
+                            let priceText = priceEl ? priceEl.textContent?.trim() || '' : '';
 
                             // If no specific price element, try to find text looking like price in the card
                             if (!priceText) {
-                                const textContent = card.innerText;
+                                const textContent = card.textContent || '';
                                 const priceMatch = textContent.match(/¥\d+(,?\d*)*/);
                                 if (priceMatch) priceText = priceMatch[0];
                             }
@@ -225,10 +225,10 @@ export class McdonaldsStrategy implements ScraperStrategy {
                     // Only run if specific cards weren't found. This assumes the *whole page* is the product.
                     // This is where "only 1 product extracted" usually happens if Strategy 1 fails.
                     if (extracted.length === 0) {
-                        const title = document.querySelector('h1')?.innerText?.trim();
+                        const title = document.querySelector('h1')?.textContent?.trim();
                         const description = document.querySelector('.product-description, .text')?.textContent?.trim();
                         const img = document.querySelector('.product-image img, .hero-image img, main img')?.getAttribute('src');
-                        const priceText = document.body.innerText.match(/(\d{1,3}(,\d{3})*)円/)?.[0];
+                        const priceText = document.body.textContent?.match(/(\d{1,3}(,\d{3})*)円/)?.[0];
 
                         // Ensure it really looks like a product page (needs title and image)
                         if (title && img) {

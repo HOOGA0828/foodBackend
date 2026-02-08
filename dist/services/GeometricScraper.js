@@ -25,7 +25,6 @@ export const GeometricScraperBrowserScript = () => {
         let bestImg = null;
         let minDist = Infinity;
         for (const img of imgs) {
-            const yDiff = price.rect.top - img.rect.bottom;
             const pCenter = { x: price.rect.left + price.rect.width / 2, y: price.rect.top + price.rect.height / 2 };
             const iCenter = { x: img.rect.left + img.rect.width / 2, y: img.rect.top + img.rect.height / 2 };
             const dist = Math.sqrt(Math.pow(pCenter.x - iCenter.x, 2) + Math.pow(pCenter.y - iCenter.y, 2));

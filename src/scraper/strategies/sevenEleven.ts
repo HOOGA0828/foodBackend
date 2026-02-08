@@ -17,9 +17,7 @@ export class SevenElevenStrategy implements ScraperStrategy {
         const startTime = Date.now();
         let allProducts: ProductInfo[] = [];
 
-        // 我們將使用一個變量來跟踪是否還有下一頁
-        let hasNextPage = true;
-        let currentPageUrl = brandConfig.url;
+
         let pageCount = 0;
         const MAX_PAGES = 5; // 安全限制，避免無限循環
 
@@ -151,11 +149,12 @@ export class SevenElevenStrategy implements ScraperStrategy {
                 const aiResult = await this.aiParser.parseProducts(parseRequest);
 
                 if (aiResult.success && aiResult.products.length > 0) {
-                    const p = aiResult.products[0];
+                    const p = aiResult.products[0]!;
                     results.push({
                         ...p,
-                        originalName: link.title, // 強制使用 selector 抓到的標題
-                        imageUrl: link.imageUrl || p.imageUrl, // 優先使用 selector 抓到的
+                        translatedName: p.translatedName || p.originalName || link.title,
+                        originalName: link.title,
+                        imageUrl: link.imageUrl || p.imageUrl || '',
                         sourceUrl: link.url
                     });
                 } else {

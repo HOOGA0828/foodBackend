@@ -62,7 +62,7 @@ export class DefaultStrategy {
                     maxRequestsPerMinute: 10,
                     maxConcurrency: 1,
                     requestHandler: async ({ request, page }) => {
-                        await page.waitForLoadState('networkidle');
+                        await page.waitForLoadState('domcontentloaded');
                         await this.performPageActions(page, brandConfig);
                         const waitTime = brandConfig.options?.waitFor || 1000;
                         await page.waitForTimeout(waitTime);
@@ -123,7 +123,7 @@ export class DefaultStrategy {
             maxConcurrency: 2,
             requestHandler: async ({ request, page }) => {
                 const link = request.userData.link;
-                await page.waitForLoadState('networkidle');
+                await page.waitForLoadState('domcontentloaded');
                 await page.waitForTimeout(deepCrawling.detailPageWaitFor || 2000);
                 const content = await page.content();
                 const images = await this.extractPageImages(page, brandConfig);
@@ -160,8 +160,14 @@ export class DefaultStrategy {
                 let imgUrl = '';
                 if (conf.imgSel) {
                     const img = el.querySelector(conf.imgSel);
-                    if (img)
-                        imgUrl = img.getAttribute('src') || '';
+                    if (img) {
+                        imgUrl = img.getAttribute('data-original') ||
+                            img.getAttribute('data-src') ||
+                            img.getAttribute('src') || '';
+                        if (imgUrl.includes('giphy.gif') || imgUrl.includes('placeholder')) {
+                            imgUrl = '';
+                        }
+                    }
                 }
                 const absUrl = href.startsWith('http') ? href : href.startsWith('/') ? `${conf.baseUrl}${href}` : `${conf.baseUrl}/${href}`;
                 const raw = el.textContent?.trim() || '';
@@ -179,9 +185,39 @@ export class DefaultStrategy {
         const sel = brandConfig.options?.deepCrawling?.productImageSelector;
         if (!sel)
             return [];
-        return await page.$$eval(sel, (imgs) => imgs.map(i => i.src).filter(s => s));
+        return await page.$$eval(sel, (imgs) => imgs.map(i => i.getAttribute('data-original') ||
+            i.getAttribute('data-src') ||
+            i.src || '')
+            .filter(s => s && !s.includes('giphy.gif') && !s.includes('placeholder')));
     }
     async performPageActions(page, brandConfig) {
+        const actions = brandConfig.options?.actions || [];
+        for (const action of actions) {
+            if (action === 'scrollToBottom') {
+                console.log('🔄 [Scraper] 開始滾動頁面以觸發 lazy loading...');
+                await page.evaluate(() => window.scrollTo(0, 0));
+                await page.waitForTimeout(500);
+                const pageHeight = await page.evaluate(() => document.body.scrollHeight);
+                const viewportHeight = await page.evaluate(() => window.innerHeight);
+                const scrollSteps = Math.ceil(pageHeight / viewportHeight) + 2;
+                console.log(`📏 [Scraper] 頁面高度: ${pageHeight}px, 視窗高度: ${viewportHeight}px, 將滾動 ${scrollSteps} 次`);
+                for (let i = 0; i < scrollSteps; i++) {
+                    await page.evaluate(() => {
+                        window.scrollBy({
+                            top: window.innerHeight,
+                            behavior: 'smooth'
+                        });
+                    });
+                    await page.waitForTimeout(1500);
+                    console.log(`   滾動進度: ${i + 1}/${scrollSteps}`);
+                }
+                await page.evaluate(() => {
+                    window.scrollTo(0, document.body.scrollHeight);
+                });
+                await page.waitForTimeout(2000);
+                console.log('✅ [Scraper] 滾動完成');
+            }
+        }
     }
     async parseWithListLinks(brandConfig, links) {
         const results = [];
@@ -192,8 +228,14 @@ export class DefaultStrategy {
                 productLink: link,
                 sourceUrl: link.url
             });
-            if (res.success)
-                results.push(...res.products);
+            if (res.success) {
+                const productsWithCorrectImages = res.products.map(p => ({
+                    ...p,
+                    imageUrl: link.imageUrl || p.imageUrl,
+                    sourceUrl: link.url
+                }));
+                results.push(...productsWithCorrectImages);
+            }
         }
         return this.removeDuplicateProducts(results);
     }
@@ -218,8 +260,14 @@ export class DefaultStrategy {
                 productLink: d.productLink,
                 sourceUrl: d.productLink.url
             });
-            if (res.success)
-                all.push(...res.products);
+            if (res.success) {
+                const productsWithCorrectImages = res.products.map(p => ({
+                    ...p,
+                    imageUrl: d.productLink.imageUrl || p.imageUrl,
+                    sourceUrl: d.productLink.url
+                }));
+                all.push(...productsWithCorrectImages);
+            }
         }
         return this.removeDuplicateProducts(all);
     }

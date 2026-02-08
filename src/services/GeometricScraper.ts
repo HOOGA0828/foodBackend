@@ -44,7 +44,7 @@ export const GeometricScraperBrowserScript = () => {
         for (const img of imgs) {
             // Image must be above or slightly below (aligned)
             // Usually Image is above Price.
-            const yDiff = price.rect.top - img.rect.bottom;
+
 
             // Center points
             const pCenter = { x: price.rect.left + price.rect.width / 2, y: price.rect.top + price.rect.height / 2 };

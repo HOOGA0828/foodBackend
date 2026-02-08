@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { BRANDS } from '../config/brands.js'; // Ensure this path is correct
+// import { BRANDS } from '../config/brands.js'; // Ensure this path is correct
 
 const prisma = new PrismaClient();
 
@@ -114,8 +114,8 @@ async function main() {
                 });
                 console.log(`✅ Created ${brand.name}`);
             }
-        } catch (e) {
-            console.error(`❌ Failed to seed ${brand.name}:`, e);
+        } catch (_e) {
+            console.error(`❌ Failed to seed ${brand.name}:`, _e);
         }
     }
 }

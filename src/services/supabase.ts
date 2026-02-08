@@ -217,17 +217,17 @@ export class SupabaseService {
       }
       const date = new Date(dateString);
       return isNaN(date.getTime()) ? null : date;
-    } catch {
+    } catch (_e) {
       return null;
     }
   }
 
   private async recordCrawlerRun(
-    result: ScraperResult,
+    _result: ScraperResult,
     insertedCount: number,
     updatedCount: number,
     errors: string[],
-    brandId: string
+    _brandId: string
   ): Promise<void> {
     try {
       // crawler_runs table mapping? 
@@ -238,8 +238,8 @@ export class SupabaseService {
       // I will log it only for now to be safe.
       // Or check if I can add it to schema.
       console.log(`📊 [DB] 爬蟲統計 - 新增: ${insertedCount}, 更新: ${updatedCount}, 錯誤: ${errors.length}`);
-    } catch (e) {
-      console.warn('Log run failed', e);
+    } catch (_e) {
+      console.warn('Log run failed', _e);
     }
   }
   /**

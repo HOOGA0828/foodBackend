@@ -95,7 +95,7 @@ export class KfcStrategy implements ScraperStrategy {
 
                 for (const container of containers) {
                     const img = container.querySelector('img');
-                    if (!img || !img.src) {
+                    if (!img || !img.getAttribute('src')) {
                         // Some containers might be loading skeletons
                         console.log('PAGE LOG: Skip container - no image (src missing or no img tag)');
                         continue;
@@ -124,7 +124,7 @@ export class KfcStrategy implements ScraperStrategy {
                     // 2. Fallback to Regex on full text
                     if (!foundPrice) {
                         const match = text.match(priceRegex);
-                        if (match) {
+                        if (match && match[1]) {
                             const pText = match[1].replace(/,/g, '');
                             if (pText.length > 1 || parseInt(pText) > 10) {
                                 foundPrice = parseInt(pText, 10);
@@ -141,7 +141,7 @@ export class KfcStrategy implements ScraperStrategy {
 
                     if (!foundName) {
                         // Fallback: Use image alt
-                        foundName = img.alt || '';
+                        foundName = img.getAttribute('alt') || '';
                     }
 
                     if (!foundName && text) {
@@ -150,7 +150,7 @@ export class KfcStrategy implements ScraperStrategy {
                             const t = l.trim();
                             return t.length > 1 && !t.includes('¥') && !t.includes('円');
                         });
-                        if (lines.length > 0) foundName = lines[0].trim();
+                        if (lines.length > 0) foundName = (lines[0] || '').trim();
                     }
 
                     if (foundPrice) {
@@ -158,7 +158,7 @@ export class KfcStrategy implements ScraperStrategy {
                         results.push({
                             name: foundName || 'KFC Product',
                             price: foundPrice,
-                            imgSrc: img.src,
+                            imgSrc: img.getAttribute('src'),
                             desc: text.trim()
                         });
                     } else {

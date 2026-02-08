@@ -304,18 +304,8 @@ function outputResultsForSupabase(results: ScraperResult[]): void {
   }
 
   // 準備 Supabase 格式的資料
-  const supabaseData = successfulResults.map(result => ({
-    brand_name: result.brand.name,
-    brand_display_name: result.brand.displayName,
-    brand_category: result.brand.category,
-    products_count: result.productsCount,
-    products: result.products,
-    scraped_at: result.scrapedAt.toISOString(),
-    status: result.status,
-    execution_time_ms: result.executionTime
-  }));
-
   // 只在 debug 模式或必要時輸出
+  // const supabaseData = successfulResults.map(result => ({ ... }));
   // console.log(JSON.stringify(supabaseData, null, 2));
 }
 

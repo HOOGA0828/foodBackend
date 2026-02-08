@@ -8,34 +8,33 @@ export class SevenElevenStrategy {
         console.log(`🏪 [SevenElevenStrategy] 開始抓取 7-Eleven...`);
         const startTime = Date.now();
         let allProducts = [];
-        let hasNextPage = true;
-        let currentPageUrl = brandConfig.url;
         let pageCount = 0;
         const MAX_PAGES = 5;
         const crawler = new PlaywrightCrawler({
             maxRequestsPerMinute: 10,
+            requestHandlerTimeoutSecs: 300,
             requestHandler: async ({ request, page }) => {
                 console.log(`📄 [SevenElevenStrategy] 正在處理頁面: ${request.url}`);
                 await page.waitForSelector('.list_inner', { timeout: 10000 }).catch(() => console.log('⚠️ 等待 .list_inner 超時'));
                 const links = await this.extractProductsFromPage(page, brandConfig);
                 console.log(`✅ [SevenElevenStrategy] 頁面找到 ${links.length} 個產品`);
-                const products = await this.parseProducts(brandConfig, links);
-                allProducts.push(...products);
                 const nextUrl = await page.$$eval('.pager_ctrl a', (anchors) => {
                     const nextLink = anchors.find(a => a.textContent.includes('次へ'));
                     return nextLink ? nextLink.getAttribute('href') : null;
-                });
+                }).catch(() => null);
                 if (nextUrl && pageCount < MAX_PAGES) {
                     const baseUrl = new URL(brandConfig.url).origin;
                     const absoluteNextUrl = nextUrl.startsWith('http') ? nextUrl :
                         nextUrl.startsWith('/') ? `${baseUrl}${nextUrl}` : `${baseUrl}/${nextUrl}`;
-                    console.log(`➡️ [SevenElevenStrategy] 發現下一頁 (文字匹配): ${absoluteNextUrl}`);
+                    console.log(`➡️ [SevenElevenStrategy] 發現下一頁 (${pageCount + 1}/${MAX_PAGES}): ${absoluteNextUrl}`);
                     await crawler.addRequests([absoluteNextUrl]);
                     pageCount++;
                 }
                 else {
                     console.log('⏹️ [SevenElevenStrategy] 未找到下一頁連結 (次へ) 或達到頁數限制。');
                 }
+                const products = await this.parseProducts(brandConfig, links);
+                allProducts.push(...products);
             },
         });
         await crawler.run([brandConfig.url]);
@@ -107,8 +106,9 @@ export class SevenElevenStrategy {
                     const p = aiResult.products[0];
                     results.push({
                         ...p,
+                        translatedName: p.translatedName || p.originalName || link.title,
                         originalName: link.title,
-                        imageUrl: link.imageUrl || p.imageUrl,
+                        imageUrl: link.imageUrl || p.imageUrl || '',
                         sourceUrl: link.url
                     });
                 }

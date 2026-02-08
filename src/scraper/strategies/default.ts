@@ -2,9 +2,9 @@
 import { PlaywrightCrawler, RequestQueue } from 'crawlee';
 import { BrandConfig } from '../../config/brands.js';
 import { ScraperStrategy } from './base.js';
-import { ScrapedData, ScraperResult, ProductInfo, ProductLink, DetailedProductData, AIParseRequest } from '../../types/scraper.js';
+import { ScrapedData, ScraperResult, ProductInfo, ProductLink, DetailedProductData } from '../../types/scraper.js';
 import { AIParserService } from '../../services/aiParser.js';
-import { htmlToMarkdown, estimateTokenCount } from '../../utils/htmlCleaner.js';
+import { htmlToMarkdown } from '../../utils/htmlCleaner.js';
 
 export class DefaultStrategy implements ScraperStrategy {
     private aiParser: AIParserService;

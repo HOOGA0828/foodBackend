@@ -1,160 +1,126 @@
-import { createClient } from '@supabase/supabase-js';
+import { PrismaClient } from '@prisma/client';
 export class SupabaseService {
-    supabase;
-    constructor(supabaseUrl, supabaseKey) {
-        const url = supabaseUrl || process.env.SUPABASE_URL;
-        const key = supabaseKey || process.env.SUPABASE_SERVICE_ROLE_KEY;
-        if (!url || !key) {
-            throw new Error('Supabase 環境變數未設定，請設定 SUPABASE_URL 和 SUPABASE_SERVICE_ROLE_KEY');
-        }
-        this.supabase = createClient(url, key);
+    prisma;
+    constructor() {
+        this.prisma = new PrismaClient();
     }
     async saveScraperResult(result) {
         try {
-            console.log(`💾 [Supabase] 準備儲存 ${result.brand.displayName} 的爬取結果...`);
-            const { data: brandData, error: brandError } = await this.supabase
-                .from('brands')
-                .select('id')
-                .eq('slug', result.brand.name.toLowerCase().replace(/\s+/g, '-'))
-                .single();
-            if (brandError || !brandData) {
-                console.error(`❌ [Supabase] 找不到品牌: ${result.brand.name}`, brandError);
+            console.log(`💾 [DB] 準備儲存 ${result.brand.displayName} 的爬取結果...`);
+            const slug = result.brand.name.toLowerCase().replace(/\s+/g, '-');
+            const brand = await this.prisma.brand.findUnique({
+                where: { slug: slug }
+            });
+            if (!brand) {
+                console.error(`❌ [DB] 找不到品牌: ${result.brand.name} (slug: ${slug})`);
                 return { success: false, error: `找不到品牌: ${result.brand.name}` };
             }
-            const brandId = brandData.id;
+            const brandId = brand.id;
             let insertedCount = 0;
             let skippedCount = 0;
             const errors = [];
+            const currentActiveProducts = await this.prisma.product.findMany({
+                where: {
+                    brandId: brandId,
+                    status: 'available'
+                },
+                select: { id: true }
+            });
+            const activeProductIds = new Set(currentActiveProducts.map(p => p.id));
+            console.log(`📋 [DB] 目前活躍產品數量: ${activeProductIds.size}`);
             for (const product of result.products) {
                 try {
-                    let existingProduct_ = null;
+                    let existingProduct = null;
                     if (product.originalName) {
-                        const { data: byOriginalName } = await this.supabase
-                            .from('products')
-                            .select('id')
-                            .eq('source_url', product.sourceUrl || result.brand.url)
-                            .filter('metadata->>original_name', 'eq', product.originalName)
-                            .maybeSingle();
-                        existingProduct_ = byOriginalName;
-                    }
-                    if (!existingProduct_) {
-                        const { data: byName } = await this.supabase
-                            .from('products')
-                            .select('id')
-                            .eq('source_url', product.sourceUrl || result.brand.url)
-                            .eq('name', product.translatedName)
-                            .maybeSingle();
-                        existingProduct_ = byName;
-                    }
-                    if (!existingProduct_ && product.sourceUrl && product.sourceUrl !== result.brand.url) {
-                        const { data: byUrl } = await this.supabase
-                            .from('products')
-                            .select('id')
-                            .eq('source_url', product.sourceUrl)
-                            .maybeSingle();
-                        if (byUrl)
-                            existingProduct_ = byUrl;
-                    }
-                    if (existingProduct_) {
-                        console.log(`📝 [Supabase] 更新產品: ${product.translatedName} (ID: ${existingProduct_.id})`);
-                        const updateData = {
-                            description: product.translatedName,
-                            name_jp: product.originalName,
-                            price: product.price?.amount || null,
-                            currency: product.price?.currency || 'JPY',
-                            image_urls: product.imageUrl ? [product.imageUrl] : [],
-                            available_start_date: this.parseDateString(product.releaseDate),
-                            is_new_product: product.isNew || true,
-                            updated_at: new Date().toISOString(),
-                            last_verified_at: new Date().toISOString(),
-                            allergens: product.allergens || [],
-                            scraped_at: result.scrapedAt.toISOString(),
-                            crawled_from: result.brand.name,
-                            metadata: {
-                                original_name: product.originalName,
-                                price_note: product.price?.note,
-                                crawled_at: result.scrapedAt.toISOString(),
-                                brand_info: result.brand
+                        existingProduct = await this.prisma.product.findFirst({
+                            where: {
+                                brandId: brandId,
+                                nameJp: product.originalName
                             }
-                        };
-                        const { error: updateError } = await this.supabase
-                            .from('products')
-                            .update(updateData)
-                            .eq('id', existingProduct_.id);
-                        if (updateError) {
-                            console.error(`❌ [Supabase] 更新失敗: ${updateError.message}`);
-                            errors.push(`更新產品 ${product.translatedName} 失敗: ${updateError.message}`);
-                        }
-                        else {
-                            skippedCount++;
-                        }
+                        });
+                    }
+                    if (existingProduct) {
+                        activeProductIds.delete(existingProduct.id);
+                        console.log(`📝 [DB] 更新產品: ${product.translatedName} (ID: ${existingProduct.id})`);
+                        await this.prisma.product.update({
+                            where: { id: existingProduct.id },
+                            data: {
+                                name: product.translatedName,
+                                nameJp: product.originalName,
+                                description: product.translatedName,
+                                price: product.price ? new Decimal(product.price.amount) : null,
+                                currency: product.price?.currency || 'JPY',
+                                imageUrls: product.imageUrl ? [product.imageUrl] : [],
+                                availableStartDate: this.parseDateString(product.releaseDate),
+                                metadata: {
+                                    ...(existingProduct.metadata || {}),
+                                    original_name: product.originalName,
+                                    price_note: product.price?.note,
+                                    crawled_at: result.scrapedAt.toISOString(),
+                                    brand_info: result.brand
+                                },
+                                status: 'available',
+                                lastVerifiedAt: new Date(),
+                                updatedAt: new Date()
+                            }
+                        });
+                        skippedCount++;
                     }
                     else {
-                        console.log(`✨ [Supabase] 新增產品: ${product.translatedName}`);
-                        const insertData = {
-                            name: product.translatedName,
-                            name_jp: product.originalName,
-                            description: product.translatedName,
-                            brand_id: brandId,
-                            price: product.price?.amount || null,
-                            currency: product.price?.currency || 'JPY',
-                            image_urls: product.imageUrl ? [product.imageUrl] : [],
-                            available_start_date: this.parseDateString(product.releaseDate),
-                            is_new_product: product.isNew || true,
-                            status: 'available',
-                            source_url: product.sourceUrl || result.brand.url,
-                            source_identifier: `${result.brand.name}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                            scraped_at: result.scrapedAt.toISOString(),
-                            last_verified_at: result.scrapedAt.toISOString(),
-                            crawled_from: result.brand.name,
-                            allergens: product.allergens || [],
-                            tags: ['新品'],
-                            metadata: {
-                                original_name: product.originalName,
-                                price_note: product.price?.note,
-                                crawled_at: result.scrapedAt.toISOString(),
-                                brand_info: result.brand
+                        console.log(`✨ [DB] 新增產品: ${product.translatedName}`);
+                        await this.prisma.product.create({
+                            data: {
+                                name: product.translatedName,
+                                nameJp: product.originalName,
+                                description: product.translatedName,
+                                brandId: brandId,
+                                price: product.price ? new Decimal(product.price.amount) : null,
+                                currency: product.price?.currency || 'JPY',
+                                imageUrls: product.imageUrl ? [product.imageUrl] : [],
+                                availableStartDate: this.parseDateString(product.releaseDate),
+                                status: 'available',
+                                sourceUrl: product.sourceUrl || result.brand.url,
+                                sourceIdentifier: `${result.brand.name}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                                scrapedAt: result.scrapedAt,
+                                lastVerifiedAt: result.scrapedAt,
+                                tags: ['新品'],
+                                metadata: {
+                                    original_name: product.originalName,
+                                    price_note: product.price?.note,
+                                    crawled_at: result.scrapedAt.toISOString(),
+                                    brand_info: result.brand
+                                }
                             }
-                        };
-                        const { error: insertError } = await this.supabase
-                            .from('products')
-                            .insert(insertData);
-                        if (insertError) {
-                            console.error(`❌ [Supabase] 插入失敗: ${insertError.message}`);
-                            errors.push(`插入產品 ${product.translatedName} 失敗: ${insertError.message}`);
-                        }
-                        else {
-                            insertedCount++;
-                        }
+                        });
+                        insertedCount++;
                     }
                 }
                 catch (error) {
                     const errorMessage = error instanceof Error ? error.message : '未知錯誤';
-                    console.error(`❌ [Supabase] 處理例外: ${errorMessage}`);
-                    errors.push(`處理產品 ${product.translatedName} 時發生錯誤: ${errorMessage}`);
+                    console.error(`❌ [DB] 處理產品例外: ${errorMessage}`);
+                    errors.push(`處理產品 ${product.translatedName} 失敗`);
                 }
             }
-            await this.recordCrawlerRun(result, insertedCount, skippedCount, errors);
-            const hasErrors = errors.length > 0;
-            console.log(`📊 [Supabase] ${result.brand.displayName} 儲存完成:`);
-            console.log(`   ✅ 新增產品: ${insertedCount} 個`);
-            console.log(`   ⚠️  更新產品: ${skippedCount} 個`);
-            console.log(`   ❌ 錯誤產品: ${errors.length} 個`);
-            if (hasErrors) {
-                console.log('   錯誤詳情:');
-                errors.slice(0, 3).forEach(error => console.log(`     - ${error}`));
-                if (errors.length > 3) {
-                    console.log(`     ...還有 ${errors.length - 3} 個錯誤`);
-                }
+            if (result.products.length > 0 && activeProductIds.size > 0) {
+                console.log(`🍂 [DB] 標記 ${activeProductIds.size} 個產品為下架...`);
+                const expiredIds = Array.from(activeProductIds);
+                await this.prisma.product.updateMany({
+                    where: { id: { in: expiredIds } },
+                    data: {
+                        status: 'sold_out',
+                        updatedAt: new Date()
+                    }
+                });
             }
+            await this.recordCrawlerRun(result, insertedCount, skippedCount, errors, brandId);
             return {
-                success: !hasErrors || insertedCount > 0,
+                success: errors.length === 0,
                 inserted: insertedCount > 0,
-                error: hasErrors ? errors.join('; ') : undefined
+                error: errors.length > 0 ? errors.join('; ') : undefined
             };
         }
         catch (error) {
-            console.error('❌ [Supabase] 儲存過程發生錯誤:', error);
+            console.error('❌ [DB] 儲存過程發生錯誤:', error);
             return {
                 success: false,
                 error: error instanceof Error ? error.message : '未知錯誤'
@@ -167,130 +133,51 @@ export class SupabaseService {
         try {
             const match = dateString.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
             if (match && match[1] && match[2] && match[3]) {
-                const year = match[1];
-                const month = match[2];
-                const day = match[3];
-                return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                return new Date(parseInt(match[1]), parseInt(match[2]) - 1, parseInt(match[3]));
             }
             const date = new Date(dateString);
             return isNaN(date.getTime()) ? null : date;
         }
-        catch {
+        catch (_e) {
             return null;
         }
     }
-    async recordCrawlerRun(result, insertedCount, updatedCount, errors) {
+    async recordCrawlerRun(_result, insertedCount, updatedCount, errors, _brandId) {
         try {
-            const { data: brandData } = await this.supabase
-                .from('brands')
-                .select('id')
-                .eq('slug', result.brand.name.toLowerCase().replace(/\s+/g, '-'))
-                .single();
-            const crawlerRunData = {
-                brand_id: brandData?.id || null,
-                brand_name: result.brand.displayName,
-                status: errors.length > 0 ? 'partial_success' : 'success',
-                started_at: new Date(result.scrapedAt.getTime() - result.executionTime),
-                completed_at: result.scrapedAt,
-                duration_ms: result.executionTime,
-                products_found: result.productsCount,
-                products_updated: updatedCount,
-                products_new: insertedCount,
-                error_message: errors.length > 0 ? errors.slice(0, 3).join('; ') : null,
-                metadata: {
-                    brand_category: result.brand.category,
-                    has_errors: errors.length > 0,
-                    error_count: errors.length
-                }
-            };
-            await this.supabase
-                .from('crawler_runs')
-                .insert(crawlerRunData);
+            console.log(`📊 [DB] 爬蟲統計 - 新增: ${insertedCount}, 更新: ${updatedCount}, 錯誤: ${errors.length}`);
         }
-        catch (error) {
-            console.warn('⚠️ [Supabase] 記錄爬蟲執行結果失敗:', error);
-        }
-    }
-    async getLatestScrapes(brandName, limit = 10) {
-        try {
-            let query = this.supabase
-                .from('product_scrapes')
-                .select('*')
-                .order('scraped_at', { ascending: false })
-                .limit(limit);
-            if (brandName) {
-                query = query.eq('brand_name', brandName);
-            }
-            const { data, error } = await query;
-            if (error) {
-                console.error('❌ [Supabase] 查詢記錄失敗:', error);
-                return [];
-            }
-            return data || [];
-        }
-        catch (error) {
-            console.error('❌ [Supabase] 查詢記錄時發生錯誤:', error);
-            return [];
+        catch (_e) {
+            console.warn('Log run failed', _e);
         }
     }
     async clearBrandProducts(brandName) {
         try {
-            console.log(`🗑️ [Supabase] 準備刪除 ${brandName} 的所有產品...`);
-            const { data: brandData, error: brandError } = await this.supabase
-                .from('brands')
-                .select('id')
-                .eq('slug', brandName.toLowerCase().replace(/\s+/g, '-'))
-                .single();
-            if (brandError || !brandData) {
-                console.warn(`⚠️ [Supabase] 找不到品牌 ${brandName}，嘗試直接用 crawl_from 刪除?`);
-                return { success: false, error: `找不到品牌: ${brandName}` };
+            console.log(`🗑️ [DB] 準備清除品牌 ${brandName} 的所有產品...`);
+            const slug = brandName.toLowerCase().replace(/\s+/g, '-');
+            const brand = await this.prisma.brand.findUnique({
+                where: { slug: slug }
+            });
+            if (!brand) {
+                return { success: false, deletedCount: 0, error: `找不到品牌: ${brandName} (slug: ${slug})` };
             }
-            const { count, error: deleteError } = await this.supabase
-                .from('products')
-                .delete({ count: 'exact' })
-                .eq('brand_id', brandData.id);
-            if (deleteError) {
-                console.error(`❌ [Supabase] 刪除失敗:`, deleteError);
-                return { success: false, error: deleteError.message };
-            }
-            console.log(`✅ [Supabase] 已刪除 ${brandName} 的 ${count} 筆產品資料`);
-            return { success: true, deletedCount: count || 0 };
+            const result = await this.prisma.product.deleteMany({
+                where: { brandId: brand.id }
+            });
+            console.log(`✅ [DB] 已刪除 ${result.count} 筆產品資料`);
+            return { success: true, deletedCount: result.count };
         }
         catch (error) {
-            console.error(`❌ [Supabase] 清除過程發生錯誤:`, error);
-            return { success: false, error: error instanceof Error ? error.message : '未知錯誤' };
-        }
-    }
-    async cleanupOldRecords(brandName, daysAgo = 7) {
-        try {
-            const cutoffDate = new Date();
-            cutoffDate.setDate(cutoffDate.getDate() - daysAgo);
-            const { error } = await this.supabase
-                .from('product_scrapes')
-                .delete()
-                .eq('brand_name', brandName)
-                .lt('scraped_at', cutoffDate.toISOString());
-            if (error) {
-                console.error('❌ [Supabase] 清理舊記錄失敗:', error);
-                return false;
-            }
-            console.log(`🧹 [Supabase] 舊記錄清理完成`);
-            return true;
-        }
-        catch (error) {
-            console.error('❌ [Supabase] 清理舊記錄時發生錯誤:', error);
-            return false;
+            console.error('❌ [DB] 清除產品過程發生錯誤:', error);
+            return {
+                success: false,
+                deletedCount: 0,
+                error: error instanceof Error ? error.message : '未知錯誤'
+            };
         }
     }
 }
+import { Decimal } from '@prisma/client/runtime/library';
 export function createSupabaseService() {
-    try {
-        return new SupabaseService();
-    }
-    catch (error) {
-        console.warn('⚠️ [Supabase] 初始化失敗:', error);
-        console.log('💡 如果不需要資料庫功能，可以忽略此警告');
-        return null;
-    }
+    return new SupabaseService();
 }
 //# sourceMappingURL=supabase.js.map

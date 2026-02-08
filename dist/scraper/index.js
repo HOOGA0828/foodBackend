@@ -39,6 +39,9 @@ async function main() {
                 const result = await scraper.scrapeAndParseBrand(brand);
                 results.push(result);
                 displayResultSummary(result);
+                if (result.status === 'success' || result.status === 'partial_success') {
+                    await saveResultsToSupabase([result], supabaseService);
+                }
             }
             catch (error) {
                 console.error(`❌ 處理 ${brand.displayName} 時發生錯誤:`, error);
@@ -62,7 +65,32 @@ async function main() {
             }
         }
         displayFinalReport(results, Date.now() - startTime);
-        await saveResultsToSupabase(results, supabaseService);
+        const saveSummary = await saveResultsToSupabase(results, supabaseService);
+        try {
+            if (process.env.NOTIFICATION_EMAIL) {
+                const { sendNotification } = await import('../services/mailer.js');
+                const insertedCount = saveSummary.successfulSaves;
+                const subject = `[爬蟲報告] 新增 ${insertedCount} 筆資料 - ${new Date().toLocaleDateString()}`;
+                let text = `爬蟲執行完成。\n\n`;
+                text += `新增資料: ${insertedCount} 筆\n`;
+                text += `執行時間: ${((Date.now() - startTime) / 1000).toFixed(1)} 秒\n`;
+                text += `成功品牌: ${results.filter(r => r.status === 'success').length}\n`;
+                text += `失敗品牌: ${results.filter(r => r.status === 'failed').length}\n`;
+                if (results.some(r => r.status === 'failed')) {
+                    text += `\n❌ 失敗品牌列表:\n`;
+                    results.filter(r => r.status === 'failed').forEach(r => {
+                        text += `- ${r.brand.displayName}: ${r.errorMessage}\n`;
+                    });
+                }
+                await sendNotification({
+                    subject,
+                    text
+                });
+            }
+        }
+        catch (e) {
+            console.error('❌ 發送通知時發生錯誤:', e);
+        }
         outputResultsForSupabase(results);
     }
     catch (error) {
@@ -134,7 +162,7 @@ function displayFinalReport(results, totalTime) {
 async function saveResultsToSupabase(results, supabaseService) {
     if (!supabaseService) {
         console.log('⚠️ Supabase 服務未初始化，跳過資料庫儲存');
-        return;
+        return { successfulSaves: 0, skippedSaves: 0, failedSaves: 0 };
     }
     console.log('\n💾 開始儲存結果到 Supabase 資料庫...');
     const savePromises = results.map(async (result) => {
@@ -173,6 +201,7 @@ async function saveResultsToSupabase(results, supabaseService) {
     console.log(`✅ 成功插入: ${successfulSaves} 筆`);
     console.log(`⚠️ 跳過重複: ${skippedSaves} 筆`);
     console.log(`❌ 儲存失敗: ${failedSaves} 筆`);
+    return { successfulSaves, skippedSaves, failedSaves };
 }
 function outputResultsForSupabase(results) {
     console.log('\n💾 Supabase 接入資料格式');
@@ -182,35 +211,6 @@ function outputResultsForSupabase(results) {
         console.log('❌ 沒有成功處理的品牌資料');
         return;
     }
-    const supabaseData = successfulResults.map(result => ({
-        brand_name: result.brand.name,
-        brand_display_name: result.brand.displayName,
-        brand_category: result.brand.category,
-        products_count: result.productsCount,
-        products: result.products,
-        scraped_at: result.scrapedAt.toISOString(),
-        status: result.status,
-        execution_time_ms: result.executionTime
-    }));
-    console.log(JSON.stringify(supabaseData, null, 2));
-    console.log('\n📝 Supabase 表格建議結構:');
-    console.log('CREATE TABLE product_scrapes (');
-    console.log('  id SERIAL PRIMARY KEY,');
-    console.log('  brand_name TEXT NOT NULL,');
-    console.log('  brand_display_name TEXT NOT NULL,');
-    console.log('  brand_category TEXT NOT NULL,');
-    console.log('  products_count INTEGER NOT NULL,');
-    console.log('  products JSONB NOT NULL,');
-    console.log('  scraped_at TIMESTAMP WITH TIME ZONE NOT NULL,');
-    console.log('  status TEXT NOT NULL,');
-    console.log('  execution_time_ms INTEGER NOT NULL,');
-    console.log('  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()');
-    console.log(');');
-    console.log('\n💡 插入範例:');
-    console.log('// 此處對接 Supabase');
-    console.log('// const { data, error } = await supabase');
-    console.log('//   .from(\'product_scrapes\')');
-    console.log('//   .insert(supabaseData);');
 }
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
