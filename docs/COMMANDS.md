@@ -12,20 +12,26 @@ npm run scraper:run
 ```
 
 ### 2. 爬取個別網站
-針對特定品牌進行爬取與更新。請將 `<BrandName>` 替換為 `src/config/brands.ts` 中的 `name` (例如 `7-Eleven`, `FamilyMart`, `McDonald's`)。
-**注意：** 品牌名稱若包含空格，請用引號包起來。
+針對特定品牌進行爬取與更新。請使用 `src/config/brands.ts` 中定義的品牌代號 (英文小寫)。
+
+**常用指令清單：**
 
 ```bash
-npm run scraper:run -- "<BrandName>"
-```
+# 超商類
+npm run scraper:run -- "seven-eleven"   # 7-Eleven
+npm run scraper:run -- "familymart"     # FamilyMart
+npm run scraper:run -- "lawson"         # Lawson
 
-**範例：**
-```bash
-# 爬取 7-Eleven
-npm run scraper:run -- "7-Eleven"
+# 速食/快餐類
+npm run scraper:run -- "mcdonalds"      # McDonald's
+npm run scraper:run -- "kfc"            # KFC
+npm run scraper:run -- "mos-burger"     # 摩斯漢堡
 
-# 爬取星巴克
-npm run scraper:run -- "Starbucks"
+# 餐廳/丼飯類
+npm run scraper:run -- "yoshinoya"      # 吉野家
+npm run scraper:run -- "sukiya"         # すき家 (Sukiya)
+npm run scraper:run -- "matsuya"        # 松屋
+npm run scraper:run -- "starbucks"      # Starbucks
 ```
 
 ---
@@ -55,37 +61,31 @@ npm run translate:names
 npx tsx src/scripts/clear-brand-data.ts "<BrandName>"
 ```
 
-**範例：**
+**支援的指令清單：** (可使用品牌名稱或代號，大小寫皆可)
+
 ```bash
-# 清空 7-Eleven 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "seven-eleven"
+# 超商類
+npx tsx src/scripts/clear-brand-data.ts "seven-eleven"   # 7-Eleven
+npx tsx src/scripts/clear-brand-data.ts "familymart"     # FamilyMart
+npx tsx src/scripts/clear-brand-data.ts "lawson"         # Lawson
 
-# 清空 FamilyMart 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "familymart"
+# 速食/快餐類
+npx tsx src/scripts/clear-brand-data.ts "mcdonalds"      # McDonald's
+npx tsx src/scripts/clear-brand-data.ts "kfc"            # KFC
+npx tsx src/scripts/clear-brand-data.ts "mos-burger"     # 摩斯漢堡
 
-# 清空 Lawson (羅森) 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "lawson"
+# 餐廳/丼飯類
+npx tsx src/scripts/clear-brand-data.ts "yoshinoya"      # 吉野家
+npx tsx src/scripts/clear-brand-data.ts "sukiya"         # すき家 (Sukiya)
+npx tsx src/scripts/clear-brand-data.ts "matsuya"        # 松屋
+npx tsx src/scripts/clear-brand-data.ts "starbucks"      # Starbucks
+```
 
-# 清空 McDonald's (麥當勞) 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "mcdonalds"
+### 5. 更新品牌 Logo
+自動抓取每個品牌首頁的 Open Graph 圖片或 Favicon，並更新至資料庫。
 
-# 清空 吉野家 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "yoshinoya"
-
-# 清空 すき家 (Sukiya) 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "sukiya"
-
-# 清空 Starbucks (星巴克) 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "starbucks"
-
-# 清空 松屋 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "matsuya"
-
-# 清空 KFC (肯德基) 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "kfc"
-
-# 清空 摩斯漢堡 的所有資料
-npx tsx src/scripts/clear-brand-data.ts "mos-burger"
+```bash
+npx tsx src/scripts/fetch-brand-logos.ts
 ```
 
 ---

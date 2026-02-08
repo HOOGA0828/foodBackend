@@ -38,11 +38,11 @@ export class WebScraper {
     this.strategies.set('familymart', new FamilyMartStrategy(this.aiParser));
     this.strategies.set('lawson', new LawsonStrategy(this.aiParser));
     this.strategies.set('mcdonalds', new McdonaldsStrategy(this.aiParser));
-    this.strategies.set('吉野家', new YoshinoyaStrategy(this.aiParser));
+    this.strategies.set('yoshinoya', new YoshinoyaStrategy(this.aiParser));
     this.strategies.set('sukiya', new SukiyaStrategy(this.aiParser));
-    this.strategies.set('Matsuya', new MatsuyaStrategy(this.aiParser));
-    this.strategies.set('KFC', new KfcStrategy(this.aiParser));
-    this.strategies.set('mos_burger', new MosBurgerStrategy(this.aiParser));
+    this.strategies.set('matsuya', new MatsuyaStrategy(this.aiParser));
+    this.strategies.set('kfc', new KfcStrategy(this.aiParser));
+    this.strategies.set('mos-burger', new MosBurgerStrategy(this.aiParser));
     this.strategies.set('starbucks', new StarbucksStrategy(this.aiParser));
   }
 

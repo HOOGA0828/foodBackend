@@ -1,9 +1,9 @@
 {
-  "usableSessionsCount": 2,
+  "usableSessionsCount": 3,
   "retiredSessionsCount": 0,
   "sessions": [
     {
-      "id": "session_PenIDzhXdX",
+      "id": "session_63arMHRLRM",
       "cookieJar": {
         "version": "tough-cookie@6.0.0",
         "storeType": "MemoryCookieStore",
@@ -16,14 +16,14 @@
       "userData": {},
       "maxErrorScore": 3,
       "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-02-06T14:50:29.180Z",
-      "createdAt": "2026-02-06T14:00:29.180Z",
+      "expiresAt": "2026-02-08T12:49:19.908Z",
+      "createdAt": "2026-02-08T11:59:19.908Z",
       "usageCount": 0,
       "maxUsageCount": 50,
       "errorScore": 0
     },
     {
-      "id": "session_FBSv69M4bU",
+      "id": "session_dhJqJff4Vc",
       "cookieJar": {
         "version": "tough-cookie@6.0.0",
         "storeType": "MemoryCookieStore",
@@ -33,123 +33,103 @@
         "prefixSecurity": "silent",
         "cookies": [
           {
-            "key": "_gcl_au",
-            "value": "1.1.1265146189.1770386430",
-            "expires": "2026-05-07T14:00:30.000Z",
-            "domain": "mos.jp",
+            "key": "_gid",
+            "value": "GA1.2.2060684836.1770551963",
+            "expires": "2026-02-09T11:59:28.000Z",
+            "domain": "yoshinoya.com",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.631Z",
-            "lastAccessed": "2026-02-06T14:00:31.631Z"
+            "creation": "2026-02-08T11:59:24.559Z",
+            "lastAccessed": "2026-02-08T11:59:28.631Z"
           },
           {
-            "key": "_ga_PWE55E4WP7",
-            "value": "GS2.1.s1770386430$o1$g0$t1770386430$j60$l0$h0",
-            "expires": "2027-03-13T14:00:30.522Z",
-            "domain": "mos.jp",
+            "key": "_gat",
+            "value": "1",
+            "expires": "2026-02-08T12:00:23.000Z",
+            "domain": "yoshinoya.com",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.636Z",
-            "lastAccessed": "2026-02-06T14:00:31.636Z"
+            "creation": "2026-02-08T11:59:24.564Z",
+            "lastAccessed": "2026-02-08T11:59:28.631Z"
+          },
+          {
+            "key": "__lt__cid",
+            "value": "d188390b-1b71-4f41-bfc9-5bcc6f54604d",
+            "expires": "2027-03-15T11:59:28.514Z",
+            "domain": "www.yoshinoya.com",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-02-08T11:59:24.566Z",
+            "lastAccessed": "2026-02-08T11:59:28.631Z"
+          },
+          {
+            "key": "__lt__sid",
+            "value": "ccff4bee-7a996665",
+            "expires": "2026-02-08T12:29:28.000Z",
+            "domain": "www.yoshinoya.com",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-02-08T11:59:24.566Z",
+            "lastAccessed": "2026-02-08T11:59:28.631Z"
+          },
+          {
+            "key": "_ga_EBR40KSV2W",
+            "value": "GS2.1.s1770551963$o1$g1$t1770551968$j55$l0$h0",
+            "expires": "2027-03-15T11:59:28.543Z",
+            "domain": "yoshinoya.com",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-02-08T11:59:24.566Z",
+            "lastAccessed": "2026-02-08T11:59:28.631Z"
           },
           {
             "key": "_ga",
-            "value": "GA1.2.339338928.1770386431",
-            "expires": "2027-03-13T14:00:30.577Z",
-            "domain": "mos.jp",
+            "value": "GA1.1.300893883.1770551963",
+            "expires": "2027-03-15T11:59:28.543Z",
+            "domain": "yoshinoya.com",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.637Z",
-            "lastAccessed": "2026-02-06T14:00:31.637Z"
+            "creation": "2026-02-08T11:59:24.566Z",
+            "lastAccessed": "2026-02-08T11:59:28.632Z"
           },
           {
-            "key": "_gid",
-            "value": "GA1.2.1857769231.1770386431",
-            "expires": "2026-02-07T14:00:30.000Z",
-            "domain": "mos.jp",
+            "key": "__pp_uid",
+            "value": "aPVu8TkaYGHEWp0vywb5LUqSkcvCztwG",
+            "expires": "2027-03-15T11:59:28.556Z",
+            "domain": "yoshinoya.com",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.637Z",
-            "lastAccessed": "2026-02-06T14:00:31.637Z"
-          },
-          {
-            "key": "_dc_gtm_UA-22874959-7",
-            "value": "1",
-            "expires": "2026-02-06T14:01:30.000Z",
-            "domain": "mos.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.637Z",
-            "lastAccessed": "2026-02-06T14:00:31.637Z"
-          },
-          {
-            "key": "AMP_MKTG_bb0559a717",
-            "value": "JTdCJTdE",
-            "expires": "2027-02-06T14:00:30.000Z",
-            "domain": "mos.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.637Z",
-            "lastAccessed": "2026-02-06T14:00:31.637Z"
-          },
-          {
-            "key": "AMP_bb0559a717",
-            "value": "JTdCJTIyZGV2aWNlSWQlMjIlM0ElMjJlZTY1MzM0MC1mMTQ4LTQ5ZTAtYTc0Ni0xYTY0NzczZTdhNzUlMjIlMkMlMjJzZXNzaW9uSWQlMjIlM0ExNzcwMzg2NDMwNjY5JTJDJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJsYXN0RXZlbnRUaW1lJTIyJTNBMTc3MDM4NjQzMDY4MCUyQyUyMmxhc3RFdmVudElkJTIyJTNBMiUyQyUyMnBhZ2VDb3VudGVyJTIyJTNBMSU3RA==",
-            "expires": "2027-02-06T14:00:30.000Z",
-            "domain": "mos.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.637Z",
-            "lastAccessed": "2026-02-06T14:00:31.637Z"
-          },
-          {
-            "key": "_fbp",
-            "value": "fb.1.1770386430696.222363712598023297",
-            "expires": "2026-05-07T14:00:31.000Z",
-            "domain": "mos.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.637Z",
-            "lastAccessed": "2026-02-06T14:00:31.637Z"
-          },
-          {
-            "key": "_yjsu_yjad",
-            "value": "1770386431.c5690e2b-d113-4522-ad4f-b24ef8c4ddb4",
-            "expires": "2027-02-06T14:00:31.000Z",
-            "domain": "mos.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.638Z",
-            "lastAccessed": "2026-02-06T14:00:31.638Z"
-          },
-          {
-            "key": "_clck",
-            "value": "1i9bad6%5E2%5Eg3c%5E0%5E2228",
-            "expires": "2027-02-06T14:00:31.000Z",
-            "domain": "mos.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-02-06T14:00:31.638Z",
-            "lastAccessed": "2026-02-06T14:00:31.638Z"
-          },
-          {
-            "key": "snexid",
-            "value": "f792efa8-6b05-4f06-87ab-7b368f2469db",
-            "expires": "2027-03-13T14:00:31.436Z",
-            "domain": "www.mos.jp",
-            "path": "/",
-            "hostOnly": true,
-            "creation": "2026-02-06T14:00:31.638Z",
-            "lastAccessed": "2026-02-06T14:00:31.638Z"
+            "creation": "2026-02-08T11:59:24.567Z",
+            "lastAccessed": "2026-02-08T11:59:28.631Z"
           }
         ]
       },
       "userData": {},
       "maxErrorScore": 3,
       "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-02-06T14:50:29.186Z",
-      "createdAt": "2026-02-06T14:00:29.186Z",
-      "usageCount": 1,
+      "expiresAt": "2026-02-08T12:49:19.913Z",
+      "createdAt": "2026-02-08T11:59:19.913Z",
+      "usageCount": 2,
+      "maxUsageCount": 50,
+      "errorScore": 0
+    },
+    {
+      "id": "session_hGQckHSSHb",
+      "cookieJar": {
+        "version": "tough-cookie@6.0.0",
+        "storeType": "MemoryCookieStore",
+        "rejectPublicSuffixes": true,
+        "enableLooseMode": false,
+        "allowSpecialUseDomain": true,
+        "prefixSecurity": "silent",
+        "cookies": []
+      },
+      "userData": {},
+      "maxErrorScore": 3,
+      "errorScoreDecrement": 0.5,
+      "expiresAt": "2026-02-08T12:49:27.981Z",
+      "createdAt": "2026-02-08T11:59:27.981Z",
+      "usageCount": 0,
       "maxUsageCount": 50,
       "errorScore": 0
     }

@@ -7,11 +7,11 @@ async function saveHtml() {
     const page = await browser.newPage();
 
     try {
-        const url = 'https://www.matsuyafoods.co.jp/matsuya/menu/gyumeshi/index.html';
-        await page.goto(url, { waitUntil: 'domcontentloaded' });
+        const url = 'https://www.yoshinoya.com/';
+        await page.goto(url, { waitUntil: 'networkidle' });
         const content = await page.content();
-        fs.writeFileSync('matsuya.html', content);
-        console.log('Saved matsuya.html');
+        fs.writeFileSync('yoshinoya.html', content);
+        console.log('Saved yoshinoya.html');
     } catch (e) {
         console.error('Error:', e);
     } finally {

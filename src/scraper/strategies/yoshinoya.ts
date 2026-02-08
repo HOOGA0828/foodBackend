@@ -11,9 +11,13 @@ export class YoshinoyaStrategy implements ScraperStrategy {
         this.aiParser = aiParser;
     }
 
+    private log(message: string) {
+        console.log(message);
+    }
+
     async scrape(brandConfig: BrandConfig): Promise<ScraperResult> {
         const startTime = Date.now();
-        console.log(`🏪 [Yoshinoya] 開始抓取: ${brandConfig.displayName}`);
+        this.log(`🏪 [Yoshinoya] 開始抓取: ${brandConfig.displayName}`);
 
         let browser = null;
         try {
@@ -22,14 +26,14 @@ export class YoshinoyaStrategy implements ScraperStrategy {
 
             // 1. 抓取首頁 Banner 連結
             const scannedLinks = await this.scrapeCarouselLinks(page, brandConfig.url);
-            console.log(`🔗 [Yoshinoya] 找到 ${scannedLinks.length} 個 AI 驗證通過的連結`);
+            this.log(`🔗 [Yoshinoya] 找到 ${scannedLinks.length} 個 AI 驗證通過的連結`);
 
             if (scannedLinks.length === 0) {
-                console.warn('⚠️ 未找到連結，可能選擇器失效或目前沒有促銷 Banner');
+                this.log('⚠️ [WARN] 未找到連結，可能選擇器失效或目前沒有促銷 Banner');
             }
 
             // 2. 抓取詳細頁面
-            console.log(`🔍 [Yoshinoya] 開始深度抓取 ${scannedLinks.length} 個頁面...`);
+            this.log(`🔍 [Yoshinoya] 開始深度抓取 ${scannedLinks.length} 個頁面...`);
             const products = await this.scrapeDetailPages(browser, scannedLinks, brandConfig);
 
             // 3. 關閉瀏覽器
@@ -55,7 +59,7 @@ export class YoshinoyaStrategy implements ScraperStrategy {
             };
 
         } catch (error) {
-            console.error(`❌ [Yoshinoya] 抓取失敗:`, error);
+            this.log(`❌ [ERROR] [Yoshinoya] 抓取失敗: ${error}`);
             if (browser) await browser.close();
             return {
                 brand: {
@@ -75,20 +79,25 @@ export class YoshinoyaStrategy implements ScraperStrategy {
     }
 
     private async scrapeCarouselLinks(page: any, url: string): Promise<ProductLink[]> {
-        console.log(`Visiting: ${url}`);
+        this.log(`Visiting: ${url}`);
         await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
 
         // 等待「おすすめメニュー」(r-menu__wrapper) 區域的 swiper 載入
         try {
             await page.waitForSelector('.r-menu__wrapper .swiper-wrapper', { timeout: 10000 });
-            console.log('✅ 找到「おすすめメニュー」區域: .r-menu__wrapper');
+            this.log('✅ 找到「おすすめメニュー」區域: .r-menu__wrapper');
+
+            // 抓取並記錄 innerHTML 以便除錯
+            const innerHTML = await page.$eval('.r-menu__wrapper', (el: HTMLElement) => el.innerHTML);
+            this.log(`📜 .r-menu__wrapper innerHTML length: ${innerHTML.length}`);
+            this.log(`📜 innerHTML preview: ${innerHTML.substring(0, 500)}...`);
+
         } catch (e) {
-            console.warn('⚠️ 找不到 .r-menu__wrapper，嘗試繼續執行...');
+            this.log('⚠️ [WARN] 找不到 .r-menu__wrapper，嘗試繼續執行...');
         }
 
         // 提取「おすすめメニュー」(r-menu__wrapper) 區域的所有候選項目
         const rawItems = await page.$$eval('.r-menu__wrapper .swiper-slide:not(.swiper-slide-duplicate)', (els: HTMLElement[]) => {
-            const seen = new Set<string>();
             return els.map(el => {
                 const anchor = el.querySelector('a');
                 const img = el.querySelector('img');
@@ -98,38 +107,39 @@ export class YoshinoyaStrategy implements ScraperStrategy {
                 const textEl = el.querySelector('.rcmd__text p, .rcmd__text, .camp__text p');
                 const text = textEl?.textContent || img?.getAttribute('alt') || anchor?.innerText || '';
 
-                // 排除無連結或無圖片的項目
-                if (!anchor || !imgSrc || seen.has(imgSrc)) return null;
-                seen.add(imgSrc);
-
                 return {
-                    url: anchor.href,
+                    url: anchor?.href,
                     text: text.trim(),
-                    imgSrc: imgSrc
+                    imgSrc: imgSrc,
+                    hasAnchor: !!anchor,
+                    hasImg: !!imgSrc
                 };
-            }).filter(i => i !== null && i.url);
+            }).filter((i: any) => i !== null);
         });
 
-        console.log(`🔎 [おすすめメニュー] 找到 ${rawItems.length} 個輪播項目，開始 AI 視覺篩選...`);
+        this.log(`🔎 [Debug] Found ${rawItems.length} raw items in carousel.`);
+        rawItems.forEach((item: any, index: number) => {
+            this.log(`   Item ${index}: URL=${item.url}, Img=${item.imgSrc}, Text=${item.text}, HasAnchor=${item.hasAnchor}`);
+        });
+
+        const validItems = rawItems.filter(i => i.url && i.imgSrc);
+        this.log(`🔎 [おすすめメニュー] 找到 ${validItems.length} 個有效輪播項目，開始 AI 視覺篩選...`);
 
         const links: ProductLink[] = [];
 
-        for (const item of rawItems) {
+        for (const item of (validItems as any[])) {
             // 確保圖片 URL 是完整的
             let validImg = item.imgSrc;
             if (validImg.startsWith('/')) {
                 validImg = new URL(validImg, url).href;
             }
 
-            // 使用 AI 判斷是否為食物廣告
-            // 避免頻率限制
-            await new Promise(r => setTimeout(r, 500));
-
-            const isFood = await this.aiParser.isFoodAdvertisement(validImg);
+            // .r-menu__wrapper 是明確的推薦菜單，直接視為食物，跳過 AI 檢查以避免誤判
+            this.log(`✅ [AI Bypass] 跳過 AI 檢查 (Known Menu Section): ${item.text || '無標題'}`);
+            const isFood = true;
 
             if (isFood) {
-                console.log(`✅ [AI] 廣告視為食物: ${item.text || '無標題'}`);
-                console.log(`   連結: ${item.url}`);
+                this.log(`   連結: ${item.url}`);
 
                 links.push({
                     title: item.text,
@@ -138,7 +148,7 @@ export class YoshinoyaStrategy implements ScraperStrategy {
                     isNew: true
                 });
             } else {
-                console.log(`❌ [AI] 廣告視為非食物: ${item.text || '無標題'}`);
+                this.log(`❌ [AI] 廣告視為非食物: ${item.text || '無標題'}`);
             }
         }
         return links;
@@ -153,7 +163,7 @@ export class YoshinoyaStrategy implements ScraperStrategy {
 
         for (const link of targets) {
             try {
-                console.log(`📄 解析產品頁面: ${link.url}`);
+                this.log(`📄 解析產品頁面: ${link.url}`);
                 await page.goto(link.url, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
                 // 抓取頁面內容轉換為 Markdown
@@ -196,7 +206,7 @@ export class YoshinoyaStrategy implements ScraperStrategy {
 
                 // AI 解析
                 await new Promise(r => setTimeout(r, 1000));
-                console.log(`🧠 [Yoshinoya] 呼叫 AI 解析頁面內容...`);
+                this.log(`🧠 [Yoshinoya] 呼叫 AI 解析頁面內容...`);
 
                 const parseRequest: AIParseRequest = {
                     brandName: brandConfig.name,
@@ -215,7 +225,7 @@ export class YoshinoyaStrategy implements ScraperStrategy {
                         const desc = (p.originalDescription || '') + (p.translatedDescription || '');
                         if (desc.includes('区域限定') || desc.includes('地域限定') || desc.includes('エリア限定') ||
                             original.includes('單品') || original.includes('単品')) {
-                            console.log(`🚫 [Filter] 排除單品/區域限定: ${p.translatedName} (${original})`);
+                            this.log(`🚫 [Filter] 排除單品/區域限定: ${p.translatedName} (${original})`);
                             continue;
                         }
 
@@ -224,7 +234,7 @@ export class YoshinoyaStrategy implements ScraperStrategy {
                         if (original.match(/\[.*(限定).+\]/)) {
                             // 簡單正則檢查
                             if (original.includes('地域') || original.includes('北海道') || original.includes('関東') || original.includes('関西')) {
-                                console.log(`🚫 [Filter] 排除區域限定產品: ${original}`);
+                                this.log(`🚫 [Filter] 排除區域限定產品: ${original}`);
                                 continue;
                             }
                         }
@@ -244,12 +254,12 @@ export class YoshinoyaStrategy implements ScraperStrategy {
                             isNew: true
                         });
 
-                        console.log(`   + [${p.originalName}] -> ${p.translatedName} (${p.price?.amount || '??'} JPY)`);
+                        this.log(`   + [${p.originalName}] -> ${p.translatedName} (${p.price?.amount || '??'} JPY)`);
                     }
                 }
 
             } catch (e) {
-                console.error(`Failed to parse page ${link.url}:`, e);
+                this.log(`❌ [ERROR] Failed to parse page ${link.url}: ${e}`);
             }
         }
         await page.close();

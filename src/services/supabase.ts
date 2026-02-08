@@ -108,32 +108,56 @@ export class SupabaseService {
             // 從待過期清單中移除
             activeProductIds.delete(existingProduct.id);
 
-            console.log(`📝 [DB] 更新產品: ${product.translatedName} (ID: ${existingProduct.id})`);
+            // 檢查資料是否有變化
+            const currentPrice = existingProduct.price ? (existingProduct.price as any).toNumber() : null;
+            const newPrice = product.price ? product.price.amount : null;
+            const isPriceChanged = currentPrice !== newPrice;
 
-            // Update
-            await this.prisma.product.update({
-              where: { id: existingProduct.id },
-              data: {
-                name: product.translatedName,
-                nameJp: product.originalName,
-                description: product.translatedName,
-                price: product.price ? new Decimal(product.price.amount) : null,
-                currency: product.price?.currency || 'JPY',
-                imageUrls: product.imageUrl ? [product.imageUrl] : [],
-                availableStartDate: this.parseDateString(product.releaseDate),
-                metadata: {
-                  ...(existingProduct.metadata as object || {}),
-                  original_name: product.originalName,
-                  price_note: product.price?.note,
-                  crawled_at: result.scrapedAt.toISOString(),
-                  brand_info: result.brand
-                } as any,
-                status: 'available', // Revive if expired
-                lastVerifiedAt: new Date(),
-                updatedAt: new Date()
-              }
-            });
-            skippedCount++;
+            const currentImage = existingProduct.imageUrls[0] || '';
+            const newImage = product.imageUrl || '';
+            const isImageChanged = currentImage !== newImage;
+
+            const isNameChanged = existingProduct.name !== product.translatedName;
+
+            if (isPriceChanged || isImageChanged || isNameChanged) {
+              console.log(`📝 [DB] 更新產品(發現變更): ${product.translatedName} (ID: ${existingProduct.id})`);
+              console.log(`   變動 - 價格: ${isPriceChanged}, 圖片: ${isImageChanged}, 名稱: ${isNameChanged}`);
+
+              // Update
+              await this.prisma.product.update({
+                where: { id: existingProduct.id },
+                data: {
+                  name: product.translatedName,
+                  nameJp: product.originalName,
+                  description: product.translatedName,
+                  price: product.price ? new Decimal(product.price.amount) : null,
+                  currency: product.price?.currency || 'JPY',
+                  imageUrls: product.imageUrl ? [product.imageUrl] : [],
+                  availableStartDate: this.parseDateString(product.releaseDate),
+                  metadata: {
+                    ...(existingProduct.metadata as object || {}),
+                    original_name: product.originalName,
+                    price_note: product.price?.note,
+                    crawled_at: result.scrapedAt.toISOString(),
+                    brand_info: result.brand
+                  } as any,
+                  status: 'available', // Revive if expired
+                  lastVerifiedAt: new Date(),
+                  updatedAt: new Date()
+                }
+              });
+              skippedCount++;
+            } else {
+              console.log(`👌 [DB] 產品無變化(僅更新時間): ${product.translatedName}`);
+              // 僅更新 lastVerifiedAt
+              await this.prisma.product.update({
+                where: { id: existingProduct.id },
+                data: {
+                  lastVerifiedAt: new Date(),
+                  status: 'available'
+                }
+              });
+            }
           } else {
             console.log(`✨ [DB] 新增產品: ${product.translatedName}`);
             await this.prisma.product.create({

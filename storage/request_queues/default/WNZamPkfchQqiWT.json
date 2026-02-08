@@ -1,9 +1,0 @@
-{
-	"id": "WNZamPkfchQqiWT",
-	"json": "{\"id\":\"WNZamPkfchQqiWT\",\"url\":\"https://www.mos.jp/menu/\",\"loadedUrl\":\"https://www.mos.jp/menu/\",\"uniqueKey\":\"https://www.mos.jp/menu\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-02-06T14:00:34.762Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://www.mos.jp/menu",
-	"url": "https://www.mos.jp/menu/"
-}

@@ -23,7 +23,7 @@ async function runRealScraper() {
         process.exit(1);
     }
 
-    const brandName = '吉野家';
+    const brandName = 'yoshinoya';
     const brandConfig = getBrandByName(brandName);
 
     if (!brandConfig) {
