@@ -260,16 +260,32 @@ export class McdonaldsStrategy implements ScraperStrategy {
                     const priceMatch = p.priceText.match(/(\d{1,3}(,\d{3})*)/);
                     const price = priceMatch ? parseInt(priceMatch[0].replace(/,/g, '')) : undefined;
 
+                    // 翻譯名稱和描述
+                    let translatedName = p.name;
+                    let translatedDescription = p.description;
+
+                    try {
+                        console.log(`   🔄 翻譯中: ${p.name}...`);
+                        translatedName = await this.aiParser.translateToTraditionalChinese(p.name);
+
+                        if (p.description) {
+                            translatedDescription = await this.aiParser.translateToTraditionalChinese(p.description);
+                        }
+                    } catch (error) {
+                        console.warn(`   ⚠️ 翻譯失敗，使用原文:`, error);
+                    }
+
                     products.push({
                         originalName: p.name,
-                        translatedName: p.name, // 稍後翻譯
+                        translatedName: translatedName,
                         price: price ? { amount: price, currency: 'JPY' } : undefined,
                         imageUrl: fullImgUrl || link.imageUrl, // 如果內頁沒抓到圖，用 Banner 圖
                         originalDescription: p.description,
+                        translatedDescription: translatedDescription,
                         sourceUrl: link.url,
                         isNew: true
                     });
-                    console.log(`   + ${p.name}`);
+                    console.log(`   + [${translatedName}] ${p.name}`);
                 }
 
             } catch (e) {

@@ -1,0 +1,76 @@
+{
+  "brand": "mcdonalds",
+  "count": 10,
+  "products": [
+    {
+      "id": "ed4e5e28-3470-48e7-bfb5-43c39b4931e5",
+      "nameZh": "N.Y. ソーセージ ペッパー&ビーフソテーマフィン",
+      "nameJp": "N.Y. ソーセージ ペッパー&ビーフソテーマフィン",
+      "description": "N.Y. ソーセージ ペッパー&ビーフソテーマフィン",
+      "updatedAt": "2026-02-08T15:14:27.255Z"
+    },
+    {
+      "id": "c4548fcf-e26f-4926-a383-854877833fed",
+      "nameZh": "N.Y. 雙層厚切牛肉 黑胡椒與炒牛肉",
+      "nameJp": "N.Y. ダブル肉厚ビーフ ペッパー&ビーフソテー",
+      "description": "N.Y. 雙層厚切牛肉 黑胡椒與炒牛肉",
+      "updatedAt": "2026-02-08T15:14:26.972Z"
+    },
+    {
+      "id": "beb4dcd1-c3a6-4218-841a-ded9e724bc64",
+      "nameZh": "N.Y. 塔塔鮮蝦 蒜香羅勒",
+      "nameJp": "N.Y. タルタルシュリンプ ガーリック&バジル",
+      "description": "N.Y. 塔塔鮮蝦 蒜香羅勒",
+      "updatedAt": "2026-02-08T15:14:26.686Z"
+    },
+    {
+      "id": "51b68323-d512-459a-b5fa-3501e2029afd",
+      "nameZh": "N.Y. 多汁雞肉 香辣胡椒",
+      "nameJp": "N.Y. ジューシーチキン ホット&ペッパー",
+      "description": "N.Y. 多汁雞肉 香辣胡椒",
+      "updatedAt": "2026-02-08T15:14:26.403Z"
+    },
+    {
+      "id": "524a4a75-216e-42f4-af27-4e2b170bcd6e",
+      "nameZh": "N.Y. 厚切牛肉 黑胡椒 & 炒牛肉",
+      "nameJp": "N.Y. 肉厚ビーフ ペッパー&ビーフソテー",
+      "description": "N.Y. 厚切牛肉 黑胡椒 & 炒牛肉",
+      "updatedAt": "2026-02-08T15:14:26.120Z"
+    },
+    {
+      "id": "47a60aca-b3be-4fd5-a468-f0cfa56d3432",
+      "nameZh": "雙層海老堡",
+      "nameJp": "倍えびフィレオ",
+      "description": "雙層海老堡",
+      "updatedAt": "2026-02-08T15:14:25.837Z"
+    },
+    {
+      "id": "861453fc-9127-4ab3-819c-9efe6ce72e18",
+      "nameZh": "雙層培根生菜堡",
+      "nameJp": "倍ベーコンレタスバーガー",
+      "description": "雙層培根生菜堡",
+      "updatedAt": "2026-02-08T15:14:25.550Z"
+    },
+    {
+      "id": "fa76b752-0083-4499-a85a-7ec46ee205bd",
+      "nameZh": "雙層照燒雞腿堡",
+      "nameJp": "倍てりやきチキンフィレオ",
+      "description": "雙層照燒雞腿堡",
+      "updatedAt": "2026-02-08T15:14:25.267Z"
+    },
+    {
+      "id": "3488ef5f-3f28-49eb-89b9-c529f2df64d8",
+      "nameZh": "雙層麥香魚",
+      "nameJp": "倍フィレオフィッシュ",
+      "description": "雙層麥香魚",
+      "updatedAt": "2026-02-08T15:14:24.981Z"
+    },
+    {
+      "id": "405bbac0-c180-4cce-ac7e-4d9d15b9ee1f",
+      "nameZh": "雙層麥香雞",
+      "nameJp": "倍チキンフィレオ",
+      "description": "雙層麥香雞",
+      "updatedAt": "2026-02-08T15:14:24.697Z"
+    }
+  ]
+}
