@@ -99,6 +99,20 @@ export class LawsonStrategy implements ScraperStrategy {
 
         } catch (error) {
             console.error('❌ [LawsonStrategy] 瀏覽器啟動或執行失敗:', error);
+            return {
+                brand: {
+                    name: brandConfig.name,
+                    displayName: brandConfig.displayName,
+                    category: brandConfig.category,
+                    url: brandConfig.url
+                },
+                productsCount: 0,
+                products: [],
+                status: 'failed',
+                errorMessage: error instanceof Error ? error.message : 'Unknown error',
+                executionTime: Date.now() - startTime,
+                scrapedAt: new Date()
+            };
         } finally {
             if (browser) await browser.close();
         }
