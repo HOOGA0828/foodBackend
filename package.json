@@ -1,6 +1,6 @@
 {
   "name": "japan-food-tracker-backend",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "日本餐飲/超商新品追蹤網站後端 API",
   "main": "dist/index.js",
   "type": "module",
@@ -38,16 +38,19 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^5.20.0",
     "@supabase/supabase-js": "^2.47.10",
     "@types/get-pixels": "^3.3.4",
     "@types/quantize": "^1.0.2",
     "cheerio": "^1.1.2",
-    "crawlee": "^3.10.4",
+    "crawlee": "^3.15.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.1",
     "get-pixels": "^3.3.3",
-    "openai": "^4.69.0",
+    "nodemailer": "^8.0.1",
+    "p-limit": "^7.3.0",
+    "p-retry": "^7.1.1",
     "playwright": "^1.57.0",
     "quantize": "^1.0.2",
     "zod": "^3.24.1"
@@ -55,6 +58,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
+    "@types/nodemailer": "^7.0.9",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
     "@typescript-eslint/parser": "^8.15.0",
     "eslint": "^9.17.0",

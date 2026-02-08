@@ -33,8 +33,8 @@ export class WebScraper {
   }
 
   private registerStrategies() {
-    // 註冊特定品牌策略
-    this.strategies.set('7-Eleven', new SevenElevenStrategy(this.aiParser));
+    // 註冊特定品牌策略（key 必須與 brandConfig.name 完全匹配）
+    this.strategies.set('seven-eleven', new SevenElevenStrategy(this.aiParser)); // 修正：使用 'seven-eleven' 而非 '7-Eleven'
     this.strategies.set('familymart', new FamilyMartStrategy(this.aiParser));
     this.strategies.set('lawson', new LawsonStrategy(this.aiParser));
     this.strategies.set('mcdonalds', new McdonaldsStrategy(this.aiParser));

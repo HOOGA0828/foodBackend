@@ -1,9 +1,0 @@
-{
-	"id": "RSqBwVfv6fuDxHF",
-	"json": "{\"id\":\"RSqBwVfv6fuDxHF\",\"url\":\"https://www.sej.co.jp/products/a/thisweek/area/kinki/\",\"loadedUrl\":\"https://www.sej.co.jp/products/a/thisweek/area/kinki/\",\"uniqueKey\":\"https://www.sej.co.jp/products/a/thisweek/area/kinki\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2026-01-30T08:27:44.036Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://www.sej.co.jp/products/a/thisweek/area/kinki",
-	"url": "https://www.sej.co.jp/products/a/thisweek/area/kinki/"
-}

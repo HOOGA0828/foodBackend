@@ -1,9 +1,9 @@
 {
-  "usableSessionsCount": 12,
-  "retiredSessionsCount": 1,
+  "usableSessionsCount": 2,
+  "retiredSessionsCount": 0,
   "sessions": [
     {
-      "id": "session_oJJbTQy46O",
+      "id": "session_PenIDzhXdX",
       "cookieJar": {
         "version": "tough-cookie@6.0.0",
         "storeType": "MemoryCookieStore",
@@ -16,14 +16,14 @@
       "userData": {},
       "maxErrorScore": 3,
       "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:16:51.239Z",
-      "createdAt": "2026-01-30T08:26:51.239Z",
+      "expiresAt": "2026-02-06T14:50:29.180Z",
+      "createdAt": "2026-02-06T14:00:29.180Z",
       "usageCount": 0,
       "maxUsageCount": 50,
       "errorScore": 0
     },
     {
-      "id": "session_STLSQ9BD4M",
+      "id": "session_FBSv69M4bU",
       "cookieJar": {
         "version": "tough-cookie@6.0.0",
         "storeType": "MemoryCookieStore",
@@ -33,401 +33,125 @@
         "prefixSecurity": "silent",
         "cookies": [
           {
-            "key": "visid_incap_1627146",
-            "value": "/Mof/C1gTyeF3GA0uCPRH01rfGkAAAAAQUIPAAAAAABfVc0R543IYPkHexy2un6y",
-            "expires": "2027-01-29T15:31:49.461Z",
-            "domain": "sej.co.jp",
+            "key": "_gcl_au",
+            "value": "1.1.1265146189.1770386430",
+            "expires": "2026-05-07T14:00:30.000Z",
+            "domain": "mos.jp",
             "path": "/",
-            "secure": true,
-            "httpOnly": true,
             "hostOnly": false,
-            "creation": "2026-01-30T08:26:55.156Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
+            "creation": "2026-02-06T14:00:31.631Z",
+            "lastAccessed": "2026-02-06T14:00:31.631Z"
           },
           {
-            "key": "incap_ses_2111_1627146",
-            "value": "LOmURaXBEX7yvfl13MdLHU1rfGkAAAAA3rAt1HKlFtgT7hdamKigyw==",
-            "expires": "2026-01-30T09:16:55.154Z",
-            "domain": "sej.co.jp",
+            "key": "_ga_PWE55E4WP7",
+            "value": "GS2.1.s1770386430$o1$g0$t1770386430$j60$l0$h0",
+            "expires": "2027-03-13T14:00:30.522Z",
+            "domain": "mos.jp",
             "path": "/",
-            "secure": true,
             "hostOnly": false,
-            "creation": "2026-01-30T08:26:55.162Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
+            "creation": "2026-02-06T14:00:31.636Z",
+            "lastAccessed": "2026-02-06T14:00:31.636Z"
+          },
+          {
+            "key": "_ga",
+            "value": "GA1.2.339338928.1770386431",
+            "expires": "2027-03-13T14:00:30.577Z",
+            "domain": "mos.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-02-06T14:00:31.637Z",
+            "lastAccessed": "2026-02-06T14:00:31.637Z"
           },
           {
             "key": "_gid",
-            "value": "GA1.3.365959066.1769761613",
-            "expires": "2026-01-31T08:31:20.000Z",
-            "domain": "sej.co.jp",
+            "value": "GA1.2.1857769231.1770386431",
+            "expires": "2026-02-07T14:00:30.000Z",
+            "domain": "mos.jp",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-01-30T08:26:55.164Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
+            "creation": "2026-02-06T14:00:31.637Z",
+            "lastAccessed": "2026-02-06T14:00:31.637Z"
           },
           {
-            "key": "_gcl_au",
-            "value": "1.1.1507016895.1769761613",
-            "expires": "2026-04-30T08:26:52.000Z",
-            "domain": "sej.co.jp",
+            "key": "_dc_gtm_UA-22874959-7",
+            "value": "1",
+            "expires": "2026-02-06T14:01:30.000Z",
+            "domain": "mos.jp",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-01-30T08:26:55.164Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
+            "creation": "2026-02-06T14:00:31.637Z",
+            "lastAccessed": "2026-02-06T14:00:31.637Z"
           },
           {
-            "key": "__ulfpc",
-            "value": "202601301726536079",
-            "expires": "2027-03-06T08:26:53.026Z",
-            "domain": "sej.co.jp",
+            "key": "AMP_MKTG_bb0559a717",
+            "value": "JTdCJTdE",
+            "expires": "2027-02-06T14:00:30.000Z",
+            "domain": "mos.jp",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-01-30T08:26:55.164Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
+            "creation": "2026-02-06T14:00:31.637Z",
+            "lastAccessed": "2026-02-06T14:00:31.637Z"
           },
           {
-            "key": "_ga_EMVSQ32ZLJ",
-            "value": "GS2.1.s1769761613$o1$g1$t1769761880$j10$l0$h0",
-            "expires": "2027-03-06T08:31:20.841Z",
-            "domain": "sej.co.jp",
+            "key": "AMP_bb0559a717",
+            "value": "JTdCJTIyZGV2aWNlSWQlMjIlM0ElMjJlZTY1MzM0MC1mMTQ4LTQ5ZTAtYTc0Ni0xYTY0NzczZTdhNzUlMjIlMkMlMjJzZXNzaW9uSWQlMjIlM0ExNzcwMzg2NDMwNjY5JTJDJTIyb3B0T3V0JTIyJTNBZmFsc2UlMkMlMjJsYXN0RXZlbnRUaW1lJTIyJTNBMTc3MDM4NjQzMDY4MCUyQyUyMmxhc3RFdmVudElkJTIyJTNBMiUyQyUyMnBhZ2VDb3VudGVyJTIyJTNBMSU3RA==",
+            "expires": "2027-02-06T14:00:30.000Z",
+            "domain": "mos.jp",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-01-30T08:26:55.164Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
-          },
-          {
-            "key": "_ga",
-            "value": "GA1.1.1984297946.1769761613",
-            "expires": "2027-03-06T08:31:20.842Z",
-            "domain": "sej.co.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-01-30T08:26:55.164Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
+            "creation": "2026-02-06T14:00:31.637Z",
+            "lastAccessed": "2026-02-06T14:00:31.637Z"
           },
           {
             "key": "_fbp",
-            "value": "fb.2.1769761613781.53689924666808387",
-            "expires": "2026-04-30T08:31:20.000Z",
-            "domain": "sej.co.jp",
+            "value": "fb.1.1770386430696.222363712598023297",
+            "expires": "2026-05-07T14:00:31.000Z",
+            "domain": "mos.jp",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-01-30T08:26:55.164Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
+            "creation": "2026-02-06T14:00:31.637Z",
+            "lastAccessed": "2026-02-06T14:00:31.637Z"
           },
           {
             "key": "_yjsu_yjad",
-            "value": "1769761613.c7931f81-c3fa-4b28-acd9-6cfdfa555d93",
-            "expires": "2027-01-30T08:26:53.000Z",
-            "domain": "sej.co.jp",
+            "value": "1770386431.c5690e2b-d113-4522-ad4f-b24ef8c4ddb4",
+            "expires": "2027-02-06T14:00:31.000Z",
+            "domain": "mos.jp",
             "path": "/",
             "hostOnly": false,
-            "creation": "2026-01-30T08:26:55.164Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
+            "creation": "2026-02-06T14:00:31.638Z",
+            "lastAccessed": "2026-02-06T14:00:31.638Z"
           },
           {
-            "key": "Apache",
-            "value": "f84de757.64996c28540ee",
-            "expires": "2026-02-06T08:28:36.849Z",
-            "domain": "www.sej.co.jp",
+            "key": "_clck",
+            "value": "1i9bad6%5E2%5Eg3c%5E0%5E2228",
+            "expires": "2027-02-06T14:00:31.000Z",
+            "domain": "mos.jp",
+            "path": "/",
+            "hostOnly": false,
+            "creation": "2026-02-06T14:00:31.638Z",
+            "lastAccessed": "2026-02-06T14:00:31.638Z"
+          },
+          {
+            "key": "snexid",
+            "value": "f792efa8-6b05-4f06-87ab-7b368f2469db",
+            "expires": "2027-03-13T14:00:31.436Z",
+            "domain": "www.mos.jp",
             "path": "/",
             "hostOnly": true,
-            "creation": "2026-01-30T08:28:37.580Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
-          },
-          {
-            "key": "nlbi_1627146",
-            "value": "0X/aN1JhbAHEvfdocJl5DwAAAACm0GKjJqOYi1w89uzXWAre",
-            "expires": "2026-01-30T09:18:37.580Z",
-            "domain": "sej.co.jp",
-            "path": "/",
-            "secure": true,
-            "httpOnly": true,
-            "hostOnly": false,
-            "creation": "2026-01-30T08:28:37.580Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
-          },
-          {
-            "key": "_gat",
-            "value": "1",
-            "expires": "2026-01-30T08:31:29.000Z",
-            "domain": "sej.co.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-01-30T08:30:30.385Z",
-            "lastAccessed": "2026-01-30T08:31:21.123Z"
+            "creation": "2026-02-06T14:00:31.638Z",
+            "lastAccessed": "2026-02-06T14:00:31.638Z"
           }
         ]
       },
       "userData": {},
       "maxErrorScore": 3,
       "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:16:51.242Z",
-      "createdAt": "2026-01-30T08:26:51.242Z",
-      "usageCount": 6,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_rlEt5JqWRz",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:17:44.078Z",
-      "createdAt": "2026-01-30T08:27:44.078Z",
-      "usageCount": 0,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_pJd40pxjSP",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:18:36.458Z",
-      "createdAt": "2026-01-30T08:28:36.458Z",
-      "usageCount": 0,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_nAr3sqD9l1",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:19:33.762Z",
-      "createdAt": "2026-01-30T08:29:33.762Z",
-      "usageCount": 0,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_iBO0hqg0CJ",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:20:29.611Z",
-      "createdAt": "2026-01-30T08:30:29.611Z",
-      "usageCount": 0,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_EaorcM29e5",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:21:20.350Z",
-      "createdAt": "2026-01-30T08:31:20.350Z",
-      "usageCount": 0,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_D4UBbzFzeQ",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:22:52.315Z",
-      "createdAt": "2026-01-30T08:32:52.315Z",
-      "usageCount": 0,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_hZV3OaSIv8",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": [
-          {
-            "key": "_gcl_au",
-            "value": "1.1.1365587382.1769761974",
-            "expires": "2026-04-30T08:32:53.000Z",
-            "domain": "lawson.co.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-01-30T08:33:53.004Z",
-            "lastAccessed": "2026-01-30T08:34:53.130Z"
-          },
-          {
-            "key": "_yjsu_yjad",
-            "value": "1769761973.b58f24ae-9e8e-47a7-a2ba-adbd806dd2bc",
-            "expires": "2027-01-30T08:32:53.000Z",
-            "domain": "lawson.co.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-01-30T08:33:53.004Z",
-            "lastAccessed": "2026-01-30T08:34:53.131Z"
-          },
-          {
-            "key": "_ga",
-            "value": "GA1.1.523723714.1769761974",
-            "expires": "2027-03-06T08:32:53.950Z",
-            "domain": "lawson.co.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-01-30T08:33:53.004Z",
-            "lastAccessed": "2026-01-30T08:34:53.131Z"
-          },
-          {
-            "key": "_ga_X1TGKLS9S0",
-            "value": "GS2.1.s1769761973$o1$g1$t1769762032$j1$l0$h0",
-            "expires": "2027-03-06T08:33:52.894Z",
-            "domain": "lawson.co.jp",
-            "path": "/",
-            "hostOnly": false,
-            "creation": "2026-01-30T08:33:53.004Z",
-            "lastAccessed": "2026-01-30T08:34:53.131Z"
-          }
-        ]
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:22:52.317Z",
-      "createdAt": "2026-01-30T08:32:52.317Z",
-      "usageCount": 4,
-      "maxUsageCount": 50,
-      "errorScore": 6
-    },
-    {
-      "id": "session_xr8w8EAcEx",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:23:52.908Z",
-      "createdAt": "2026-01-30T08:33:52.908Z",
-      "usageCount": 0,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_aGV8lB2rjE",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:24:53.036Z",
-      "createdAt": "2026-01-30T08:34:53.036Z",
-      "usageCount": 0,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_x1W2ErR0rE",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:25:53.158Z",
-      "createdAt": "2026-01-30T08:35:53.158Z",
-      "usageCount": 0,
-      "maxUsageCount": 50,
-      "errorScore": 0
-    },
-    {
-      "id": "session_wTdoRsvxcj",
-      "cookieJar": {
-        "version": "tough-cookie@6.0.0",
-        "storeType": "MemoryCookieStore",
-        "rejectPublicSuffixes": true,
-        "enableLooseMode": false,
-        "allowSpecialUseDomain": true,
-        "prefixSecurity": "silent",
-        "cookies": []
-      },
-      "userData": {},
-      "maxErrorScore": 3,
-      "errorScoreDecrement": 0.5,
-      "expiresAt": "2026-01-30T09:25:53.159Z",
-      "createdAt": "2026-01-30T08:35:53.159Z",
+      "expiresAt": "2026-02-06T14:50:29.186Z",
+      "createdAt": "2026-02-06T14:00:29.186Z",
       "usageCount": 1,
       "maxUsageCount": 50,
-      "errorScore": 1
+      "errorScore": 0
     }
   ]
 }

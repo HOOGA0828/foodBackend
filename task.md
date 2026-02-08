@@ -1,7 +1,12 @@
-# Configure GitHub Actions for Daily Scraping
+# Extract and Store Favicons
 
-- [x] Check existing GitHub Actions workflows <!-- id: 0 -->
-- [x] Create or update workflow for daily schedule (12:00 PM) <!-- id: 1 -->
-- [ ] Commit and Push Changes <!-- id: 4 -->
-- [ ] Verify `npm run scraper:run` capability in CI environment <!-- id: 2 -->
-- [ ] Notify user about deployment status and workflow setup <!-- id: 3 -->
+- [x] Update database schema (Prisma & SQL) to add `favicon_url` column
+- [x] Create script `src/scripts/fetch-favicons.ts` to fetch favicons
+- [ ] Notify user to run migration and script
+
+# Switch Translation Model to Gemini
+
+- [x] Uninstall `openai` and install `@google/generative-ai`
+- [x] Refactor `src/services/aiParser.ts` to use Gemini
+- [x] Update `env.example.txt`
+- [ ] Verify functionality

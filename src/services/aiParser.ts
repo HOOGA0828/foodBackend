@@ -1,17 +1,20 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
 import { AIParseRequest, AIParseResponse, ProductInfo } from '../types/scraper.js';
+import pRetry from 'p-retry';
 
 /**
  * AI 解析器服務
- * 使用 OpenAI GPT-4o-mini 來解析日文產品資訊並翻譯為中文
+ * 使用 Google Gemini (gemini-1.5-flash) 來解析日文產品資訊並翻譯為中文
  */
 export class AIParserService {
-  private openai: OpenAI;
-  private readonly model = 'gpt-4o-mini';
+  private genAI: GoogleGenerativeAI;
+  private model: GenerativeModel;
 
   constructor(apiKey: string) {
-    this.openai = new OpenAI({
-      apiKey: apiKey,
+    this.genAI = new GoogleGenerativeAI(apiKey);
+    this.model = this.genAI.getGenerativeModel({
+      model: "gemini-3-flash-preview",
+      generationConfig: { responseMimeType: "application/json" }
     });
   }
 
@@ -27,26 +30,46 @@ export class AIParserService {
       const systemPrompt = this.buildSystemPrompt(request.brandName);
       const userPrompt = this.buildUserPrompt(request);
 
-      const completion = await this.openai.chat.completions.create({
-        model: this.model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.1, // 降低隨機性，提高一致性
-        max_tokens: 4000,
-        response_format: { type: 'json_object' }
-      });
+      const result = await pRetry(
+        async () => {
+          return await this.model.generateContent([
+            systemPrompt,
+            userPrompt
+          ]);
+        },
+        {
+          retries: 3,
+          minTimeout: 2000,
+          factor: 2,
+          onFailedAttempt: error => {
+            console.warn(`⚠️ [AI Parser] Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left. Error: ${(error as any).message}`);
+          }
+        }
+      );
 
-      const content = completion.choices[0]?.message?.content;
-      if (!content) {
+      const response = result.response;
+      const text = response.text();
+
+      if (!text) {
         throw new Error('AI 回應為空');
       }
 
-      const parsedData = JSON.parse(content);
+      const parsedData = JSON.parse(text);
 
       // 驗證並轉換資料格式
       const products = this.validateAndTransformProducts(parsedData.products || [], request.sourceUrl);
+
+      // CRITICAL: 如果 AI 沒抓到 imageUrl，使用請求中的 productLink 圖片
+      // FIXED: 增加安全檢查，避免還原 placeholder 圖片
+      products.forEach(product => {
+        const linkImageUrl = request.productLink?.imageUrl;
+        if (!product.imageUrl && linkImageUrl && this.isValidImageUrl(linkImageUrl)) {
+          console.log(`🖼️ [AI Parser] Restoring imageUrl from link: ${linkImageUrl}`);
+          product.imageUrl = linkImageUrl;
+        } else if (!product.imageUrl && linkImageUrl) {
+          console.log(`⚠️ [AI Parser] Refused to restore invalid imageUrl: ${linkImageUrl}`);
+        }
+      });
 
       console.log(`✅ [AI Parser] ${request.brandName} 解析完成，找到 ${products.length} 個產品`);
 
@@ -54,21 +77,33 @@ export class AIParserService {
         success: true,
         products,
         tokenUsage: {
-          promptTokens: completion.usage?.prompt_tokens || 0,
-          completionTokens: completion.usage?.completion_tokens || 0,
-          totalTokens: completion.usage?.total_tokens || 0
+          promptTokens: 0,
+          completionTokens: 0,
+          totalTokens: 0
         }
       };
 
     } catch (error) {
       console.error(`❌ [AI Parser] ${request.brandName} 解析失敗:`, error);
-
       return {
         success: false,
         products: [],
         errorMessage: error instanceof Error ? error.message : '未知錯誤'
       };
     }
+  }
+
+  /**
+   * 驗證圖片 URL 是否有效且非 placeholder
+   */
+  private isValidImageUrl(url: string): boolean {
+    if (!url) return false;
+    const lower = url.toLowerCase();
+    return !lower.includes('giphy.gif') &&
+      !lower.includes('placeholder') &&
+      !lower.includes('loading') &&
+      !lower.endsWith('.gif') && // 7-11 產品圖通常不是 gif
+      !lower.includes('data:image/');
   }
 
   /**
@@ -177,6 +212,21 @@ ${request.detailMarkdownContent}
   }
 
   /**
+   * 輔助函數：將圖片 URL 轉換為 Base64
+   */
+  private async fetchImageAsBase64(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+      const arrayBuffer = await response.arrayBuffer();
+      return Buffer.from(arrayBuffer).toString('base64');
+    } catch (error) {
+      console.warn(`⚠️ 無法下載圖片 ${url}:`, error);
+      return null;
+    }
+  }
+
+  /**
    * 判斷圖片是否為食物商品廣告
    * @param imageUrl 圖片網址
    * @returns 是否為食物廣告
@@ -185,36 +235,33 @@ ${request.detailMarkdownContent}
     try {
       console.log(`🖼️ [AI Parser] 分析圖片是否為食物廣告: ${imageUrl}`);
 
-      const completion = await this.openai.chat.completions.create({
-        model: this.model,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: '請問這張圖片是否為便利商店的「食物商品」或「飲料商品」的廣告或介紹？\n如果是會員招募、APP下載、點數活動、徵才資訊等非具體食物商品的內容，請回答 false。\n請只回傳 JSON 格式：{"isFood": boolean, "reason": "理由"}'
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: imageUrl
-                }
-              }
-            ]
+      // const parsedUrl = new URL(imageUrl);
+      // const isRelative = parsedUrl.protocol === 'file:'; 
+
+      const imageBase64 = await this.fetchImageAsBase64(imageUrl);
+      if (!imageBase64) {
+        return false;
+      }
+
+      const prompt = '請問這張圖片是否為「食物商品」或「飲料商品」的廣告或介紹？\n包含便利商店、餐廳、速食店等各種食物飲料產品（如主餐、湯類、飲品、甜點等）。\n如果是會員招募、APP下載、點數活動、徵才資訊等非具體食物商品的內容，請回答 false。\n請只回傳 JSON 格式：{"isFood": boolean, "reason": "理由"}';
+
+      const result = await this.model.generateContent([
+        prompt,
+        {
+          inlineData: {
+            data: imageBase64,
+            mimeType: "image/jpeg"
           }
-        ],
-        max_tokens: 300,
-        response_format: { type: 'json_object' }
-      });
+        }
+      ]);
 
-      const content = completion.choices[0]?.message?.content;
-      if (!content) return false;
+      const text = result.response.text();
+      if (!text) return false;
 
-      const result = JSON.parse(content);
-      console.log(`🤖 [AI Parser] 圖片分析結果: ${result.isFood} (${result.reason})`);
+      const jsonResult = JSON.parse(text);
+      console.log(`🤖 [AI Parser] 圖片分析結果: ${jsonResult.isFood} (${jsonResult.reason})`);
 
-      return result.isFood === true;
+      return jsonResult.isFood === true;
 
     } catch (error) {
       console.warn(`⚠️ [AI Parser] 圖片分析失敗，預設視為非食物:`, error);
@@ -231,36 +278,28 @@ ${request.detailMarkdownContent}
     try {
       console.log(`🖼️ [AI Parser] 分析圖片是否為期間限定/新品食物: ${imageUrl}`);
 
-      const completion = await this.openai.chat.completions.create({
-        model: this.model,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: '請問這張圖片是否為食物或飲料商品的廣告或介紹？\n\n判斷標準：\n1. 必須是具體的食物或飲料商品。\n2. 只要是介紹某個食物產品（包含新品、期間限定、或是一般主打商品），請都回答 true。\n3. 如果是純粹的會員招募、APP下載、徵才資訊、單純品牌形象（無特定產品）等，請回答 false。\n\n請只回傳 JSON 格式：{"isTarget": boolean, "reason": "理由"}'
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: imageUrl
-                }
-              }
-            ]
+      const imageBase64 = await this.fetchImageAsBase64(imageUrl);
+      if (!imageBase64) return false;
+
+      const prompt = '請問這張圖片是否為食物或飲料商品的廣告或介紹？\n\n判斷標準：\n1. 必須是具體的食物或飲料商品。\n2. 只要是介紹某個食物產品（包含新品、期間限定、或是一般主打商品），請都回答 true。\n3. 如果是純粹的會員招募、APP下載、徵才資訊、單純品牌形象（無特定產品）等，請回答 false。\n\n請只回傳 JSON 格式：{"isTarget": boolean, "reason": "理由"}';
+
+      const result = await this.model.generateContent([
+        prompt,
+        {
+          inlineData: {
+            data: imageBase64,
+            mimeType: "image/jpeg"
           }
-        ],
-        max_tokens: 300,
-        response_format: { type: 'json_object' }
-      });
+        }
+      ]);
 
-      const content = completion.choices[0]?.message?.content;
-      if (!content) return false;
+      const text = result.response.text();
+      if (!text) return false;
 
-      const result = JSON.parse(content);
-      console.log(`🤖 [AI Parser] 期間限定/新品分析結果: ${result.isTarget} (${result.reason})`);
+      const jsonResult = JSON.parse(text);
+      console.log(`🤖 [AI Parser] 期間限定/新品分析結果: ${jsonResult.isTarget} (${jsonResult.reason})`);
 
-      return result.isTarget === true;
+      return jsonResult.isTarget === true;
 
     } catch (error) {
       console.warn(`⚠️ [AI Parser] 圖片分析失敗，預設視為非目標:`, error);
@@ -275,30 +314,22 @@ ${request.detailMarkdownContent}
     try {
       console.log(`🧠 [AI Parser] 解析產品頁面: ${request.url}`);
 
-      const completion = await this.openai.chat.completions.create({
-        model: this.model,
-        messages: [
-          {
-            role: 'system',
-            content: `你是一個產品資訊提取助手。請從提供的 HTML/文字內容中提取：
+      const prompt = `你是一個產品資訊提取助手。請從提供的 HTML/文字內容中提取：
             1. 產品名稱 (name) - 請保留原文
             2. 產品描述 (description)
             3. 價格 (price) - 包含 amount (數字) 和 currency (幣種，預設 JPY)
             
-            回傳 JSON 格式: { "name": string, "description": string, "price": { "amount": number, "currency": string } }`
-          },
-          {
-            role: 'user',
-            content: request.html
-          }
-        ],
-        response_format: { type: 'json_object' }
-      });
+            回傳 JSON 格式: { "name": string, "description": string, "price": { "amount": number, "currency": string } }`;
 
-      const content = completion.choices[0]?.message?.content;
-      if (!content) return {};
+      const result = await this.model.generateContent([
+        prompt,
+        request.html
+      ]);
 
-      return JSON.parse(content);
+      const text = result.response.text();
+      if (!text) return {};
+
+      return JSON.parse(text);
     } catch (e) {
       console.warn('AI 解析產品頁面失敗', e);
       return {};
@@ -311,23 +342,178 @@ ${request.detailMarkdownContent}
   async translateToTraditionalChinese(text: string): Promise<string> {
     try {
       if (!text) return '';
-      const completion = await this.openai.chat.completions.create({
-        model: this.model,
-        messages: [
-          {
-            role: 'system',
-            content: '你是翻譯助手。請將以下日文翻譯成台灣繁體中文。只回傳翻譯後的文字，不要包含任何解釋。'
-          },
-          {
-            role: 'user',
-            content: text
-          }
-        ]
-      });
-      return completion.choices[0]?.message?.content?.trim() || text;
+
+      const prompt = '你是翻譯助手。請將以下日文翻譯成台灣繁體中文。請回傳 JSON 格式：{ "translated": "翻譯後的文字" }';
+
+      const result = await this.model.generateContent([
+        prompt,
+        text
+      ]);
+
+      const respText = result.response.text();
+      if (!respText) return text;
+
+      const json = JSON.parse(respText);
+      return json.translated || text;
+
     } catch (e) {
       console.warn('翻譯失敗', e);
       return text;
+    }
+  }
+
+  /**
+   * 批次解析產品資訊 (Batch Processing)
+   * 將多個產品的解析請求合併為一個 API 呼叫，以節省請求次數。
+   * @param requests 解析請求陣列
+   * @returns 解析結果陣列
+   */
+  /**
+   * 批次解析產品資訊 (Batch Processing)
+   * 將多個產品的解析請求合併為一個 API 呼叫，以節省請求次數。
+   * @param requests 解析請求陣列
+   * @returns 解析結果陣列
+   */
+  async parseProductsBatch(requests: AIParseRequest[]): Promise<ProductInfo[]> {
+    if (requests.length === 0) return [];
+
+    // Concurrency control: Limit concurrent batch requests if called in parallel contexts
+    // Although parseProductsBatch itself is one call, if the caller calls this multiple times, we might want global limit.
+    // However, the caller (SevenElevenStrategy) calls this in a loop.
+    // Ideally, we move the loop parallelism here or control it in the strategy.
+    // But per user request "B. Limit Concurrency... ensure only 2~3 requests executing".
+    // Since this method makes ONE API call per invocation (for the batch), we wrap the generation in p-retry.
+
+    // To strictly limit global concurrency across multiple calls, we should use a static or singleton limiter.
+    // But for now, we assume this method is called sequentially by the strategy loop (await in loop).
+    // Wait, the strategy loop `for (let i = 0; i < links.length; i += BATCH_SIZE)` awaits each batch properly.
+    // So there is NO parallelism properly happening there!
+    // If the user wants concurrency, we should change the strategy to use Promise.all with p-limit, 
+    // OR we change this method to accept ALL requests and chunk them internally with p-limit.
+
+    // The user said: "Don't start all requests in map. Use p-limit... ensure 2~3 requests executing".
+    // This implies optimizing the CALLING side (Strategy) or handling it here if we change the signature.
+    // Current SevenElevenStrategy awaits each batch. It is sequential (Concurrency = 1).
+    // To optimize, we should Parallelize the batches in SevenElevenStrategy using p-limit!
+
+    // BUT, the user explicitly mentioned "Exponential Backoff... This is standard for 503 errors".
+    // So I must implement retry logic here for the API call.
+
+    try {
+      console.log(`🤖 [AI Parser] 開始批次解析 ${requests.length} 個產品...`);
+
+      // Using p-retry for robust API calling
+      const result = await pRetry(
+        async () => {
+          // 建構批次提示詞
+          const listings = requests.map((req, index) => {
+            return `Item ${index + 1}:\nSource URL: ${req.sourceUrl}\nContent:\n${req.listMarkdownContent}\n${req.detailMarkdownContent ? `Detail: ${req.detailMarkdownContent}` : ''}`;
+          }).join('\n\n----------------\n\n');
+
+          const systemPrompt = `你是專業的日本產品資訊解析助手。
+你的任務是從提供的多個產品內容中提取資訊，並將其轉換為結構化的 JSON 格式。
+
+請遵循以下規則：
+1. 每個項目由 "Item N" 標識。請確保回傳的陣列順序與輸入 Item 順序一致。
+2. 將日文產品名稱翻譯為自然、易懂的繁體中文。
+3. 將產品描述翻譯為繁體中文，保持簡潔但完整。
+4. 正確識別價格資訊（保持數字格式）。
+5. 提取營養資訊和過敏原。
+6. 對於每個 Item，回傳一個完整的產品物件。
+7. 如果某個 Item 無法解析或非產品，請在該位置回傳 null 或標記錯誤，不要跳過導致索引錯位。
+
+輸出格式必須是：
+{
+  "products": [
+    { ...product 1 object... },
+    { ...product 2 object... },
+    ...
+  ]
+}`;
+
+          const userPrompt = `請解析以下 ${requests.length} 個產品項目：
+
+${listings}
+
+除了基本資訊外，請特別注意提取圖片 URL (imageUrl) 和價格。
+請回傳包含 ${requests.length} 個產品物件的 JSON，格式如下：
+{
+  "products": [
+    {
+       "originalName": "日文原名",
+       "translatedName": "繁體中文翻譯名稱",
+       "originalDescription": "日文描述",
+       "translatedDescription": "繁體中文描述",
+       "price": { "amount": 100, "currency": "JPY" },
+       "nutrition": { ... },
+       "allergens": [],
+       "imageUrl": "URL",
+       "isNew": true,
+       "sourceUrl": "Source URL from input"
+    },
+    ...
+  ]
+}`;
+
+          const generationResult = await this.model.generateContent([
+            systemPrompt,
+            userPrompt
+          ]);
+
+          return generationResult;
+        },
+        {
+          retries: 3,
+          minTimeout: 2000,
+          factor: 2,
+          onFailedAttempt: error => {
+            console.warn(`⚠️ [AI Parser] Attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left. Error: ${(error as any).message}`);
+          }
+        }
+      );
+
+      const text = result.response.text();
+      if (!text) throw new Error('AI 回應為空');
+
+      const parsedData = JSON.parse(text);
+      let products = parsedData.products || [];
+
+      // 簡單驗證數量
+      if (products.length !== requests.length) {
+        console.warn(`⚠️ [AI Parser] 批次解析數量不匹配 (預期 ${requests.length}, 實際 ${products.length})，可能部分丟失。`);
+      }
+
+      // 轉換並補全
+      return products.map((p: any, i: number) => {
+        const req = requests[i];
+        if (!req || !p) return null;
+
+        // Fallback sourceUrl if AI didn't return it
+        const sourceUrl = p?.sourceUrl || req?.sourceUrl || '';
+
+        const transformedArray = this.validateAndTransformProducts([p], sourceUrl);
+        if (transformedArray.length === 0) return null;
+
+        const transformed = transformedArray[0];
+        if (!transformed) return null; // Safety check
+
+        // 確保圖片優先級：如果 AI 沒抓到，使用請求中的 Link 圖片
+        if (!transformed.imageUrl && req.productLink?.imageUrl) {
+          console.log(`🖼️ [AI Parser] Restoring imageUrl from link: ${req.productLink.imageUrl}`);
+          transformed.imageUrl = req.productLink.imageUrl;
+        } else if (!transformed.imageUrl) {
+          console.log(`⚠️ [AI Parser] Item '${transformed.translatedName}' has no imageUrl. Link info:`, JSON.stringify(req.productLink));
+        }
+
+        // 確保 Source URL 正確
+        transformed.sourceUrl = sourceUrl;
+
+        return transformed;
+      }).filter((p: any) => p !== null) as ProductInfo[];
+
+    } catch (error: any) {
+      console.error(`❌ [AI Parser] 批次解析失敗 (Max Retries Reached):`, error);
+      return []; // Return empty on batch failure to avoid crashing scraper
     }
   }
 
@@ -345,7 +531,7 @@ ${request.detailMarkdownContent}
         originalDetailedDescription: product.originalDetailedDescription || undefined,
         translatedDetailedDescription: product.translatedDetailedDescription || undefined,
         price: product.price && typeof product.price.amount === 'number' ? {
-          amount: product.price.amount,
+          amount: Math.round(product.price.amount), // 四捨五入取整
           currency: product.price.currency || 'JPY',
           note: product.price.note || undefined
         } : undefined,
@@ -371,9 +557,9 @@ ${request.detailMarkdownContent}
  * 建立 AI 解析器服務實例
  */
 export function createAIParserService(apiKey?: string): AIParserService {
-  const key = apiKey || process.env.OPENAI_API_KEY;
+  const key = apiKey || process.env.GEMINI_API_KEY;
   if (!key) {
-    throw new Error('OpenAI API Key 未設定，請設定 OPENAI_API_KEY 環境變數');
+    throw new Error('Gemini API Key 未設定，請設定 GEMINI_API_KEY 環境變數');
   }
   return new AIParserService(key);
 }

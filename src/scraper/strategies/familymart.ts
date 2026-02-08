@@ -260,20 +260,78 @@ export class FamilyMartStrategy implements ScraperStrategy {
 
                 console.log(`   found ${pageProducts.length} items on this page`);
 
+                // 使用 AI Parser 處理翻譯
                 for (const p of pageProducts) {
-                    const priceMatch = p.priceText.match(/(\d{1,3}(,\d{3})*)/);
-                    const price = priceMatch ? parseInt(priceMatch[0].replace(/,/g, '')) : undefined;
+                    try {
+                        // 準備 AI Parser 請求
+                        const parseRequest = {
+                            brandName: 'familymart',
+                            listMarkdownContent: `${p.name}\n${p.priceText}\n${p.dateText}`,
+                            productLink: {
+                                title: p.name,
+                                url: link.url,
+                                imageUrl: p.imgUrl,
+                                rawText: `${p.name}\n${p.priceText}\n${p.dateText}`,
+                                isNew: true
+                            },
+                            sourceUrl: link.url
+                        };
 
-                    products.push({
-                        originalName: p.name,
-                        translatedName: p.name, // Will be translated later
-                        price: price ? { amount: price, currency: 'JPY' } : undefined,
-                        imageUrl: p.imgUrl,
-                        releaseDate: p.dateText,
-                        sourceUrl: `${link.url}#${p.imgUrl.split('/').pop()?.split('?')[0] || Math.random()}`, // Make URL unique for DB constraint
-                        isNew: true
-                    });
-                    console.log(`   + ${p.name} (${price} JPY)`);
+                        await new Promise(resolve => setTimeout(resolve, 200)); // 避免 API rate limit
+
+                        const aiResult = await this.aiParser.parseProducts(parseRequest);
+
+                        if (aiResult.success && aiResult.products.length > 0) {
+                            const parsed = aiResult.products[0];
+                            products.push({
+                                originalName: p.name,
+                                translatedName: parsed.translatedName || p.name,
+                                originalDescription: parsed.originalDescription,
+                                translatedDescription: parsed.translatedDescription,
+                                originalDetailedDescription: parsed.originalDetailedDescription,
+                                translatedDetailedDescription: parsed.translatedDetailedDescription,
+                                price: parsed.price,
+                                category: parsed.category,
+                                releaseDate: parsed.releaseDate,
+                                allergens: parsed.allergens,
+                                nutrition: parsed.nutrition,
+                                imageUrl: p.imgUrl || parsed.imageUrl,
+                                sourceUrl: `${link.url}#${p.imgUrl.split('/').pop()?.split('?')[0] || Math.random()}`,
+                                isNew: true
+                            });
+                            console.log(`   ✅ ${p.name} → ${parsed.translatedName || p.name} (${parsed.price?.amount || 'N/A'} JPY)`);
+                        } else {
+                            // Fallback: 沒有 AI 解析結果
+                            const priceMatch = p.priceText.match(/(\d{1,3}(,\d{3})*)/);
+                            const price = priceMatch ? parseInt(priceMatch[0].replace(/,/g, '')) : undefined;
+
+                            products.push({
+                                originalName: p.name,
+                                translatedName: p.name, // Fallback 保持原文
+                                price: price ? { amount: price, currency: 'JPY' } : undefined,
+                                imageUrl: p.imgUrl,
+                                releaseDate: p.dateText,
+                                sourceUrl: `${link.url}#${p.imgUrl.split('/').pop()?.split('?')[0] || Math.random()}`,
+                                isNew: true
+                            });
+                            console.log(`   ⚠️ ${p.name} (AI 解析失敗，使用原文)`);
+                        }
+                    } catch (e) {
+                        console.error(`   ❌ AI 解析失敗 ${p.name}:`, e);
+                        // Fallback 處理
+                        const priceMatch = p.priceText.match(/(\d{1,3}(,\d{3})*)/);
+                        const price = priceMatch ? parseInt(priceMatch[0].replace(/,/g, '')) : undefined;
+
+                        products.push({
+                            originalName: p.name,
+                            translatedName: p.name,
+                            price: price ? { amount: price, currency: 'JPY' } : undefined,
+                            imageUrl: p.imgUrl,
+                            releaseDate: p.dateText,
+                            sourceUrl: `${link.url}#${p.imgUrl.split('/').pop()?.split('?')[0] || Math.random()}`,
+                            isNew: true
+                        });
+                    }
                 }
 
             } catch (e) {

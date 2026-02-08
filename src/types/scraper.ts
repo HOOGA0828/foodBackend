@@ -36,6 +36,8 @@ export interface ProductLink {
   isNew?: boolean;
   /** 原始文本內容 (用於 AI 解析) */
   rawText?: string;
+  /** Debug info for tracking missing fields */
+  debugInfo?: string;
 }
 
 /**

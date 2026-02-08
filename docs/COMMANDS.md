@@ -45,6 +45,49 @@ npm run translate:names
 - 使用 OpenAI 模型進行翻譯並更新資料庫。
 - 內建速率限制，避免超過 API 額度。
 
+### 4. 清空單一品牌資料
+快速刪除特定品牌的**所有產品資料**。請將 `<BrandName>` 替換為 `src/config/brands.ts` 中的 `name`。
+這通常用於重置測試資料或清除錯誤抓取的內容。
+
+**注意：** 此動作無法復原，請謹慎使用。
+
+```bash
+npx tsx src/scripts/clear-brand-data.ts "<BrandName>"
+```
+
+**範例：**
+```bash
+# 清空 7-Eleven 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "seven-eleven"
+
+# 清空 FamilyMart 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "familymart"
+
+# 清空 Lawson (羅森) 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "lawson"
+
+# 清空 McDonald's (麥當勞) 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "mcdonalds"
+
+# 清空 吉野家 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "yoshinoya"
+
+# 清空 すき家 (Sukiya) 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "sukiya"
+
+# 清空 Starbucks (星巴克) 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "starbucks"
+
+# 清空 松屋 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "matsuya"
+
+# 清空 KFC (肯德基) 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "kfc"
+
+# 清空 摩斯漢堡 的所有資料
+npx tsx src/scripts/clear-brand-data.ts "mos-burger"
+```
+
 ---
 
 ## 🗄️ 資料庫更新 (Database)
@@ -59,3 +102,9 @@ npm run translate:names
 ALTER TABLE products ADD COLUMN IF NOT EXISTS is_expired BOOLEAN DEFAULT FALSE;
 ALTER TABLE products ADD COLUMN IF NOT EXISTS last_active_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();
 ```
+
+---
+
+## 📖 相關文件
+
+- [GitHub Actions 設定與操作指南](./GITHUB_GUIDE.md): 詳細說明如何設定 Secrets、查看排程與手動觸發爬蟲。

@@ -25,6 +25,7 @@ export class SevenElevenStrategy implements ScraperStrategy {
 
         const crawler = new PlaywrightCrawler({
             maxRequestsPerMinute: 10,
+            requestHandlerTimeoutSecs: 300, // 5 分鐘，足夠處理 AI 解析
             requestHandler: async ({ request, page }) => {
                 console.log(`📄 [SevenElevenStrategy] 正在處理頁面: ${request.url}`);
 
@@ -35,16 +36,12 @@ export class SevenElevenStrategy implements ScraperStrategy {
                 const links = await this.extractProductsFromPage(page, brandConfig);
                 console.log(`✅ [SevenElevenStrategy] 頁面找到 ${links.length} 個產品`);
 
-                // 解析這些產品 (使用 List-Only 模式)
-                const products = await this.parseProducts(brandConfig, links);
-                allProducts.push(...products);
-
-                // 檢查分頁 (使用更穩健的文字匹配)
+                // ✨ 關鍵修正：先檢查分頁（頁面還活著），再執行耗時的 AI 解析
                 // 用戶提示: class="pager_ctrl wide", 連結文字為［次へ］
                 const nextUrl = await page.$$eval('.pager_ctrl a', (anchors: any[]) => {
                     const nextLink = anchors.find(a => a.textContent.includes('次へ'));
                     return nextLink ? nextLink.getAttribute('href') : null;
-                });
+                }).catch(() => null); // 添加錯誤處理
 
                 if (nextUrl && pageCount < MAX_PAGES) {
                     // 構建絕對路徑
@@ -52,13 +49,17 @@ export class SevenElevenStrategy implements ScraperStrategy {
                     const absoluteNextUrl = nextUrl.startsWith('http') ? nextUrl :
                         nextUrl.startsWith('/') ? `${baseUrl}${nextUrl}` : `${baseUrl}/${nextUrl}`;
 
-                    console.log(`➡️ [SevenElevenStrategy] 發現下一頁 (文字匹配): ${absoluteNextUrl}`);
+                    console.log(`➡️ [SevenElevenStrategy] 發現下一頁 (${pageCount + 1}/${MAX_PAGES}): ${absoluteNextUrl}`);
                     // 將下一頁加入隊列
                     await crawler.addRequests([absoluteNextUrl]);
                     pageCount++;
                 } else {
                     console.log('⏹️ [SevenElevenStrategy] 未找到下一頁連結 (次へ) 或達到頁數限制。');
                 }
+
+                // AI解析 (放在分頁檢查後，即使耗時也不影響分頁發現)
+                const products = await this.parseProducts(brandConfig, links);
+                allProducts.push(...products);
             },
         });
 

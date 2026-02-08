@@ -6,3 +6,6 @@ ALTER TABLE products ADD COLUMN IF NOT EXISTS last_active_at TIMESTAMP WITH TIME
 
 -- Update index to include is_expired for faster filtering
 CREATE INDEX IF NOT EXISTS idx_products_is_expired ON products(is_expired);
+
+-- Add favicon_url column to brands table
+ALTER TABLE brands ADD COLUMN IF NOT EXISTS favicon_url TEXT;

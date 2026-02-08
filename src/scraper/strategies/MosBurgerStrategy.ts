@@ -72,11 +72,27 @@ export class MosBurgerStrategy implements ScraperStrategy {
                     let imgSrc = img.getAttribute('src');
                     if (!imgSrc) continue;
 
-                    // Fix relative path
-                    // User note: src="/img/menu/..." -> https://www.mos.jp/img/menu/...
-                    if (imgSrc.startsWith('/')) {
-                        imgSrc = 'https://www.mos.jp' + imgSrc;
+                    // Fix relative path - 處理各種相對路徑格式
+                    const baseUrl = 'https://www.mos.jp';
+                    const currentPath = '/menu/';
+
+                    if (imgSrc.startsWith('//')) {
+                        // Protocol-relative URL: //cdn.example.com/img.jpg
+                        imgSrc = 'https:' + imgSrc;
+                    } else if (imgSrc.startsWith('/')) {
+                        // Absolute path: /img/menu/...
+                        imgSrc = baseUrl + imgSrc;
+                    } else if (imgSrc.startsWith('./')) {
+                        // Relative to current directory: ./img/...
+                        imgSrc = baseUrl + currentPath + imgSrc.substring(2);
+                    } else if (imgSrc.startsWith('../')) {
+                        // Relative to parent directory: ../img/...
+                        imgSrc = baseUrl + '/img/' + imgSrc.split('../').pop();
+                    } else if (!imgSrc.startsWith('http://') && !imgSrc.startsWith('https://')) {
+                        // Relative path without prefix: img/...
+                        imgSrc = baseUrl + currentPath + imgSrc;
                     }
+                    // 如果已經是完整 URL (http:// 或 https://)，則不處理
 
                     // 2. Name
                     // Try common selectors for name
@@ -88,7 +104,7 @@ export class MosBurgerStrategy implements ScraperStrategy {
                         // Fallback to text lines if needed, but usually .name exists
                         const text = container.textContent?.trim() || '';
                         const lines = text.split('\n');
-                        if (lines.length > 0) name = lines[0].trim();
+                        if (lines.length > 0) name = lines[0]?.trim() || '';
                     }
 
                     if (!name) continue;

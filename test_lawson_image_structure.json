@@ -1,0 +1,59 @@
+{
+  "currentUrl": "https://www.lawson.co.jp/recommend/new/list/1518640_5162.html",
+  "products": [
+    {
+      "index": 0,
+      "title": "盛りすぎ！ハムサンド",
+      "productUrl": "/recommend/original/detail/1512681_1996.html",
+      "imageData": {
+        "src": "/recommend/original/detail/img/l781595.jpg",
+        "dataSrc": null,
+        "dataOriginal": null,
+        "dataset": {},
+        "allAttributes": {
+          "src": "/recommend/original/detail/img/l781595.jpg",
+          "width": "306",
+          "height": "235",
+          "alt": ""
+        }
+      },
+      "outerHTML": "<li>\n\t\t\t<a href=\"/recommend/original/detail/1512681_1996.html\">\n\t\t\t\t<p class=\"img\"><img src=\"/recommend/original/detail/img/l781595.jpg\" width=\"306\" height=\"235\" alt=\"\"></p>\n\t\t\t\t<p class=\"ttl\">盛りすぎ！ハムサンド</p>\n\t\t\t\t<p>1包装当たり324kcal</p>\n\t\t\t\t<p class=\"price\"><span>343</span><span>円(税込)</span></p>\n\t\t\t\t<p class=\"date\">発売日<span>2026.02.10</span></p>\n\t\t\t</a>\n\t\t</li>"
+    },
+    {
+      "index": 1,
+      "title": "盛りすぎ！鶏のから揚げ弁当",
+      "productUrl": "/recommend/original/detail/1518682_1996.html",
+      "imageData": {
+        "src": "/recommend/original/detail/img/l20260210chubo0001.jpg",
+        "dataSrc": null,
+        "dataOriginal": null,
+        "dataset": {},
+        "allAttributes": {
+          "src": "/recommend/original/detail/img/l20260210chubo0001.jpg",
+          "width": "306",
+          "height": "235",
+          "alt": ""
+        }
+      },
+      "outerHTML": "<li>\n\t\t\t<a href=\"/recommend/original/detail/1518682_1996.html\">\n\t\t\t\t<p class=\"img\"><img src=\"/recommend/original/detail/img/l20260210chubo0001.jpg\" width=\"306\" height=\"235\" alt=\"\"></p>\n\t\t\t\t<p class=\"ttl\">盛りすぎ！鶏のから揚げ弁当</p>\n\t\t\t\t<p>1包装当たり1,007kcal</p>\n\t\t\t\t<p class=\"price\"><span>592</span><span>円(税込)</span></p>\n\t\t\t\t<p class=\"date\">発売日<span>2026.02.10</span></p>\n\t\t\t\t<div class=\"smalltxt\" style=\"padding-top:5px;\"><ul><li>※熱量は参照値となります。</li><li>※北海道・沖縄地域のローソンではお取り扱いしておりません。</li><li>※北海道地域のローソンでは「盛りすぎ！布袋"
+    },
+    {
+      "index": 2,
+      "title": "",
+      "imageData": {},
+      "outerHTML": "<li>※熱量は参照値となります。</li>"
+    },
+    {
+      "index": 3,
+      "title": "",
+      "imageData": {},
+      "outerHTML": "<li>※北海道・沖縄地域のローソンではお取り扱いしておりません。</li>"
+    },
+    {
+      "index": 4,
+      "title": "",
+      "imageData": {},
+      "outerHTML": "<li>※北海道地域のローソンでは「盛りすぎ！布袋監修 ザンギ弁当」を販売いたします。</li>"
+    }
+  ]
+}

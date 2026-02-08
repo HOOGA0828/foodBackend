@@ -78,16 +78,16 @@ export class YoshinoyaStrategy implements ScraperStrategy {
         console.log(`Visiting: ${url}`);
         await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
 
-        // 等待 .campaign__unit ... 載入
+        // 等待「おすすめメニュー」(r-menu__wrapper) 區域的 swiper 載入
         try {
-            await page.waitForSelector('.campaign__unit .swiper-wrapper', { timeout: 10000 });
+            await page.waitForSelector('.r-menu__wrapper .swiper-wrapper', { timeout: 10000 });
+            console.log('✅ 找到「おすすめメニュー」區域: .r-menu__wrapper');
         } catch (e) {
-            console.warn('⚠️ 找不到 .campaign__unit .swiper-wrapper，嘗試繼續執行...');
+            console.warn('⚠️ 找不到 .r-menu__wrapper，嘗試繼續執行...');
         }
 
-        // 提取所有候選項目
-        // 吉野家 Campaign Banner
-        const rawItems = await page.$$eval('.campaign__unit .swiper-slide:not(.swiper-slide-duplicate)', (els: HTMLElement[]) => {
+        // 提取「おすすめメニュー」(r-menu__wrapper) 區域的所有候選項目
+        const rawItems = await page.$$eval('.r-menu__wrapper .swiper-slide:not(.swiper-slide-duplicate)', (els: HTMLElement[]) => {
             const seen = new Set<string>();
             return els.map(el => {
                 const anchor = el.querySelector('a');
@@ -110,7 +110,7 @@ export class YoshinoyaStrategy implements ScraperStrategy {
             }).filter(i => i !== null && i.url);
         });
 
-        console.log(`🔎 找到 ${rawItems.length} 個輪播項目，開始 AI 視覺篩選...`);
+        console.log(`🔎 [おすすめメニュー] 找到 ${rawItems.length} 個輪播項目，開始 AI 視覺篩選...`);
 
         const links: ProductLink[] = [];
 

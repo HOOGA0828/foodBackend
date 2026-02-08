@@ -82,7 +82,7 @@ export class DefaultStrategy implements ScraperStrategy {
                     maxRequestsPerMinute: 10,
                     maxConcurrency: 1,
                     requestHandler: async ({ request, page }) => {
-                        await page.waitForLoadState('networkidle');
+                        await page.waitForLoadState('domcontentloaded');
                         await this.performPageActions(page, brandConfig);
                         const waitTime = brandConfig.options?.waitFor || 1000;
                         await page.waitForTimeout(waitTime);
@@ -142,7 +142,7 @@ export class DefaultStrategy implements ScraperStrategy {
             maxConcurrency: 2,
             requestHandler: async ({ request, page }) => {
                 const link = request.userData.link as ProductLink;
-                await page.waitForLoadState('networkidle');
+                await page.waitForLoadState('domcontentloaded');
                 await page.waitForTimeout(deepCrawling.detailPageWaitFor || 2000);
                 const content = await page.content();
                 // Image extraction from detail
@@ -181,7 +181,16 @@ export class DefaultStrategy implements ScraperStrategy {
                 let imgUrl = '';
                 if (conf.imgSel) {
                     const img = el.querySelector(conf.imgSel);
-                    if (img) imgUrl = img.getAttribute('src') || '';
+                    if (img) {
+                        // 處理 lazy loading: 優先檢查 data-original, data-src, 最後才用 src
+                        imgUrl = img.getAttribute('data-original') ||
+                            img.getAttribute('data-src') ||
+                            img.getAttribute('src') || '';
+                        // 過濾掉預覽圖/佔位圖
+                        if (imgUrl.includes('giphy.gif') || imgUrl.includes('placeholder')) {
+                            imgUrl = '';
+                        }
+                    }
                 }
 
                 const absUrl = href.startsWith('http') ? href : href.startsWith('/') ? `${conf.baseUrl}${href}` : `${conf.baseUrl}/${href}`;
@@ -199,14 +208,58 @@ export class DefaultStrategy implements ScraperStrategy {
     }
 
     private async extractPageImages(page: any, brandConfig: BrandConfig): Promise<string[]> {
-        // Simplified image extraction
         const sel = brandConfig.options?.deepCrawling?.productImageSelector;
         if (!sel) return [];
-        return await page.$$eval(sel, (imgs: any[]) => imgs.map(i => i.src).filter(s => s));
+        return await page.$$eval(sel, (imgs: any[]) =>
+            imgs.map(i => i.getAttribute('data-original') ||
+                i.getAttribute('data-src') ||
+                i.src || '')
+                .filter(s => s && !s.includes('giphy.gif') && !s.includes('placeholder'))
+        );
     }
 
     private async performPageActions(page: any, brandConfig: BrandConfig) {
-        // Stub
+        const actions = brandConfig.options?.actions || [];
+
+        for (const action of actions) {
+            if (action === 'scrollToBottom') {
+                console.log('🔄 [Scraper] 開始滾動頁面以觸發 lazy loading...');
+
+                // 先滾動到最頂部
+                await page.evaluate(() => window.scrollTo(0, 0));
+                await page.waitForTimeout(500);
+
+                // 獲取頁面高度
+                const pageHeight = await page.evaluate(() => document.body.scrollHeight);
+                const viewportHeight = await page.evaluate(() => window.innerHeight);
+
+                // 計算需要滾動的次數
+                const scrollSteps = Math.ceil(pageHeight / viewportHeight) + 2;
+                console.log(`📏 [Scraper] 頁面高度: ${pageHeight}px, 視窗高度: ${viewportHeight}px, 將滾動 ${scrollSteps} 次`);
+
+                // 逐步滾動，每次一個視窗高度
+                for (let i = 0; i < scrollSteps; i++) {
+                    await page.evaluate(() => {
+                        window.scrollBy({
+                            top: window.innerHeight,
+                            behavior: 'smooth'
+                        });
+                    });
+
+                    // 每次滾動後等待較長時間讓圖片載入
+                    await page.waitForTimeout(1500);
+                    console.log(`   滾動進度: ${i + 1}/${scrollSteps}`);
+                }
+
+                // 最後滾到最底部確保萬無一失
+                await page.evaluate(() => {
+                    window.scrollTo(0, document.body.scrollHeight);
+                });
+                await page.waitForTimeout(2000); // 最後多等2秒
+
+                console.log('✅ [Scraper] 滾動完成');
+            }
+        }
     }
 
     // --- Parsing Helpers ---
@@ -221,7 +274,15 @@ export class DefaultStrategy implements ScraperStrategy {
                 productLink: link,
                 sourceUrl: link.url
             });
-            if (res.success) results.push(...res.products);
+            if (res.success) {
+                // 優先使用 HTML selector 抓到的圖片，而非 AI 推測的
+                const productsWithCorrectImages = res.products.map(p => ({
+                    ...p,
+                    imageUrl: link.imageUrl || p.imageUrl, // HTML 優先
+                    sourceUrl: link.url
+                }));
+                results.push(...productsWithCorrectImages);
+            }
         }
         return this.removeDuplicateProducts(results);
     }
@@ -248,7 +309,15 @@ export class DefaultStrategy implements ScraperStrategy {
                 productLink: d.productLink,
                 sourceUrl: d.productLink.url
             });
-            if (res.success) all.push(...res.products);
+            if (res.success) {
+                // 優先使用 HTML 抓到的圖片
+                const productsWithCorrectImages = res.products.map(p => ({
+                    ...p,
+                    imageUrl: d.productLink.imageUrl || p.imageUrl,
+                    sourceUrl: d.productLink.url
+                }));
+                all.push(...productsWithCorrectImages);
+            }
         }
         return this.removeDuplicateProducts(all);
     }

@@ -63,6 +63,11 @@ async function main() {
         // 顯示處理結果摘要
         displayResultSummary(result);
 
+        // [New] 立即儲存該品牌資料到資料庫 (Incremental Save)
+        if (result.status === 'success' || result.status === 'partial_success') {
+          await saveResultsToSupabase([result], supabaseService);
+        }
+
       } catch (error) {
         console.error(`❌ 處理 ${brand.displayName} 時發生錯誤:`, error);
 
@@ -93,9 +98,40 @@ async function main() {
     displayFinalReport(results, Date.now() - startTime);
 
     // 5. 儲存結果到 Supabase 資料庫
-    await saveResultsToSupabase(results, supabaseService);
+    const saveSummary = await saveResultsToSupabase(results, supabaseService);
 
-    // 6. 輸出最終 JSON 結果 (用於參考)
+    // 6. 發送通知 (New)
+    try {
+      if (process.env.NOTIFICATION_EMAIL) {
+        const { sendNotification } = await import('../services/mailer.js');
+        const insertedCount = saveSummary.successfulSaves;
+
+        // 只有在有新資料或有錯誤時才通知，或者每天都通知 (這裡選擇每天通知)
+        const subject = `[爬蟲報告] 新增 ${insertedCount} 筆資料 - ${new Date().toLocaleDateString()}`;
+
+        let text = `爬蟲執行完成。\n\n`;
+        text += `新增資料: ${insertedCount} 筆\n`;
+        text += `執行時間: ${((Date.now() - startTime) / 1000).toFixed(1)} 秒\n`;
+        text += `成功品牌: ${results.filter(r => r.status === 'success').length}\n`;
+        text += `失敗品牌: ${results.filter(r => r.status === 'failed').length}\n`;
+
+        if (results.some(r => r.status === 'failed')) {
+          text += `\n❌ 失敗品牌列表:\n`;
+          results.filter(r => r.status === 'failed').forEach(r => {
+            text += `- ${r.brand.displayName}: ${r.errorMessage}\n`;
+          });
+        }
+
+        await sendNotification({
+          subject,
+          text
+        });
+      }
+    } catch (e) {
+      console.error('❌ 發送通知時發生錯誤:', e);
+    }
+
+    // 7. 輸出最終 JSON 結果 (用於參考)
     outputResultsForSupabase(results);
 
   } catch (error) {
@@ -135,7 +171,7 @@ function getTargetBrands() {
  */
 function displayResultSummary(result: ScraperResult): void {
   const statusEmoji = result.status === 'success' ? '✅' :
-                     result.status === 'partial_success' ? '⚠️' : '❌';
+    result.status === 'partial_success' ? '⚠️' : '❌';
 
   console.log(`${statusEmoji} ${result.brand.displayName} 處理完成`);
   console.log(`   📊 產品數量: ${result.productsCount}`);
@@ -194,10 +230,14 @@ function displayFinalReport(results: ScraperResult[], totalTime: number): void {
 /**
  * 儲存結果到 Supabase 資料庫
  */
-async function saveResultsToSupabase(results: ScraperResult[], supabaseService: any): Promise<void> {
+async function saveResultsToSupabase(results: ScraperResult[], supabaseService: any): Promise<{
+  successfulSaves: number;
+  skippedSaves: number;
+  failedSaves: number;
+}> {
   if (!supabaseService) {
     console.log('⚠️ Supabase 服務未初始化，跳過資料庫儲存');
-    return;
+    return { successfulSaves: 0, skippedSaves: 0, failedSaves: 0 };
   }
 
   console.log('\n💾 開始儲存結果到 Supabase 資料庫...');
@@ -239,6 +279,8 @@ async function saveResultsToSupabase(results: ScraperResult[], supabaseService: 
   console.log(`✅ 成功插入: ${successfulSaves} 筆`);
   console.log(`⚠️ 跳過重複: ${skippedSaves} 筆`);
   console.log(`❌ 儲存失敗: ${failedSaves} 筆`);
+
+  return { successfulSaves, skippedSaves, failedSaves };
 }
 
 /**
@@ -246,6 +288,10 @@ async function saveResultsToSupabase(results: ScraperResult[], supabaseService: 
  * 這是給開發者參考的最終 JSON 格式
  */
 function outputResultsForSupabase(results: ScraperResult[]): void {
+  // ... (保留此函數內容，或者只顯示 log 以節省篇幅)
+  // 為了完整性，這裡如果不修改這部分函數內容，可以保留原樣
+  // 但因為 replacement 必須是完整的函數塊，我這裡需要把它寫完整以免語法錯誤
+
   console.log('\n💾 Supabase 接入資料格式');
   console.log('========================');
 
@@ -269,29 +315,8 @@ function outputResultsForSupabase(results: ScraperResult[]): void {
     execution_time_ms: result.executionTime
   }));
 
-  // 輸出 JSON (格式化後)
-  console.log(JSON.stringify(supabaseData, null, 2));
-
-  // 提供使用說明
-  console.log('\n📝 Supabase 表格建議結構:');
-  console.log('CREATE TABLE product_scrapes (');
-  console.log('  id SERIAL PRIMARY KEY,');
-  console.log('  brand_name TEXT NOT NULL,');
-  console.log('  brand_display_name TEXT NOT NULL,');
-  console.log('  brand_category TEXT NOT NULL,');
-  console.log('  products_count INTEGER NOT NULL,');
-  console.log('  products JSONB NOT NULL,');
-  console.log('  scraped_at TIMESTAMP WITH TIME ZONE NOT NULL,');
-  console.log('  status TEXT NOT NULL,');
-  console.log('  execution_time_ms INTEGER NOT NULL,');
-  console.log('  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()');
-  console.log(');');
-
-  console.log('\n💡 插入範例:');
-  console.log('// 此處對接 Supabase');
-  console.log('// const { data, error } = await supabase');
-  console.log('//   .from(\'product_scrapes\')');
-  console.log('//   .insert(supabaseData);');
+  // 只在 debug 模式或必要時輸出
+  // console.log(JSON.stringify(supabaseData, null, 2));
 }
 
 /**

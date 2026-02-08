@@ -1,0 +1,21 @@
+{
+  "total": 25,
+  "withImages": 25,
+  "samples": [
+    {
+      "title": "盛りすぎ！ハムサンド",
+      "imageUrl": "https://www.lawson.co.jp/recommend/original/detail/img/l781595.jpg",
+      "href": "/recommend/original/detail/1512681_1996.html"
+    },
+    {
+      "title": "盛りすぎ！鶏のから揚げ弁当",
+      "imageUrl": "https://www.lawson.co.jp/recommend/original/detail/img/l20260210chubo0001.jpg",
+      "href": "/recommend/original/detail/1518682_1996.html"
+    },
+    {
+      "title": "盛りすぎ！和風シーチキン®マヨネーズおにぎり",
+      "imageUrl": "https://www.lawson.co.jp/recommend/original/detail/img/l799297.jpg",
+      "href": "/recommend/original/detail/1518637_1996.html"
+    }
+  ]
+}

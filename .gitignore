@@ -18,6 +18,9 @@ build/
 # Logs
 logs/
 *.log
+*.txt
+!env.example.txt
+!requirements.txt
 
 # OS specific
 .DS_Store
@@ -25,4 +28,10 @@ logs/
 # Debug & Test Output
 mcd_result.json
 debug-*.ts
-test-mcdonalds-scraper.ts
+debug-*.mjs
+test-*.ts
+!test-scraper-basic.ts
+!test-deep-crawling.ts
+temp_*.html
+*_dump.html
+check-*.ts

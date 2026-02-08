@@ -6,7 +6,11 @@ import { ScraperResult, ProductInfo } from '../../types/scraper.js';
 import { AIParserService } from '../../services/aiParser.js';
 
 export class StarbucksStrategy implements ScraperStrategy {
-    constructor(aiParser: AIParserService) { }
+    private aiParser: AIParserService;
+
+    constructor(aiParser: AIParserService) {
+        this.aiParser = aiParser;
+    }
 
     async scrape(brandConfig: BrandConfig): Promise<ScraperResult> {
         const startTime = Date.now();
@@ -69,7 +73,7 @@ export class StarbucksStrategy implements ScraperStrategy {
 
                             return {
                                 originalName: nameEl?.textContent?.trim() || imgEl?.getAttribute('alt') || 'Unknown',
-                                translatedName: '',
+                                translatedName: '', // 待翻譯
                                 price: priceAmount ? {
                                     amount: priceAmount,
                                     currency: 'JPY',
@@ -82,6 +86,21 @@ export class StarbucksStrategy implements ScraperStrategy {
                     });
 
                     console.log(`✨ [StarbucksStrategy] 從頁面 DOM 提取出 ${products.length} 個產品`);
+
+                    // 使用 AI Parser 批次翻譯產品名稱
+                    console.log(`🤖 [StarbucksStrategy] 開始翻譯產品名稱...`);
+                    for (const product of products) {
+                        if (product.originalName && !product.translatedName) {
+                            try {
+                                const translated = await this.aiParser.translateToTraditionalChinese(product.originalName);
+                                product.translatedName = translated || product.originalName;
+                            } catch (e) {
+                                console.warn(`⚠️ 翻譯失敗，使用原名: ${product.originalName}`);
+                                product.translatedName = product.originalName;
+                            }
+                        }
+                    }
+
                     allProducts.push(...products);
 
                 } catch (err) {

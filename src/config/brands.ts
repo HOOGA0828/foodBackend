@@ -54,8 +54,8 @@ export interface BrandConfig {
  */
 export const BRANDS: BrandConfig[] = [
   {
-    name: '7-Eleven',
-    displayName: '7-Eleven 新品頁面(近畿)',
+    name: 'seven-eleven',
+    displayName: '7-Eleven',
     url: 'https://www.sej.co.jp/products/a/thisweek/area/kinki/',
     category: 'convenience_store',
     pageType: 'product_list',
@@ -72,14 +72,14 @@ export const BRANDS: BrandConfig[] = [
         productTitleSelector: '.item_ttl',
         productImageSelector: 'figure img',
         newBadgeSelector: '.new-badge, .badge-new, [class*="new"]',
-        maxProducts: 30,
+        // maxProducts: 50, // 移除限制，抓取所有產品
         detailPageWaitFor: 0
       }
     }
   },
   {
     name: 'familymart',
-    displayName: '全家 新品頁面',
+    displayName: 'FamilyMart',
     url: 'https://www.family.co.jp/',
     category: 'convenience_store',
     pageType: 'homepage_banner',
@@ -100,7 +100,7 @@ export const BRANDS: BrandConfig[] = [
   },
   {
     name: 'lawson',
-    displayName: 'LAWSON',
+    displayName: 'Lawson',
     url: 'https://www.lawson.co.jp/recommend/new/',
     category: 'convenience_store',
     pageType: 'product_list',
@@ -122,7 +122,7 @@ export const BRANDS: BrandConfig[] = [
   },
   {
     name: 'mcdonalds',
-    displayName: 'mcdonalds',
+    displayName: 'McDonald\'s',
     url: 'https://www.mcdonalds.co.jp/',
     category: 'fast_food',
     pageType: 'homepage_banner',
@@ -142,19 +142,20 @@ export const BRANDS: BrandConfig[] = [
     }
   },
   {
-    name: '吉野家',
+    name: 'yoshinoya',
     displayName: '吉野家',
     url: 'https://www.yoshinoya.com/',
     category: 'restaurant',
     pageType: 'homepage_banner',
-    newProductSelector: '.campaign__unit .swiper-wrapper',
+    // 專注於「おすすめメニュー」(推薦菜單) 的 swiper banner - r-menu__wrapper 區域
+    newProductSelector: '.r-menu__wrapper .swiper-wrapper',
     enabled: true,
     options: {
       waitFor: 3000,
       deepCrawling: {
         enabled: true,
-        scrapeDetailPages: true,
-        productLinkSelector: '.campaign__unit .swiper-slide:not(.swiper-slide-duplicate) a',
+        scrapeDetailPages: true, // 進入活動頁面進行產品詳細抓取
+        productLinkSelector: '.r-menu__wrapper .swiper-slide:not(.swiper-slide-duplicate) a',
         productTitleSelector: '.rcmd__text p',
         productImageSelector: 'img',
         newBadgeSelector: '.new-badge',
@@ -165,7 +166,7 @@ export const BRANDS: BrandConfig[] = [
   },
   {
     name: 'sukiya',
-    displayName: 'Sukiya',
+    displayName: 'すき家',
     url: 'https://www.sukiya.jp/',
     category: 'restaurant',
     pageType: 'product_list',
@@ -181,7 +182,7 @@ export const BRANDS: BrandConfig[] = [
   },
   {
     name: 'starbucks',
-    displayName: 'starbucks',
+    displayName: 'Starbucks',
     url: 'https://product.starbucks.co.jp/beverage/?nid=mm',
     url2: 'https://product.starbucks.co.jp/food/?nid=mm',
     category: 'restaurant',
@@ -202,9 +203,9 @@ export const BRANDS: BrandConfig[] = [
     }
   },
   {
-    name: 'Matsuya',
+    name: 'matsuya',
     displayName: '松屋',
-    url: 'https://www.matsuyafoods.co.jp/matsuya/menu/',
+    url: 'https://www.matsuyafoods.co.jp/matsuya/menu/limited/index.html',
     category: 'restaurant',
     pageType: 'product_list',
     newProductSelector: '.menu-list',
@@ -218,24 +219,33 @@ export const BRANDS: BrandConfig[] = [
     }
   },
   {
-    name: 'KFC',
-    displayName: '肯德基',
+    name: 'kfc',
+    displayName: 'KFC',
     url: 'https://www.kfc.co.jp/menu/',
     category: 'fast_food',
     pageType: 'product_list',
-    newProductSelector: '.product-list',
+    // 只抓取「おすすめ」推薦區域，位於 id="campaign" 內
+    newProductSelector: '#campaign',
     enabled: true,
     options: {
-      waitFor: 3000,
+      waitFor: 5000, // 增加等待時間，確保滾動和圖片載入完成
+      actions: ['scrollToBottom'], // 滾動以觸發 lazy loading
       deepCrawling: {
         enabled: true,
-        scrapeDetailPages: false
+        scrapeDetailPages: false,
+        // 專注於 campaign 區域內的產品連結
+        productLinkSelector: '#campaign a[href*="/menu/"]',
+        productTitleSelector: 'h2, h3, .title, .name',
+        // Contentful 圖片通常在 images.ctfassets.net
+        productImageSelector: '#campaign img',
+        newBadgeSelector: '.new, .badge-new, [class*="new"]',
+        maxProducts: 30
       }
     }
   }
   ,
   {
-    name: 'mos_burger',
+    name: 'mos-burger',
     displayName: '摩斯漢堡',
     url: 'https://www.mos.jp/menu/',
     category: 'fast_food',

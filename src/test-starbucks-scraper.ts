@@ -11,15 +11,15 @@ dotenv.config();
 async function testStarbucksScraper() {
     console.log('🚀 開始測試 Starbucks 爬蟲...');
 
-    const openaiApiKey = process.env.OPENAI_API_KEY;
-    if (!openaiApiKey) {
-        console.error('❌ 錯誤: 未設定 OPENAI_API_KEY 環境變數');
+    const geminiApiKey = process.env.GEMINI_API_KEY;
+    if (!geminiApiKey) {
+        console.error('❌ 錯誤: 未設定 GEMINI_API_KEY 環境變數');
         process.exit(1);
     }
 
     try {
         // 1. 初始化服務
-        const aiParser = new AIParserService(openaiApiKey);
+        const aiParser = new AIParserService(geminiApiKey);
         const scraper = createWebScraper(aiParser);
         const supabaseService = createSupabaseService();
 
