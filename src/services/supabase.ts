@@ -94,8 +94,19 @@ export class SupabaseService {
         try {
           let existingProduct = null;
 
-          // 策略 1: 優先使用 brand_id + nameJp (original_name) 進行比對
-          if (product.originalName) {
+          // 策略 1: 優先嘗試使用 sourceUrl (且非品牌首頁) 進行比對
+          // 這能解決名稱變更但網址不變導致的重複建立問題
+          if (product.sourceUrl && product.sourceUrl !== result.brand.url) {
+            existingProduct = await this.prisma.product.findFirst({
+              where: {
+                brandId: brandId,
+                sourceUrl: product.sourceUrl
+              }
+            });
+          }
+
+          // 策略 2: 如果找不到，退回檢查 nameJp (original_name)
+          if (!existingProduct && product.originalName) {
             existingProduct = await this.prisma.product.findFirst({
               where: {
                 brandId: brandId,
@@ -105,6 +116,13 @@ export class SupabaseService {
           }
 
           if (existingProduct) {
+            if (existingProduct.status === 'ignored') {
+              console.log(`🙈 [DB] 忽略產品 (手動標記): ${product.translatedName} (ID: ${existingProduct.id})`);
+              // 從待過期清單中移除，以免被誤判為下架
+              activeProductIds.delete(existingProduct.id);
+              continue;
+            }
+
             // 從待過期清單中移除
             activeProductIds.delete(existingProduct.id);
 
@@ -186,13 +204,13 @@ export class SupabaseService {
             });
             insertedCount++;
           }
-
         } catch (error) {
           const errorMessage = error instanceof Error ? error.message : '未知錯誤';
           console.error(`❌ [DB] 處理產品例外: ${errorMessage}`);
           errors.push(`處理產品 ${product.translatedName} 失敗`);
         }
       }
+
 
       // 3. 處理過期產品
       // Mark products that were available but not found in this scrape as 'sold_out' or similar?
@@ -204,6 +222,25 @@ export class SupabaseService {
       if (result.products.length > 0 && activeProductIds.size > 0) {
         console.log(`🍂 [DB] 標記 ${activeProductIds.size} 個產品為下架...`);
         const expiredIds = Array.from(activeProductIds);
+
+        // 過濾掉 ignored 狀態產品，雖然上面的 logic 已經把 ignored 從 activeProductIds 移除了
+        // 但為了保險起見，這裡不應該有 ignored 的產品，因為 activeProductIds 一開始只選 status='available'
+        // 行 85: status: 'available'
+        // 所以 activeProductIds 裡面本來就不包含 ignored 的產品。
+        // 但是！！！
+        // 如果使用者把原本 available 的產品改成 ignored，那 data base 裡就是 ignored。
+        // 下次爬蟲跑的時候：
+        // 1. activeProductIds 只撈 available，所以 ignored 的產品不在這清單內。
+        // 2. 爬蟲抓到該產品 -> 進入 existingProduct 判斷 -> 發現是 ignored -> skip update -> continue。
+        // 3. 爬蟲沒抓到該產品 -> existingProduct 不會觸發。
+        // 4. 最後 step 3 處理過期 -> ignored 的產品不在 activeProductIds 裡 -> 不會被改成 sold_out。
+        //
+        // 結論：目前的邏輯加上面的 if (existingProduct.status === 'ignored') 就足夠了。
+        // 修正：上面的 activeProductIds.delete(existingProduct.id); 其實如果你是 ignored，你根本不在 activeIds 裡 (因為 activeIds 只撈 available)。
+        // 但是 existingProduct 確實是 DB 撈出來的，可能包含非 available 的狀態嗎？
+        // prisma.product.findFirst({ where: { nameJp: ... } }) 沒有限定 status。
+        // 所以 existingProduct 可能是 ignored。
+        // 這樣 activeProductIds.delete(existingProduct.id) 是安全的 (就算不在 set 裡 delete 也不會錯)。
 
         await this.prisma.product.updateMany({
           where: { id: { in: expiredIds } },
