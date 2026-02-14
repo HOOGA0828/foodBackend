@@ -39,32 +39,65 @@ export class SupabaseService {
                             }
                         });
                     }
-                    if (existingProduct) {
-                        activeProductIds.delete(existingProduct.id);
-                        console.log(`📝 [DB] 更新產品: ${product.translatedName} (ID: ${existingProduct.id})`);
-                        await this.prisma.product.update({
-                            where: { id: existingProduct.id },
-                            data: {
-                                name: product.translatedName,
-                                nameJp: product.originalName,
-                                description: product.translatedName,
-                                price: product.price ? new Decimal(product.price.amount) : null,
-                                currency: product.price?.currency || 'JPY',
-                                imageUrls: product.imageUrl ? [product.imageUrl] : [],
-                                availableStartDate: this.parseDateString(product.releaseDate),
-                                metadata: {
-                                    ...(existingProduct.metadata || {}),
-                                    original_name: product.originalName,
-                                    price_note: product.price?.note,
-                                    crawled_at: result.scrapedAt.toISOString(),
-                                    brand_info: result.brand
-                                },
-                                status: 'available',
-                                lastVerifiedAt: new Date(),
-                                updatedAt: new Date()
+                    if (!existingProduct && product.sourceUrl && product.sourceUrl !== result.brand.url) {
+                        existingProduct = await this.prisma.product.findFirst({
+                            where: {
+                                brandId: brandId,
+                                sourceUrl: product.sourceUrl
                             }
                         });
-                        skippedCount++;
+                    }
+                    if (existingProduct) {
+                        if (existingProduct.status === 'ignored') {
+                            console.log(`🙈 [DB] 忽略產品 (手動標記): ${product.translatedName} (ID: ${existingProduct.id})`);
+                            activeProductIds.delete(existingProduct.id);
+                            continue;
+                        }
+                        activeProductIds.delete(existingProduct.id);
+                        const currentPrice = existingProduct.price ? existingProduct.price.toNumber() : null;
+                        const newPrice = product.price ? product.price.amount : null;
+                        const isPriceChanged = currentPrice !== newPrice;
+                        const currentImage = existingProduct.imageUrls[0] || '';
+                        const newImage = product.imageUrl || '';
+                        const isImageChanged = currentImage !== newImage;
+                        const isNameChanged = existingProduct.name !== product.translatedName;
+                        if (isPriceChanged || isImageChanged || isNameChanged) {
+                            console.log(`📝 [DB] 更新產品(發現變更): ${product.translatedName} (ID: ${existingProduct.id})`);
+                            console.log(`   變動 - 價格: ${isPriceChanged}, 圖片: ${isImageChanged}, 名稱: ${isNameChanged}`);
+                            await this.prisma.product.update({
+                                where: { id: existingProduct.id },
+                                data: {
+                                    name: product.translatedName,
+                                    nameJp: product.originalName,
+                                    description: product.translatedName,
+                                    price: product.price ? new Decimal(product.price.amount) : null,
+                                    currency: product.price?.currency || 'JPY',
+                                    imageUrls: product.imageUrl ? [product.imageUrl] : [],
+                                    availableStartDate: this.parseDateString(product.releaseDate),
+                                    metadata: {
+                                        ...(existingProduct.metadata || {}),
+                                        original_name: product.originalName,
+                                        price_note: product.price?.note,
+                                        crawled_at: result.scrapedAt.toISOString(),
+                                        brand_info: result.brand
+                                    },
+                                    status: 'available',
+                                    lastVerifiedAt: new Date(),
+                                    updatedAt: new Date()
+                                }
+                            });
+                            skippedCount++;
+                        }
+                        else {
+                            console.log(`👌 [DB] 產品無變化(僅更新時間): ${product.translatedName}`);
+                            await this.prisma.product.update({
+                                where: { id: existingProduct.id },
+                                data: {
+                                    lastVerifiedAt: new Date(),
+                                    status: 'available'
+                                }
+                            });
+                        }
                     }
                     else {
                         console.log(`✨ [DB] 新增產品: ${product.translatedName}`);

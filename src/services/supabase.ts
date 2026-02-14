@@ -94,23 +94,23 @@ export class SupabaseService {
         try {
           let existingProduct = null;
 
-          // 策略 1: 優先嘗試使用 sourceUrl (且非品牌首頁) 進行比對
-          // 這能解決名稱變更但網址不變導致的重複建立問題
-          if (product.sourceUrl && product.sourceUrl !== result.brand.url) {
-            existingProduct = await this.prisma.product.findFirst({
-              where: {
-                brandId: brandId,
-                sourceUrl: product.sourceUrl
-              }
-            });
-          }
-
-          // 策略 2: 如果找不到，退回檢查 nameJp (original_name)
-          if (!existingProduct && product.originalName) {
+          // 策略 1: 優先檢查 nameJp (original_name) 以避免共用 URL 造成的誤判 (如麥當勞)
+          if (product.originalName) {
             existingProduct = await this.prisma.product.findFirst({
               where: {
                 brandId: brandId,
                 nameJp: product.originalName
+              }
+            });
+          }
+
+          // 策略 2: 如果找不到，嘗試使用 sourceUrl (且非品牌首頁) 進行比對 (處理改名但網址不變的情況)
+          // 這能解決名稱變更但網址不變導致的重複建立問題
+          if (!existingProduct && product.sourceUrl && product.sourceUrl !== result.brand.url) {
+            existingProduct = await this.prisma.product.findFirst({
+              where: {
+                brandId: brandId,
+                sourceUrl: product.sourceUrl
               }
             });
           }

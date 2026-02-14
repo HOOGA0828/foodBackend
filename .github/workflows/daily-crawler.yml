@@ -2,8 +2,8 @@ name: Daily Crawler
 
 on:
   schedule:
-    # 每天 UTC 04:00 (台灣時間 12:00 PM) 執行
-    - cron: '0 4 * * *'
+    # 每周一、三、五 UTC 03:00 (台灣時間 11:00 AM / 日本時間 12:00 PM) 執行
+    - cron: '0 3 * * 1,3,5'
   workflow_dispatch: # 允許手動觸發
 
 jobs:

@@ -263,10 +263,19 @@ ${request.detailMarkdownContent}
             if (!text)
                 return '';
             const prompt = '你是翻譯助手。請將以下日文翻譯成台灣繁體中文。請回傳 JSON 格式：{ "translated": "翻譯後的文字" }';
-            const result = await this.model.generateContent([
-                prompt,
-                text
-            ]);
+            const result = await pRetry(async () => {
+                return await this.model.generateContent([
+                    prompt,
+                    text
+                ]);
+            }, {
+                retries: 3,
+                minTimeout: 2000,
+                factor: 2,
+                onFailedAttempt: error => {
+                    console.warn(`⚠️ [AI Parser] Translation attempt ${error.attemptNumber} failed. There are ${error.retriesLeft} retries left. Error: ${error.message}`);
+                }
+            });
             const respText = result.response.text();
             if (!respText)
                 return text;
