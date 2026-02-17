@@ -128,52 +128,74 @@ export class SevenElevenStrategy implements ScraperStrategy {
         }, baseUrl);
     }
 
-    // 使用 AI 解析 (List-Only 模式)
+    // 使用 AI 批次解析 (優化版)
     private async parseProducts(brandConfig: BrandConfig, links: ProductLink[]): Promise<ProductInfo[]> {
-        const results: ProductInfo[] = [];
+        if (links.length === 0) return [];
 
-        for (const link of links) {
-            // AI 解析
-            const contentText = link.rawText || `Product: ${link.title}`;
-            try {
-                const parseRequest: AIParseRequest = {
-                    brandName: brandConfig.name,
-                    listMarkdownContent: contentText,
-                    productLink: link,
+        const BATCH_SIZE = 10; // 每批處理 10 個產品
+        const batches: ProductLink[][] = [];
+
+        // 分批
+        for (let i = 0; i < links.length; i += BATCH_SIZE) {
+            batches.push(links.slice(i, i + BATCH_SIZE));
+        }
+
+        console.log(`📦 [SevenElevenStrategy] 將 ${links.length} 個產品分為 ${batches.length} 批次處理`);
+
+        // 並行處理多個批次 (限制 2 個並行，避免 API 過載)
+        const pLimit = (await import('p-limit')).default;
+        const limit = pLimit(2);
+
+        const batchResults = await Promise.all(
+            batches.map((batch, idx) =>
+                limit(async () => {
+                    console.log(`🔄 [SevenElevenStrategy] 處理批次 ${idx + 1}/${batches.length}...`);
+                    return this.processBatch(brandConfig, batch);
+                })
+            )
+        );
+
+        return batchResults.flat();
+    }
+
+    // 批次處理輔助方法
+    private async processBatch(brandConfig: BrandConfig, links: ProductLink[]): Promise<ProductInfo[]> {
+        const requests: AIParseRequest[] = links.map(link => ({
+            brandName: brandConfig.name,
+            listMarkdownContent: link.rawText || `Product: ${link.title}`,
+            productLink: link,
+            sourceUrl: link.url
+        }));
+
+        try {
+            const parsedProducts = await this.aiParser.parseProductsBatch(requests);
+
+            // 合併 HTML 提取的資訊
+            return parsedProducts.map((p, idx) => {
+                const link = links[idx];
+                if (!link) return p; // 安全檢查
+
+                return {
+                    ...p,
+                    translatedName: p.translatedName || p.originalName || link.title,
+                    originalName: link.title,
+                    imageUrl: link.imageUrl || p.imageUrl || '',
                     sourceUrl: link.url
                 };
+            });
 
-                // 這裡可以加上簡單的快取或延遲
-                await new Promise(resolve => setTimeout(resolve, 200));
-
-                const aiResult = await this.aiParser.parseProducts(parseRequest);
-
-                if (aiResult.success && aiResult.products.length > 0) {
-                    const p = aiResult.products[0]!;
-                    results.push({
-                        ...p,
-                        translatedName: p.translatedName || p.originalName || link.title,
-                        originalName: link.title,
-                        imageUrl: link.imageUrl || p.imageUrl || '',
-                        sourceUrl: link.url
-                    });
-                } else {
-                    // Fallback
-                    results.push({
-                        originalName: link.title,
-                        translatedName: link.title,
-                        imageUrl: link.imageUrl,
-                        sourceUrl: link.url,
-                        isNew: true,
-                        description: link.rawText
-                    } as any);
-                }
-
-            } catch (e) {
-                console.error(`解析失敗 ${link.title}:`, e);
-            }
+        } catch (error) {
+            console.error('❌ [SevenElevenStrategy] 批次處理失敗，使用 fallback:', error);
+            // Fallback: 回傳基本資訊
+            return links.map(link => ({
+                originalName: link.title,
+                translatedName: link.title,
+                imageUrl: link.imageUrl,
+                sourceUrl: link.url,
+                isNew: true,
+                description: link.rawText
+            } as any));
         }
-        return results;
     }
 
     private removeDuplicateProducts(products: ProductInfo[]): ProductInfo[] {
